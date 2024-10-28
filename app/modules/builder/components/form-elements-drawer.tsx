@@ -15,27 +15,22 @@ import {
 	CircleDot,
 	Hash,
 	List,
+	type LucideIcon,
 	Mail,
 	Type,
 } from 'lucide-react'
 
-const questionTypes = [
-	{ type: 'text', icon: <Type className="w-4 h-4" />, label: 'Text' },
-	{ type: 'number', icon: <Hash className="w-4 h-4" />, label: 'Number' },
-	{ type: 'email', icon: <Mail className="w-4 h-4" />, label: 'Email' },
-	{
-		type: 'textarea',
-		icon: <AlignLeft className="w-4 h-4" />,
-		label: 'Long Text',
-	},
-	{ type: 'select', icon: <List className="w-4 h-4" />, label: 'Dropdown' },
-	{
-		type: 'checkbox',
-		icon: <CheckSquare className="w-4 h-4" />,
-		label: 'Checkbox',
-	},
-	{ type: 'radio', icon: <CircleDot className="w-4 h-4" />, label: 'Radio' },
-]
+import { FIELD_LIST } from '../constants'
+
+const IconMap: Partial<Record<FieldTypes, LucideIcon>> = {
+	MULTIPLE_CHOICE: CircleDot,
+	CHECKBOX: CheckSquare,
+	DROPDOWN: List,
+	LONG_ANSWER: AlignLeft,
+	EMAIL: Mail,
+	NUMBER: Hash,
+	SHORT_ANSWER: Type,
+}
 
 export function FormElementsDrawer() {
 	return (
@@ -49,16 +44,19 @@ export function FormElementsDrawer() {
 					<SheetDescription className="sr-only">Form Elements</SheetDescription>
 				</SheetHeader>
 				<div className="grid gap-4 py-4">
-					{questionTypes.map((item) => (
-						<Button
-							className="justify-start"
-							variant="outline"
-							type="button"
-							key={item.label}
-						>
-							{item.icon} {item.label}
-						</Button>
-					))}
+					{FIELD_LIST.map((item) => {
+						const ItemIcon = IconMap[item.type] as LucideIcon
+						return (
+							<Button
+								className="justify-start"
+								variant="outline"
+								type="button"
+								key={item.label}
+							>
+								<ItemIcon className="w-4 h-4" /> {item.label}
+							</Button>
+						)
+					})}
 				</div>
 			</SheetContent>
 		</Sheet>

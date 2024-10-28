@@ -26,6 +26,9 @@ importers:
       '@remix-run/serve':
         specifier: ^2.13.1
         version: 2.13.1(typescript@5.6.3)
+      '@xstate/store':
+        specifier: ^2.6.0
+        version: 2.6.0(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -1008,6 +1011,17 @@ packages:
 
   '@web3-storage/multipart-parser@1.0.0':
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
+
+  '@xstate/store@2.6.0':
+    resolution: {integrity: sha512-pHiGIn378yPSCY36f/8iFF1KtKTKpGINqUVJH/dYydzWT+uXc4zKUQ+XUk0qTHchTvBXQ/UivRox2Q19ZnzTjw==}
+    peerDependencies:
+      react: ^18.2.0
+      solid-js: ^1.7.6
+    peerDependenciesMeta:
+      react:
+        optional: true
+      solid-js:
+        optional: true
 
   '@zxing/text-encoding@0.9.0':
     resolution: {integrity: sha512-U/4aVJ2mxI0aDNI8Uq0wEhMgY+u4CNtEb0om3+y3+niDAsoTCOB33UF0sxpzqzdqXLqmvc+vZyAt4O8pPdfkwA==}
@@ -3948,6 +3962,10 @@ snapshots:
   '@vanilla-extract/private@1.0.6': {}
 
   '@web3-storage/multipart-parser@1.0.0': {}
+
+  '@xstate/store@2.6.0(react@18.3.1)':
+    optionalDependencies:
+      react: 18.3.1
 
   '@zxing/text-encoding@0.9.0':
     optional: true
