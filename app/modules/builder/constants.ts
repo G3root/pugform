@@ -1,6 +1,6 @@
-type TFieldList = {
-	label: string
-} & Field
+import type { Field } from '~/lib/db.server'
+
+type TFieldList = Pick<Field, 'type' | 'label'>
 
 export const FIELD_LIST: TFieldList[] = [
 	{ type: 'SHORT_ANSWER', label: 'Short Answer' },
@@ -10,9 +10,9 @@ export const FIELD_LIST: TFieldList[] = [
 		type: 'LONG_ANSWER',
 		label: 'Long Text',
 	},
-	{ type: 'DROPDOWN', label: 'Dropdown' },
+	{ type: 'DROP_DOWN', label: 'Dropdown' },
 	{
-		type: 'CHECKBOX',
+		type: 'CHECK_BOX',
 		label: 'Checkbox',
 	},
 	{ type: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },

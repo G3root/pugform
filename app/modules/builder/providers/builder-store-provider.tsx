@@ -1,6 +1,7 @@
 import { createStoreWithProducer } from '@xstate/store'
 import { create } from 'mutative'
 import type { ReactNode } from 'react'
+import type { NewField } from '~/lib/db.server'
 import { createContext } from '~/utils/create-context'
 
 const [Provider, useBuilderStore] = createContext<
@@ -14,11 +15,15 @@ const [Provider, useBuilderStore] = createContext<
 function useCreateStore() {
 	return createStoreWithProducer(create, {
 		context: {
-			fields: [] as Field[],
+			fields: [] as NewField[],
 		},
 		on: {
-			addField: (context, event: { field: Field }) => {
+			addField: (context, event: { field: NewField }) => {
 				context.fields.push(event.field)
+			},
+
+			removeField: (context, event: { index: number }) => {
+				context.fields.splice(event.index, 1)
 			},
 		},
 	})
