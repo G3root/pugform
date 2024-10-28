@@ -1,175 +1,239 @@
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { type VariantProps, cva } from 'class-variance-authority'
-import type * as React from 'react'
-import {
-	Button as AriaButton,
-	Dialog as AriaDialog,
-	type DialogProps as AriaDialogProps,
-	DialogTrigger as AriaDialogTrigger,
-	Heading as AriaHeading,
-	type HeadingProps as AriaHeadingProps,
-	Modal as AriaModal,
-	ModalOverlay as AriaModalOverlay,
-	type ModalOverlayProps as AriaModalOverlayProps,
-	composeRenderProps,
+import * as React from 'react'
+
+import { IconX } from 'justd-icons'
+import type {
+	ButtonProps as ButtonPrimitiveProps,
+	DialogProps,
+	HeadingProps,
 } from 'react-aria-components'
+import {
+	Button as ButtonPrimitive,
+	Dialog as DialogPrimitive,
+	Heading,
+	OverlayTriggerStateContext,
+} from 'react-aria-components'
+import { tv } from 'tailwind-variants'
 
-import { cn } from '~/lib/utils'
+import { Button, type ButtonProps } from './button'
+import { useMediaQuery } from './primitive'
 
-const Dialog = AriaDialog
+const dialogStyles = tv({
+	slots: {
+		root: [
+			'dlc relative flex max-h-[inherit] [&::-webkit-scrollbar]:size-0.5 [scrollbar-width:thin] flex-col overflow-hidden outline-none',
+			'sm:[&:not(:has([data-slot=dialog-body]))]:px-6 sm:[&:has([data-slot=dialog-body])_[data-slot=dialog-header]]:px-6 sm:[&:has([data-slot=dialog-body])_[data-slot=dialog-footer]]:px-6',
+			'[&:not(:has([data-slot=dialog-body]))]:px-4 [&:has([data-slot=dialog-body])_[data-slot=dialog-header]]:px-4 [&:has([data-slot=dialog-body])_[data-slot=dialog-footer]]:px-4',
+		],
+		header: 'relative flex flex-col pb-3 pt-4 sm:pt-6',
+		description: 'text-sm block text-muted-fg mt-0.5 sm:mt-1',
+		body: [
+			'flex flex-1 flex-col gap-2 overflow-auto px-4 sm:px-6 py-1',
+			'max-h-[calc(var(--visual-viewport-height)-var(--visual-viewport-vertical-padding)-var(--dialog-header-height,0px)-var(--dialog-footer-height,0px))]',
+		],
+		footer:
+			'mt-auto flex flex-col-reverse justify-between gap-3 pb-4 sm:pb-6 pt-4 sm:flex-row',
+		closeIndicator:
+			'close absolute right-1 top-1 sm:right-2 sm:top-2 focus:outline-none focus:bg-secondary hover:bg-secondary grid place-content-center rounded-xl sm:rounded-md focus-visible:ring-1 focus-visible:ring-primary size-8 sm:size-7 z-50',
+	},
+})
 
-const sheetVariants = cva(
-	[
-		'fixed z-50 gap-4 bg-background shadow-lg transition ease-in-out',
-		/* Entering */
-		'data-[entering]:duration-500 data-[entering]:animate-in',
-		/* Exiting */
-		'data-[exiting]:duration-300  data-[exiting]:animate-out',
-	],
-	{
-		variants: {
-			side: {
-				top: 'inset-x-0 top-0 border-b data-[entering]:slide-in-from-top data-[exiting]:slide-out-to-top',
-				bottom:
-					'inset-x-0 bottom-0 border-t data-[entering]:slide-in-from-bottom data-[exiting]:slide-out-to-bottom',
-				left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[entering]:slide-in-from-left data-[exiting]:slide-out-to-left sm:max-w-sm',
-				right:
-					'inset-y-0 right-0 h-full w-3/4  border-l data-[entering]:slide-in-from-right data-[exiting]:slide-out-to-right sm:max-w-sm',
-			},
+const { root, header, description, body, footer, closeIndicator } =
+	dialogStyles()
+
+const Dialog = ({ role, className, ...props }: DialogProps) => {
+	return (
+		<DialogPrimitive
+			{...props}
+			role={role ?? 'dialog'}
+			className={root({ className })}
+		/>
+	)
+}
+
+const Trigger = (props: ButtonPrimitiveProps) => (
+	<ButtonPrimitive {...props}>
+		{(values) => (
+			<>
+				{typeof props.children === 'function'
+					? props.children(values)
+					: props.children}
+			</>
+		)}
+	</ButtonPrimitive>
+)
+
+type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
+	title?: string
+	description?: string
+}
+
+const Header = ({ className, ...props }: DialogHeaderProps) => {
+	const headerRef = React.useRef<HTMLHeadingElement>(null)
+
+	React.useEffect(() => {
+		const header = headerRef.current
+		if (!header) {
+			return
+		}
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				header.parentElement?.style.setProperty(
+					'--dialog-header-height',
+					`${entry.target.clientHeight}px`,
+				)
+			}
+		})
+
+		observer.observe(header)
+		return () => observer.unobserve(header)
+	}, [])
+
+	return (
+		<div
+			data-slot="dialog-header"
+			ref={headerRef}
+			className={header({ className })}
+		>
+			{props.title && <Title>{props.title}</Title>}
+			{props.description && <Description>{props.description}</Description>}
+			{!props.title && typeof props.children === 'string' ? (
+				<Title {...props} />
+			) : (
+				props.children
+			)}
+		</div>
+	)
+}
+
+const titleStyles = tv({
+	base: 'flex flex-1 items-center text-fg',
+	variants: {
+		level: {
+			1: 'font-semibold text-lg sm:text-xl',
+			2: 'font-semibold text-lg sm:text-xl',
+			3: 'font-semibold text-base sm:text-lg',
+			4: 'font-semibold text-base',
 		},
 	},
-)
+})
 
-const DialogTrigger = AriaDialogTrigger
-
-const DialogOverlay = ({
-	className,
-	isDismissable = true,
-	...props
-}: AriaModalOverlayProps) => (
-	<AriaModalOverlay
-		isDismissable={isDismissable}
-		className={composeRenderProps(className, (className) =>
-			cn(
-				'fixed inset-0 z-50 bg-black/80',
-				/* Exiting */
-				'data-[exiting]:duration-300 data-[exiting]:animate-out data-[exiting]:fade-out-0',
-				/* Entering */
-				'data-[entering]:animate-in data-[entering]:fade-in-0',
-				className,
-			),
-		)}
-		{...props}
-	/>
-)
-
-interface DialogContentProps
-	extends Omit<React.ComponentProps<typeof AriaModal>, 'children'>,
-		VariantProps<typeof sheetVariants> {
-	children?: AriaDialogProps['children']
-	role?: AriaDialogProps['role']
-	closeButton?: boolean
+interface TitleProps extends Omit<HeadingProps, 'level'> {
+	level?: 1 | 2 | 3 | 4
 }
 
-const DialogContent = ({
-	className,
-	children,
-	side,
-	role,
-	closeButton = true,
-	...props
-}: DialogContentProps) => (
-	<AriaModal
-		className={composeRenderProps(className, (className) =>
-			cn(
-				side
-					? sheetVariants({ side, className: 'h-full p-6' })
-					: 'fixed left-[50vw] top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 border bg-background p-6 shadow-lg duration-200 data-[exiting]:duration-300 data-[entering]:animate-in data-[exiting]:animate-out data-[entering]:fade-in-0 data-[exiting]:fade-out-0 data-[entering]:zoom-in-95 data-[exiting]:zoom-out-95 data-[entering]:slide-in-from-left-1/2 data-[entering]:slide-in-from-top-[48%] data-[exiting]:slide-out-to-left-1/2 data-[exiting]:slide-out-to-top-[48%] sm:rounded-lg md:w-full',
-				className,
-			),
-		)}
-		{...props}
-	>
-		<AriaDialog
-			role={role}
-			className={cn(!side && 'grid h-full gap-4', 'h-full outline-none')}
-		>
-			{composeRenderProps(children, (children, renderProps) => (
-				<>
-					{children}
-					{closeButton && (
-						<AriaButton
-							onPress={renderProps.close}
-							className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[disabled]:pointer-events-none data-[entering]:bg-accent data-[entering]:text-muted-foreground data-[hovered]:opacity-100 data-[focused]:outline-none data-[focused]:ring-2 data-[focused]:ring-ring data-[focused]:ring-offset-2"
-						>
-							<Cross2Icon className="size-4" />
-							<span className="sr-only">Close</span>
-						</AriaButton>
-					)}
-				</>
-			))}
-		</AriaDialog>
-	</AriaModal>
-)
-
-const DialogHeader = ({
-	className,
-	...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-	<div
-		className={cn(
-			'flex flex-col space-y-1.5 text-center sm:text-left',
-			className,
-		)}
-		{...props}
-	/>
-)
-
-const DialogFooter = ({
-	className,
-	...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-	<div
-		className={cn(
-			'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-			className,
-		)}
-		{...props}
-	/>
-)
-
-const DialogTitle = ({ className, ...props }: AriaHeadingProps) => (
-	<AriaHeading
+const Title = ({ level = 2, className, ...props }: TitleProps) => (
+	<Heading
 		slot="title"
-		className={cn(
-			'text-lg font-semibold leading-none tracking-tight',
-			className,
-		)}
+		level={level}
+		className={titleStyles({ level, className })}
 		{...props}
 	/>
 )
 
-const DialogDescription = ({
+const Description = ({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLParagraphElement>) => (
-	<p
-		className={cn(
-			'flex flex-col space-y-1.5 text-center sm:text-left',
-			className,
-		)}
-		{...props}
-	/>
+}: React.HTMLAttributes<HTMLDivElement>) => (
+	<div className={description({ className })} {...props} />
 )
 
-export {
-	Dialog,
-	DialogOverlay,
-	DialogTrigger,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogFooter,
-	DialogTitle,
+const Body = ({
+	className,
+	...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+	<div data-slot="dialog-body" className={body({ className })} {...props} />
+)
+
+const Footer = ({
+	className,
+	...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+	const footerRef = React.useRef<HTMLDivElement>(null)
+
+	React.useEffect(() => {
+		const footer = footerRef.current
+
+		if (!footer) {
+			return
+		}
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				footer.parentElement?.style.setProperty(
+					'--dialog-footer-height',
+					`${entry.target.clientHeight}px`,
+				)
+			}
+		})
+
+		observer.observe(footer)
+		return () => {
+			observer.unobserve(footer)
+		}
+	}, [])
+	return (
+		<div
+			ref={footerRef}
+			data-slot="dialog-footer"
+			className={footer({ className })}
+			{...props}
+		/>
+	)
 }
-export type { DialogContentProps }
+
+const Close = ({
+	className,
+	appearance = 'outline',
+	...props
+}: ButtonProps) => {
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	const state = React.useContext(OverlayTriggerStateContext)!
+	return (
+		<Button
+			className={className}
+			appearance={appearance}
+			onPress={() => state.close()}
+			{...props}
+		/>
+	)
+}
+
+interface CloseButtonIndicatorProps {
+	className?: string
+	close: () => void
+	isDismissable?: boolean | undefined
+}
+
+const CloseIndicator = ({ className, ...props }: CloseButtonIndicatorProps) => {
+	const isMobile = useMediaQuery('(max-width: 600px)')
+	const buttonRef = React.useRef<HTMLButtonElement>(null)
+
+	React.useEffect(() => {
+		if (isMobile && buttonRef.current) {
+			buttonRef.current.focus()
+		}
+	}, [isMobile])
+	return props.isDismissable ? (
+		<ButtonPrimitive
+			ref={buttonRef}
+			{...(isMobile ? { autoFocus: true } : {})}
+			aria-label="Close"
+			onPress={props.close}
+			className={closeIndicator({ className })}
+		>
+			<IconX className="size-4" />
+		</ButtonPrimitive>
+	) : null
+}
+
+Dialog.Trigger = Trigger
+Dialog.Header = Header
+Dialog.Title = Title
+Dialog.Description = Description
+Dialog.Body = Body
+Dialog.Footer = Footer
+Dialog.Close = Close
+Dialog.CloseIndicator = CloseIndicator
+
+export { Dialog }

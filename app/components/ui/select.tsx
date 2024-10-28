@@ -1,160 +1,119 @@
-'use client'
-
-import { CaretSortIcon } from '@radix-ui/react-icons'
+import { IconChevronLgDown } from 'justd-icons'
+import type * as React from 'react'
+import type { ButtonProps, PopoverProps } from 'react-aria-components'
 import {
-	Button as AriaButton,
-	type ButtonProps as AriaButtonProps,
-	ListBox as AriaListBox,
-	type ListBoxProps as AriaListBoxProps,
-	type PopoverProps as AriaPopoverProps,
-	Select as AriaSelect,
-	type SelectProps as AriaSelectProps,
-	SelectValue as AriaSelectValue,
-	type SelectValueProps as AriaSelectValueProps,
-	type ValidationResult as AriaValidationResult,
-	Text,
-	composeRenderProps,
+	Button,
+	Select as SelectPrimitive,
+	type SelectProps as SelectPrimitiveProps,
+	SelectValue,
+	type ValidationResult,
 } from 'react-aria-components'
-
-import { cn } from '~/lib/utils'
-
-import { FieldError, Label } from './field'
-import {
-	ListBoxCollection,
-	ListBoxHeader,
-	ListBoxItem,
-	ListBoxSection,
-} from './list-box'
+import { tv } from 'tailwind-variants'
+import { DropdownItem, DropdownItemDetails, DropdownSection } from './dropdown'
+import { Description, FieldError, Label } from './field'
+import { ListBox } from './list-box'
 import { Popover } from './popover'
+import { cr, ctr, focusStyles } from './primitive'
 
-const Select = AriaSelect
+const selectTriggerStyles = tv({
+	extend: focusStyles,
+	base: [
+		'btr group-disabled:bg-secondary [&_[data-slot=icon]]:size-4 group-disabled:opacity-50 focus-visible:border-ring/85 focus-visible:ring-4 focus-visible:ring-primary/20 group-open:border-ring/85 group-open:ring-4 group-open:ring-ring/20 flex h-10 w-full cursor-default items-center gap-4 rounded-lg border border-input bg-bg py-2 pl-3 pr-2 text-start shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] transition dark:shadow-none',
+	],
+	variants: {
+		isDisabled: {
+			false:
+				'text-fg group-invalid:border-danger group-invalid:ring-danger/20 forced-colors:group-invalid:border-[Mark]',
+			true: 'bg-secondary text-muted-fg forced-colors:border-[GrayText] forced-colors:text-[GrayText]',
+		},
+	},
+})
 
-const SelectItem = ListBoxItem
-
-const SelectHeader = ListBoxHeader
-
-const SelectSection = ListBoxSection
-
-const SelectCollection = ListBoxCollection
-
-const SelectValue = <T extends object>({
-	className,
-	...props
-}: AriaSelectValueProps<T>) => (
-	<AriaSelectValue
-		className={composeRenderProps(className, (className) =>
-			cn(
-				'line-clamp-1 data-[placeholder]:text-muted-foreground',
-				/* Description */
-				'[&>[slot=description]]:hidden',
-				className,
-			),
-		)}
-		{...props}
-	/>
-)
-
-const SelectTrigger = ({ className, children, ...props }: AriaButtonProps) => (
-	<AriaButton
-		className={composeRenderProps(className, (className) =>
-			cn(
-				'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm',
-				/* Disabled */
-				'data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
-				/* Focused */
-				'data-[focus-visible]:outline-none data-[focus-visible]:ring-1 data-[focus-visible]:ring-ring',
-				/* Resets */
-				'focus-visible:outline-none',
-				className,
-			),
-		)}
-		{...props}
-	>
-		{composeRenderProps(children, (children) => (
-			<>
-				{children}
-				<CaretSortIcon aria-hidden="true" className="size-4 opacity-50" />
-			</>
-		))}
-	</AriaButton>
-)
-
-const SelectPopover = ({ className, ...props }: AriaPopoverProps) => (
-	<Popover
-		className={composeRenderProps(className, (className) =>
-			cn('w-[--trigger-width]', className),
-		)}
-		{...props}
-	/>
-)
-
-const SelectListBox = <T extends object>({
-	className,
-	...props
-}: AriaListBoxProps<T>) => (
-	<AriaListBox
-		className={composeRenderProps(className, (className) =>
-			cn(
-				'max-h-[inherit] overflow-auto p-1 outline-none [clip-path:inset(0_0_0_0_round_calc(var(--radius)-2px))]',
-				className,
-			),
-		)}
-		{...props}
-	/>
-)
-
-interface JollySelectProps<T extends object>
-	extends Omit<AriaSelectProps<T>, 'children'> {
+interface SelectProps<T extends object> extends SelectPrimitiveProps<T> {
 	label?: string
 	description?: string
-	errorMessage?: string | ((validation: AriaValidationResult) => string)
+	errorMessage?: string | ((validation: ValidationResult) => string)
 	items?: Iterable<T>
-	children: React.ReactNode | ((item: T) => React.ReactNode)
+	className?: string
 }
 
-function JollySelect<T extends object>({
+const Select = <T extends object>({
 	label,
 	description,
 	errorMessage,
 	children,
 	className,
-	items,
 	...props
-}: JollySelectProps<T>) {
+}: SelectProps<T>) => {
 	return (
-		<Select
-			className={composeRenderProps(className, (className) =>
-				cn('group flex flex-col gap-2', className),
-			)}
+		<SelectPrimitive
 			{...props}
+			className={ctr(className, 'group flex w-full flex-col gap-1')}
 		>
-			<Label>{label}</Label>
-			<SelectTrigger>
-				<SelectValue />
-			</SelectTrigger>
-			{description && (
-				<Text className="text-sm text-muted-foreground" slot="description">
-					{description}
-				</Text>
-			)}
+			{label && <Label>{label}</Label>}
+			{/* biome-ignore lint/complexity/noUselessFragments: <explanation> */}
+			<>{children}</>
+			{description && <Description>{description}</Description>}
 			<FieldError>{errorMessage}</FieldError>
-			<SelectPopover>
-				<SelectListBox items={items}>{children}</SelectListBox>
-			</SelectPopover>
-		</Select>
+		</SelectPrimitive>
 	)
 }
 
-export {
-	Select,
-	SelectValue,
-	SelectTrigger,
-	SelectItem,
-	SelectPopover,
-	SelectHeader,
-	SelectListBox,
-	SelectSection,
-	SelectCollection,
-	JollySelect,
+interface ListProps<T extends object> {
+	items?: Iterable<T>
+	placement?: PopoverProps['placement']
+	children: React.ReactNode | ((item: T) => React.ReactNode)
+	className?: string
 }
-export type { JollySelectProps }
+
+const List = <T extends object>({
+	className,
+	children,
+	items,
+	placement,
+}: ListProps<T>) => {
+	return (
+		<Popover.Picker
+			className={className}
+			trigger="Select"
+			placement={placement}
+		>
+			<ListBox.Picker aria-label="items" items={items}>
+				{children}
+			</ListBox.Picker>
+		</Popover.Picker>
+	)
+}
+
+interface TriggerProps extends ButtonProps {
+	prefix?: React.ReactNode
+	className?: string
+}
+
+const Trigger = ({ className, ...props }: TriggerProps) => {
+	return (
+		<Button
+			className={cr(className, (className, renderProps) =>
+				selectTriggerStyles({
+					...renderProps,
+					className,
+				}),
+			)}
+		>
+			{props.prefix && <span className="-mr-1">{props.prefix}</span>}
+			<SelectValue className="flex-1 [&_[slot=description]]:hidden text-base placeholder-shown:text-muted-fg lg:text-sm" />
+			<IconChevronLgDown
+				aria-hidden
+				className="text-muted-fg shrink-0 size-4 duration-300 group-open:rotate-180 group-open:text-fg group-disabled:opacity-50 forced-colors:text-[ButtonText] forced-colors:group-disabled:text-[GrayText]"
+			/>
+		</Button>
+	)
+}
+
+Select.OptionDetails = DropdownItemDetails
+Select.Option = DropdownItem
+Select.Section = DropdownSection
+Select.Trigger = Trigger
+Select.List = List
+
+export { Select }

@@ -1,98 +1,136 @@
-'use client'
-
-import { CheckIcon } from '@radix-ui/react-icons'
+import { IconCheck, IconHamburger } from 'justd-icons'
+import type * as React from 'react'
 import {
-	Collection as AriaCollection,
-	Header as AriaHeader,
-	ListBox as AriaListBox,
-	ListBoxItem as AriaListBoxItem,
-	type ListBoxItemProps as AriaListBoxItemProps,
-	type ListBoxProps as AriaListBoxProps,
-	Section as AriaSection,
-	composeRenderProps,
+	ListBoxItem as ListBoxItemPrimitive,
+	type ListBoxItemProps as ListBoxItemPrimitiveProps,
+	ListBox as ListBoxPrimitive,
+	type ListBoxProps as ListBoxPrimitiveProps,
 } from 'react-aria-components'
+import { tv } from 'tailwind-variants'
+import { DropdownItemDetails, DropdownSection } from './dropdown'
+import { cn, cr } from './primitive'
 
-import { cn } from '~/lib/utils'
+const listBoxStyles = tv({
+	base: 'flex max-h-96 [&::-webkit-scrollbar]:size-0.5 [scrollbar-width:thin] w-full gap-y-1 min-w-72 flex-col overflow-y-auto rounded-xl border p-1 shadow-lg outline-none',
+})
 
-const ListBoxSection = AriaSection
+interface ListBoxProps<T> extends ListBoxPrimitiveProps<T> {
+	className?: string
+}
 
-const ListBoxCollection = AriaCollection
-
-function ListBox<T extends object>({
+const ListBox = <T extends object>({
+	children,
 	className,
 	...props
-}: AriaListBoxProps<T>) {
-	return (
-		<AriaListBox
-			className={composeRenderProps(className, (className) =>
-				cn(
-					className,
-					'group overflow-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none',
-					/* Empty */
-					'data-[empty]:p-6 data-[empty]:text-center data-[empty]:text-sm',
-				),
-			)}
-			{...props}
-		/>
-	)
+}: ListBoxProps<T>) => (
+	<ListBoxPrimitive {...props} className={listBoxStyles({ className })}>
+		{children}
+	</ListBoxPrimitive>
+)
+
+const listBoxItemStyles = tv({
+	base: 'lbi cursor-pointer relative rounded-[calc(var(--radius)-1px)] p-2 text-base outline-none lg:text-sm',
+	variants: {
+		isFocusVisible: {
+			true: 'bg-secondary [&:focus-visible_[slot=label]]:text-accent-fg [&:focus-visible_[slot=description]]:text-accent-fg/70 text-secondary-fg',
+		},
+		isHovered: {
+			true: 'bg-accent [&:hover_[slot=label]]:text-accent-fg [&:hover_[slot=description]]:text-accent-fg/70 text-accent-fg [&_.text-muted-fg]:text-accent-fg/80',
+		},
+		isFocused: {
+			true: '[&_[data-slot=icon]]:text-accent-fg [&_[data-slot=label]]:text-accent-fg [&_.text-muted-fg]:text-accent-fg/80 bg-accent text-accent-fg',
+		},
+		isSelected: {
+			true: '[&_[data-slot=icon]]:text-accent-fg [&_[data-slot=label]]:text-accent-fg [&_.text-muted-fg]:text-accent-fg/80 bg-accent text-accent-fg',
+		},
+		isDragging: { true: 'cursor-grabbing bg-secondary text-secondary-fg' },
+		isDisabled: {
+			true: 'opacity-70 cursor-default text-muted-fg',
+		},
+	},
+})
+
+interface ListBoxItemProps<T extends object>
+	extends ListBoxItemPrimitiveProps<T> {
+	className?: string
 }
 
 const ListBoxItem = <T extends object>({
-	className,
 	children,
+	className,
 	...props
-}: AriaListBoxItemProps<T>) => {
+}: ListBoxItemProps<T>) => {
+	const textValue = typeof children === 'string' ? children : undefined
+
 	return (
-		<AriaListBoxItem
-			textValue={
-				props.textValue || (typeof children === 'string' ? children : undefined)
-			}
-			className={composeRenderProps(className, (className) =>
-				cn(
-					'relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none',
-					/* Disabled */
-					'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-					/* Focused */
-					'data-[focused]:bg-accent data-[focused]:text-accent-foreground',
-					/* Hovered */
-					'data-[hovered]:bg-accent data-[hovered]:text-accent-foreground',
-					/* Selection */
-					'data-[selection-mode]:pr-8',
-					className,
-				),
-			)}
+		<ListBoxItemPrimitive
+			textValue={textValue}
 			{...props}
+			className={cr(className, (className, renderProps) =>
+				listBoxItemStyles({
+					...renderProps,
+					className,
+				}),
+			)}
 		>
-			{composeRenderProps(children, (children, renderProps) => (
-				<>
-					{renderProps.isSelected && (
-						<span className="absolute right-2 flex size-4 items-center justify-center">
-							<CheckIcon className="size-4" />
-						</span>
-					)}
-					{children}
-				</>
-			))}
-		</AriaListBoxItem>
+			{(values) => (
+				<div className="flex items-center gap-2">
+					<>
+						{values.allowsDragging && (
+							<IconHamburger
+								className={cn(
+									'size-4 shrink-0 text-muted-fg transition',
+									values.isFocused && 'text-fg',
+									values.isDragging && 'text-fg',
+									values.isSelected && 'text-accent-fg/70',
+								)}
+							/>
+						)}
+						<div className="flex flex-col">
+							{typeof children === 'function' ? children(values) : children}
+
+							{values.isSelected && (
+								<span className="animate-in absolute right-2 top-3 lg:top-2.5">
+									<IconCheck />
+								</span>
+							)}
+						</div>
+					</>
+				</div>
+			)}
+		</ListBoxItemPrimitive>
 	)
 }
 
-function ListBoxHeader({
+type ListBoxPickerProps<T> = ListBoxProps<T>
+
+const ListBoxPicker = <T extends object>({
 	className,
 	...props
-}: React.ComponentProps<typeof AriaHeader>) {
+}: ListBoxPickerProps<T>) => {
 	return (
-		<AriaHeader
-			className={cn('px-2 py-1.5 text-sm font-semibold', className)}
+		<ListBoxPrimitive
+			className={cn('max-h-72 overflow-auto p-1 outline-none', className)}
 			{...props}
 		/>
 	)
 }
 
-export {
-	ListBox,
-	ListBoxItem,
-	ListBoxHeader,
-	ListBoxSection,
-	ListBoxCollection,
+const Section = ({
+	className,
+	...props
+}: React.ComponentProps<typeof DropdownSection>) => {
+	return (
+		<DropdownSection
+			className={cn(className, '[&_.lbi:last-child]:-mb-1.5 gap-y-1')}
+			{...props}
+		/>
+	)
 }
+
+ListBox.Section = Section
+ListBox.ItemDetails = DropdownItemDetails
+ListBox.Item = ListBoxItem
+ListBox.Picker = ListBoxPicker
+
+export { ListBox, listBoxStyles, type ListBoxPickerProps }
