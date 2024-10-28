@@ -41,7 +41,7 @@ export function FormElementsDrawer() {
 			<FloatingButton aria-label="add items" />
 			<DialogOverlay>
 				<DialogContent side="right" className="sm:max-w-[425px]">
-					{() => (
+					{({ close }) => (
 						<>
 							<DialogHeader>
 								<DialogTitle>Form Elements</DialogTitle>
@@ -60,6 +60,7 @@ export function FormElementsDrawer() {
 													type: 'addField',
 													field: { type: item.type },
 												})
+												close()
 											}}
 										>
 											<ItemIcon className="w-4 h-4" /> {item.label}
