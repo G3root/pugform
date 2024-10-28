@@ -80,6 +80,9 @@ importers:
       tailwindcss-react-aria-components:
         specifier: ^1.1.6
         version: 1.1.6(tailwindcss@3.4.14)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
