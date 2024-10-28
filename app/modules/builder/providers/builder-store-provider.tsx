@@ -1,4 +1,5 @@
-import { createStore } from '@xstate/store'
+import { createStoreWithProducer } from '@xstate/store'
+import { create } from 'mutative'
 import type { ReactNode } from 'react'
 import { createContext } from '~/utils/create-context'
 
@@ -11,11 +12,15 @@ const [Provider, useBuilderStore] = createContext<
 })
 
 function useCreateStore() {
-	return createStore({
+	return createStoreWithProducer(create, {
 		context: {
-			data: {},
+			fields: [] as Field[],
 		},
-		on: {},
+		on: {
+			addField: (context, event: { field: Field }) => {
+				context.fields.push(event.field)
+			},
+		},
 	})
 }
 

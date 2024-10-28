@@ -12,6 +12,7 @@ import {
 	Type,
 } from 'lucide-react'
 
+import { useSelector } from '@xstate/store/react'
 import {
 	DialogContent,
 	DialogHeader,
@@ -20,6 +21,7 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog'
 import { FIELD_LIST } from '../constants'
+import { useBuilderStore } from '../providers/builder-store-provider'
 
 const IconMap: Partial<Record<FieldTypes, LucideIcon>> = {
 	MULTIPLE_CHOICE: CircleDot,
@@ -32,6 +34,8 @@ const IconMap: Partial<Record<FieldTypes, LucideIcon>> = {
 }
 
 export function FormElementsDrawer() {
+	const store = useBuilderStore()
+
 	return (
 		<DialogTrigger>
 			<FloatingButton aria-label="add items" />
@@ -47,10 +51,16 @@ export function FormElementsDrawer() {
 									const ItemIcon = IconMap[item.type] as LucideIcon
 									return (
 										<Button
-											className="justify-start"
+											className="justify-start flex items-center gap-2"
 											variant="outline"
 											type="button"
 											key={item.label}
+											onPress={() => {
+												store.send({
+													type: 'addField',
+													field: { type: item.type },
+												})
+											}}
 										>
 											<ItemIcon className="w-4 h-4" /> {item.label}
 										</Button>
