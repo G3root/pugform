@@ -9,3 +9,129 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+generator kysely {
+  provider = "prisma-kysely"
+
+  // Optionally provide a destination directory for the generated file
+  // and a filename of your choice
+  output       = "../app/generated"
+  fileName     = "db-types.ts"
+  // Optionally generate runtime enums to a separate file
+  enumFileName = "enums.ts"
+}
+
+model Organization {
+  id   String @id @default(cuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  membership Membership[]
+  Workspace  Workspace[]
+  Form       Form[]
+  FormPage   FormPage[]
+
+  @@map("organization")
+}
+
+model Membership {
+  id String @id @default(cuid())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Form      Form[]
+
+  @@map("membership")
+}
+
+model User {
+  id String @id @default(cuid())
+
+  name        String?
+  email       String       @unique
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("user")
+}
+
+model Workspace {
+  id String @id @default(cuid())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Form      Form[]
+
+  @@map("workspace")
+}
+
+model Form {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  isActive    Boolean @default(true)
+
+  creator   Membership @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  FormPage FormPage[]
+
+  @@map("form")
+}
+
+model FormPage {
+  id String @id @default(cuid())
+
+  form   Form   @relation(fields: [formId], references: [id])
+  formId String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Field     Field[]
+
+  @@map("formPage")
+}
+
+model Field {
+  id    String @id @default(cuid())
+  label String
+
+  /// @kyselyType('SHORT_ANSWER' | 'NUMBER' | 'EMAIL' | 'LONG_ANSWER' | 'CHECK_BOX' | 'MULTIPLE_CHOICE' | 'DROPDOWN' | 'MULTI_SELECT')
+  type     String
+  required Boolean @default(false)
+  order    Int     @default(0)
+
+  page       FormPage @relation(fields: [formPageId], references: [id])
+  formPageId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@map("field")
+}
