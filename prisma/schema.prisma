@@ -122,7 +122,7 @@ model Field {
   id    String @id @default(cuid())
   label String
 
-  /// @kyselyType('SHORT_ANSWER' | 'NUMBER' | 'EMAIL' | 'LONG_ANSWER' | 'CHECK_BOX' | 'MULTIPLE_CHOICE' | 'DROPDOWN' | 'MULTI_SELECT')
+  /// @kyselyType('SHORT_ANSWER' | 'NUMBER' | 'EMAIL' | 'LONG_ANSWER' | 'CHECK_BOX' | 'MULTIPLE_CHOICE' | 'DROP_DOWN' | 'MULTI_SELECT')
   type     String
   required Boolean @default(false)
   order    Int     @default(0)

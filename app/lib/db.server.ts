@@ -1,6 +1,12 @@
 import SQLite from 'better-sqlite3'
-import { Kysely, SqliteDialect } from 'kysely'
-import type { DB as Database } from '~/generated/db-types' // this is the Database interface we defined earlier
+import {
+	type Insertable,
+	Kysely,
+	type Selectable,
+	SqliteDialect,
+	type Updateable,
+} from 'kysely'
+import type { DB as Database, Field as FieldTable } from '~/generated/db-types' // this is the Database interface we defined earlier
 
 const globalForDb = globalThis as unknown as {
 	database: SQLite.Database | undefined
@@ -19,3 +25,9 @@ const dialect = new SqliteDialect({
 export const db = new Kysely<Database>({
 	dialect,
 })
+
+export type TKyselyDb = typeof db
+
+export type Field = Selectable<FieldTable>
+export type NewField = Insertable<FieldTable>
+export type FieldUpdate = Updateable<FieldTable>
