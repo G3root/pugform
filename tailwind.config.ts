@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import { withTV } from 'tailwind-variants/transformer'
+import { fontFamily } from 'tailwindcss/defaultTheme'
 
 const config = withTV({
 	darkMode: ['class'],
@@ -13,6 +14,9 @@ const config = withTV({
 			},
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter Variable', ...fontFamily.sans],
+			},
 			colors: {
 				light: 'hsl(var(--light))',
 				dark: 'hsl(var(--dark))',

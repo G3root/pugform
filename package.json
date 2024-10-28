@@ -12,6 +12,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
     "@remix-run/node": "^2.13.1",
     "@remix-run/react": "^2.13.1",
     "@remix-run/serve": "^2.13.1",
