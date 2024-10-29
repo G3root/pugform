@@ -7,6 +7,10 @@ export const numberId = customAlphabet('0123456789')
 
 const prefixes = {
 	field: 'fld',
+	page: 'pg',
+	user: 'usr',
+	organization: 'org',
+	member: 'mbr',
 } as const
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {
