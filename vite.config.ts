@@ -10,6 +10,10 @@ declare module '@remix-run/node' {
 	}
 }
 
+const applicationBasePath = 'routes/(application)/'
+const buildApplicationPath = (segment: 'auth' | 'dashboard', path: string) =>
+	`${applicationBasePath}(${segment})/${path}`
+
 export default defineConfig({
 	plugins: [
 		envOnlyMacros(),
@@ -27,12 +31,12 @@ export default defineConfig({
 			routes(defineRoutes) {
 				return defineRoutes((route) => {
 					route('/', 'routes/_index.tsx', { index: true })
-					route('dashboard/login', 'routes/(application)/(auth)/login.tsx', {
+					route('dashboard/login', buildApplicationPath('auth', 'login.tsx'), {
 						index: true,
 					})
 					route(
 						'dashboard',
-						'routes/(application)/(dashboard)/_layout.tsx',
+						buildApplicationPath('dashboard', '_layout.tsx'),
 						() => {},
 					)
 				})
