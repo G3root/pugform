@@ -290,6 +290,7 @@ const Item = ({
 	icon: Icon,
 	...props
 }: ItemProps) => {
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const { state, isMobile } = React.useContext(SidebarContext)!
 	return (
 		<Link
@@ -308,6 +309,7 @@ const Item = ({
 			{(values) => (
 				<>
 					{Icon && (
+						// biome-ignore lint/complexity/noUselessFragments: <explanation>
 						<>
 							{state === 'collapsed' && !isMobile ? (
 								<Tooltip closeDelay={0} delay={0}>
@@ -395,6 +397,7 @@ const Header = ({
 	className,
 	...props
 }: React.HtmlHTMLAttributes<HTMLDivElement>) => {
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const { state } = React.useContext(SidebarContext)!
 	return (
 		<div
@@ -422,6 +425,7 @@ const Footer = ({
 	className,
 	...props
 }: React.HtmlHTMLAttributes<HTMLDivElement>) => {
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const { state } = React.useContext(SidebarContext)!
 	return (
 		<div
@@ -453,6 +457,7 @@ const Section = ({
 			: true
 		: true
 
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	const { state } = React.useContext(SidebarContext)!
 	return (
 		<Disclosure
