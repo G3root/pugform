@@ -9,6 +9,7 @@ import {
 
 import type { FieldProps } from './field'
 
+import type { ListOfErrors } from '../error-list'
 import {
 	Description,
 	FieldError,
@@ -39,7 +40,10 @@ interface NonRevealableTextFieldProps extends BaseTextFieldProps {
 	type?: InputType
 }
 
-type TextFieldProps = RevealableTextFieldProps | NonRevealableTextFieldProps
+type TextFieldProps = { errors?: ListOfErrors } & (
+	| RevealableTextFieldProps
+	| NonRevealableTextFieldProps
+)
 
 const TextField = ({
 	placeholder,
@@ -51,6 +55,7 @@ const TextField = ({
 	isPending,
 	className,
 	isRevealable,
+	errors,
 	type,
 	...props
 }: TextFieldProps) => {
@@ -64,11 +69,14 @@ const TextField = ({
 	const handleTogglePasswordVisibility = () => {
 		setIsPasswordVisible((prev) => !prev)
 	}
+
+	const isInvalid = errors?.length ? true : undefined
 	return (
 		<TextFieldPrimitive
 			type={inputType}
 			{...props}
 			className={ctr(className, 'group flex flex-col gap-1')}
+			isInvalid={isInvalid}
 		>
 			{label && <Label>{label}</Label>}
 			<FieldGroup
@@ -99,7 +107,17 @@ const TextField = ({
 				) : null}
 			</FieldGroup>
 			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
+			<FieldError>
+				{/* {errorMessage} */}
+
+				{errors && errors?.length > 0 ? (
+					<ul>
+						{errors.map((error) => (
+							<li key={error}>{error}</li>
+						))}
+					</ul>
+				) : null}
+			</FieldError>
 		</TextFieldPrimitive>
 	)
 }
