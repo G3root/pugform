@@ -3,7 +3,7 @@ import {
 	encodeBase32LowerCaseNoPadding,
 	encodeHexLowerCase,
 } from '@oslojs/encoding'
-import cookies from 'cookie'
+import * as cookies from 'cookie'
 import type { TKyselyDb } from '~/lib/db.server'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
@@ -54,6 +54,7 @@ export async function validateSessionToken(
 			})
 			.execute()
 	}
+
 	return { session, user }
 }
 
@@ -63,7 +64,7 @@ async function getUser(
 ): Promise<SessionUser | null> {
 	const membership = await db
 		.selectFrom('membership')
-		.where('id', '=', session.organizationId)
+		.where('id', '=', session.membershipId)
 		.select(['id'])
 		.executeTakeFirst()
 
@@ -146,6 +147,10 @@ export async function invalidateSession(
 	db: TKyselyDb,
 ): Promise<void> {
 	await db.deleteFrom('session').where('id', '=', sessionId).execute()
+}
+
+export const getSessionCookie = (cookie: string) => {
+	return cookies.parse(cookie)?.[sessionKey]
 }
 
 export function deleteSessionTokenCookie() {

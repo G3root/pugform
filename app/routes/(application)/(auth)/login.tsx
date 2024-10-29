@@ -17,7 +17,7 @@ import { ErrorList } from '~/components/error-list'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { TextField } from '~/components/ui/text-field'
-import { login } from '~/utils/auth.server'
+import { login, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import { setSessionTokenCookie } from '~/utils/session.server'
 import { EmailSchema, PasswordSchema } from '~/utils/user-validation'
@@ -29,7 +29,7 @@ const LoginFormSchema = z.object({
 })
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
-	// requireAnonymous(context)
+	requireAnonymous(context)
 
 	const isDev = process.env.NODE_ENV === 'development'
 	return {
@@ -41,7 +41,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
-	// requireAnonymous(context)
+	requireAnonymous(context)
 	const formData = await request.formData()
 	checkHoneypot(formData)
 

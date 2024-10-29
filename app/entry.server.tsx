@@ -12,6 +12,7 @@ import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
 import { getEnv, init } from './utils/env.server'
+import type { Session, SessionUser } from './utils/session.server'
 
 const ABORT_DELAY = 5_000
 
@@ -143,4 +144,11 @@ function handleBrowserRequest(
 
 		setTimeout(abort, ABORT_DELAY)
 	})
+}
+
+declare module '@remix-run/server-runtime' {
+	export interface AppLoadContext {
+		session: Session | null
+		user: SessionUser | null
+	}
 }
