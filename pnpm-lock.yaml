@@ -123,9 +123,6 @@ importers:
       remix-development-tools:
         specifier: ^4.7.3
         version: 4.7.3(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vite@5.4.10(@types/node@22.7.9))
-      remix-flat-routes:
-        specifier: ^0.6.5
-        version: 0.6.5(@remix-run/dev@2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9)))
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.14
@@ -1871,11 +1868,6 @@ packages:
       typescript:
         optional: true
 
-  '@remix-run/v1-route-convention@0.1.4':
-    resolution: {integrity: sha512-fVTr9YlNLWfaiM/6Y56sOtcY8x1bBJQHY0sDWO5+Z/vjJ2Ni7fe2fwrzs1jUFciMPXqBQdFGePnkuiYLz3cuUA==}
-    peerDependencies:
-      '@remix-run/dev': ^1.15.0 || ^2.0.0
-
   '@remix-run/web-blob@3.1.0':
     resolution: {integrity: sha512-owGzFLbqPH9PlKb8KvpNJ0NO74HWE2euAn61eEiyCXX/oteoVzTVSN8mpLgDjaxBf2btj5/nUllSUgpyd6IH6g==}
 
@@ -3582,10 +3574,6 @@ packages:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
     engines: {node: '>=10'}
 
-  minimatch@7.4.6:
-    resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==}
-    engines: {node: '>=10'}
-
   minimatch@9.0.1:
     resolution: {integrity: sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -4268,12 +4256,6 @@ packages:
       react: '>=17'
       react-dom: '>=17'
       vite: '>=5.0.0'
-
-  remix-flat-routes@0.6.5:
-    resolution: {integrity: sha512-VvPak+LCxL4Fm6Kb/nqPLipB71k9p+GXpzRNPVxs9FmCeJ7hxVmQ3HQMpStzuRQyAh0PMkaX6mBiRlCRHTCYHw==}
-    hasBin: true
-    peerDependencies:
-      '@remix-run/dev': ^1.15.0 || ^2
 
   replace-string@3.1.0:
     resolution: {integrity: sha512-yPpxc4ZR2makceA9hy/jHNqc7QVkd4Je/N0WRHm6bs3PtivPuPynxE5ejU/mp5EhnCv8+uZL7vhz8rkluSlx+Q==}
@@ -7211,11 +7193,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.6.3
 
-  '@remix-run/v1-route-convention@0.1.4(@remix-run/dev@2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9)))':
-    dependencies:
-      '@remix-run/dev': 2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9))
-      minimatch: 7.4.6
-
   '@remix-run/web-blob@3.1.0':
     dependencies:
       '@remix-run/web-stream': 1.1.0
@@ -9153,10 +9130,6 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimatch@7.4.6:
-    dependencies:
-      brace-expansion: 2.0.1
-
   minimatch@9.0.1:
     dependencies:
       brace-expansion: 2.0.1
@@ -9969,13 +9942,6 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
       - supports-color
-
-  remix-flat-routes@0.6.5(@remix-run/dev@2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9))):
-    dependencies:
-      '@remix-run/dev': 2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9))
-      '@remix-run/v1-route-convention': 0.1.4(@remix-run/dev@2.13.1(@remix-run/react@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(@remix-run/serve@2.13.1(typescript@5.6.3))(@types/node@22.7.9)(babel-plugin-macros@3.1.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.7.9)))
-      fs-extra: 11.1.1
-      minimatch: 5.1.6
 
   replace-string@3.1.0: {}
 
