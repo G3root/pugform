@@ -15,6 +15,9 @@ const buildApplicationPath = (segment: 'auth' | 'dashboard', path: string) =>
 	`${applicationBasePath}(${segment})/${path}`
 
 export default defineConfig({
+	optimizeDeps: {
+		exclude: ['@node-rs/argon2'],
+	},
 	plugins: [
 		envOnlyMacros(),
 		remixDevTools(),
@@ -27,6 +30,7 @@ export default defineConfig({
 				v3_throwAbortReason: true,
 				v3_singleFetch: true,
 				v3_lazyRouteDiscovery: true,
+				unstable_optimizeDeps: true,
 			},
 			routes(defineRoutes) {
 				return defineRoutes((route) => {
