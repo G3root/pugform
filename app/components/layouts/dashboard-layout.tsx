@@ -30,11 +30,16 @@ function Header() {
 
 function AppSidebar() {
 	return (
-		<Sidebar>
+		<Sidebar intent="inset">
 			<Sidebar.Content>
 				<Sidebar.Section>
 					<Sidebar.Item isCurrent icon={IconDashboard} href="#">
 						Dashboard
+					</Sidebar.Item>
+				</Sidebar.Section>
+				<Sidebar.Section collapsible title="Workspaces">
+					<Sidebar.Item href="/dashboard/workspaces">
+						All workspaces
 					</Sidebar.Item>
 				</Sidebar.Section>
 			</Sidebar.Content>

@@ -48,7 +48,18 @@ export default defineConfig({
 					route(
 						'dashboard',
 						buildApplicationPath('dashboard', '_layout.tsx'),
-						() => {},
+						() => {
+							route(
+								'workspaces',
+								buildApplicationPath(
+									'dashboard',
+									'workspace/all-workspaces.tsx',
+								),
+								{
+									index: true,
+								},
+							)
+						},
 					)
 				})
 			},

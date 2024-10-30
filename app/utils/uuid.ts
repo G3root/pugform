@@ -11,6 +11,8 @@ const prefixes = {
 	user: 'usr',
 	organization: 'org',
 	member: 'mbr',
+	form: 'frm',
+	workspace: 'ws',
 } as const
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

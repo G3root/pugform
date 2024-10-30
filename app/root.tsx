@@ -6,8 +6,11 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useHref,
 	useLoaderData,
+	useNavigate,
 } from '@remix-run/react'
+import { RouterProvider } from 'react-aria-components'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { GeneralErrorBoundary } from './components/error-boundary'
 import { Toast } from './components/ui/toast'
@@ -73,6 +76,7 @@ function Document({
 	theme = 'light',
 	env = {},
 }: DocumentProps) {
+	const navigate = useNavigate()
 	return (
 		<html lang="en" className={`${theme} h-full`}>
 			<head>
@@ -84,7 +88,9 @@ function Document({
 				<Links />
 			</head>
 			<body className="flex h-full flex-col bg-background text-foreground">
-				{children}
+				<RouterProvider navigate={navigate} useHref={useHref}>
+					{children}
+				</RouterProvider>
 				<script
 					nonce={nonce}
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
