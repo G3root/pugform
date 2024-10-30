@@ -1,0 +1,23 @@
+name: pugform
+services:
+  pg:
+    image: postgres:15
+    container_name: pugform-database
+    environment:
+      - POSTGRES_USER=pugform
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pugform
+    ports:
+      - 54323:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  smtp:
+    image: axllent/mailpit
+    container_name: pugform-smtp
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+volumes:
+  postgres:

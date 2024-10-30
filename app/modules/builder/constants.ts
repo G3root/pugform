@@ -1,8 +1,6 @@
-import type { Field } from '~/lib/db.server'
+import type { FieldType } from '~/generated/enums'
 
-type TFieldList = Pick<Field, 'type' | 'label'>
-
-export const FIELD_LIST: TFieldList[] = [
+export const FIELD_LIST: { type: FieldType; label: string }[] = [
 	{ type: 'SHORT_ANSWER', label: 'Short Answer' },
 	{ type: 'NUMBER', label: 'Number' },
 	{ type: 'EMAIL', label: 'Email' },
@@ -12,8 +10,19 @@ export const FIELD_LIST: TFieldList[] = [
 	},
 	{ type: 'DROP_DOWN', label: 'Dropdown' },
 	{
-		type: 'CHECK_BOX',
+		type: 'CHECKBOX',
 		label: 'Checkbox',
 	},
 	{ type: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },
 ]
+
+export const humanizedFieldType: Record<FieldType, string> = {
+	CHECKBOX: 'Checkbox',
+	DROP_DOWN: 'Dropdown',
+	EMAIL: 'Email',
+	LONG_ANSWER: 'Long Answer',
+	MULTI_SELECT: 'Multi Select',
+	MULTIPLE_CHOICE: 'Multiple Choice',
+	NUMBER: 'Number',
+	SHORT_ANSWER: 'Short Answer',
+}

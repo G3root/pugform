@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -56,13 +56,20 @@ model Membership {
   @@map("membership")
 }
 
+enum GlobalRole {
+  SUPERADMIN
+  CUSTOMER
+}
+
 model User {
   id String @id @default(cuid())
 
   name         String
-  email        String       @unique
+  email        String     @unique
   passwordHash String?
-  memberships  Membership[]
+  role         GlobalRole @default(CUSTOMER)
+
+  memberships Membership[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
@@ -142,18 +149,28 @@ model FormPage {
   @@map("formPage")
 }
 
+enum FieldType {
+  SHORT_ANSWER
+  NUMBER
+  EMAIL
+  LONG_ANSWER
+  CHECKBOX
+  MULTIPLE_CHOICE
+  DROP_DOWN
+  MULTI_SELECT
+}
+
 model Field {
   id    String @id @default(cuid())
   label String
 
-  /// @kyselyType('SHORT_ANSWER' | 'NUMBER' | 'EMAIL' | 'LONG_ANSWER' | 'CHECK_BOX' | 'MULTIPLE_CHOICE' | 'DROP_DOWN' | 'MULTI_SELECT')
-  type     String
-  required Boolean @default(false)
-  order    Int     @default(0)
+  type     FieldType
+  required Boolean   @default(false)
+  order    Int       @default(0)
 
   page       FormPage @relation(fields: [formPageId], references: [id])
   formPageId String
-  options    String   @default("[]")
+  options    String[] @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
