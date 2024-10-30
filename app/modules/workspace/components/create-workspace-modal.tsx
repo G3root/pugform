@@ -14,7 +14,7 @@ export function CreateWorkspaceModal() {
 	const actionData = useActionData<TCreateWorkspaceAction>()
 
 	const [form, fields] = useForm({
-		id: 'builder-form',
+		id: 'workspace-form',
 		constraint: getZodConstraint(CreateWorkspaceSchema),
 
 		lastResult: actionData?.result,
