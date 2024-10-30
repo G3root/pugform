@@ -50,7 +50,7 @@ export function requireAnonymous(context: AppLoadContext) {
 
 export function requireAuth(context: AppLoadContext) {
 	if (!context.session || !context.user) {
-		throw redirect('/login')
+		throw redirect('/dashboard/login')
 	}
 
 	return { session: context.session, user: context.user }

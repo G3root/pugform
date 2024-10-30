@@ -3,6 +3,7 @@ import { create } from 'mutative'
 import type { ReactNode } from 'react'
 import type { NewField } from '~/lib/db.server'
 import { createContext } from '~/utils/create-context'
+import { newId } from '~/utils/uuid'
 
 const [Provider, useBuilderStore] = createContext<
 	ReturnType<typeof useCreateStore>
@@ -15,6 +16,7 @@ const [Provider, useBuilderStore] = createContext<
 function useCreateStore() {
 	return createStoreWithProducer(create, {
 		context: {
+			fieldPages: [newId('page')],
 			fields: [] as NewField[],
 		},
 		on: {

@@ -6,6 +6,7 @@ import {
 } from 'react-aria-components'
 import { tv } from 'tailwind-variants'
 
+import type { ListOfErrors } from '../error-list'
 import { Description, FieldError, Label } from './field'
 import { cr, ctr, focusStyles } from './primitive'
 
@@ -21,6 +22,7 @@ interface TextareaProps extends TextFieldPrimitiveProps {
 	description?: string
 	errorMessage?: string | ((validation: ValidationResult) => string)
 	className?: string
+	errors?: ListOfErrors
 }
 
 const Textarea = ({
@@ -29,6 +31,7 @@ const Textarea = ({
 	label,
 	description,
 	errorMessage,
+	errors,
 	...props
 }: TextareaProps) => {
 	return (
@@ -47,7 +50,17 @@ const Textarea = ({
 				)}
 			/>
 			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
+			<FieldError>
+				{/* {errorMessage} */}
+
+				{errors && errors?.length > 0 ? (
+					<ul>
+						{errors.map((error) => (
+							<li key={error}>{error}</li>
+						))}
+					</ul>
+				) : null}
+			</FieldError>
 		</TextFieldPrimitive>
 	)
 }

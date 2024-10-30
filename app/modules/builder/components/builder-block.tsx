@@ -1,54 +1,232 @@
-import { IconSettings, IconTrash } from 'justd-icons'
-import { useId } from 'react'
+import {
+	getFormProps,
+	getInputProps,
+	getTextareaProps,
+	useForm,
+	useFormMetadata,
+} from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { Form } from '@remix-run/react'
+import { IconSettings } from 'justd-icons'
+import { z } from 'zod'
+import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
-import { Menu } from '~/components/ui/menu'
-import type { Field } from '~/lib/db.server'
-import { useBuilderStore } from '../providers/builder-store-provider'
+import { Input } from '~/components/ui/field'
+import { Sheet } from '~/components/ui/sheet'
+import { Switch } from '~/components/ui/switch'
+import { TextField } from '~/components/ui/text-field'
+import { Textarea } from '~/components/ui/textarea'
+import { humanizedFieldType } from '../constants'
+import type { useBuilderForm } from '../hooks/use-builder-form'
 
-interface BuilderBlockProps extends Pick<Field, 'type' | 'label' | 'id'> {
+interface BuilderBlockProps {
+	formId: ReturnType<typeof useBuilderForm>[2]
+	formPageId: string
+}
+
+export function BuilderBlock({ formId, formPageId }: BuilderBlockProps) {
+	const form = useFormMetadata(formId)
+
+	const fieldItems = form.getFieldset().fields.getFieldset()[formPageId]
+	const fields = fieldItems.getFieldList()
+
+	return (
+		<div className="container mx-auto flex flex-col items-center w-full max-w-3xl">
+			<div className="flex flex-col w-full  gap-4">
+				{fields.map((item, index) => {
+					const itemFieldset = item.getFieldset()
+					const label = itemFieldset.label
+					const type = itemFieldset.type
+					const itemId = itemFieldset.id
+					const required = itemFieldset.required
+					const placeholder = itemFieldset.placeholder
+					const description = itemFieldset.description
+
+					return (
+						<Card key={item.key}>
+							<Card.Header>
+								<div className="flex items-center justify-between">
+									<div>
+										<div>
+											<Badge>
+												{
+													humanizedFieldType[
+														type.value as keyof typeof humanizedFieldType
+													]
+												}
+											</Badge>
+										</div>
+									</div>
+									<div>
+										<BlockSettingsSheet
+											index={index}
+											formId={formId}
+											formPageId={formPageId}
+										/>
+
+										{/* <Menu>
+											<Button
+												aria-label="Menu"
+												size="square-petite"
+												appearance="outline"
+											>
+												<IconSettings />
+											</Button>
+
+											<Menu.Content>
+												<Menu.Separator />
+												<Menu.Item
+													onAction={() => {
+														form.remove({ index, name: fieldItems.name })
+													}}
+													isDanger
+												>
+													<IconTrash /> Delete
+												</Menu.Item>
+											</Menu.Content>
+										</Menu> */}
+									</div>
+								</div>
+							</Card.Header>
+
+							<Card.Content>
+								<label className="sr-only" htmlFor={''}>
+									label
+								</label>
+								<Input
+									{...getInputProps(label, { type: 'text' })}
+									key={label.key}
+									placeholder="type a question"
+								/>
+								<input
+									{...getInputProps(type, { type: 'hidden' })}
+									key={type.key}
+									readOnly
+								/>
+								<input
+									{...getInputProps(itemId, { type: 'hidden' })}
+									key={itemId.key}
+									readOnly
+								/>
+								<input
+									{...getInputProps(required, { type: 'hidden' })}
+									key={required.key}
+									readOnly
+								/>
+								<input
+									{...getInputProps(placeholder, { type: 'hidden' })}
+									key={placeholder.key}
+									readOnly
+								/>
+								<input
+									{...getInputProps(description, { type: 'hidden' })}
+									key={description.key}
+									readOnly
+								/>
+							</Card.Content>
+						</Card>
+					)
+				})}
+			</div>
+		</div>
+	)
+}
+
+const Schema = z.object({
+	placeholder: z.string().optional(),
+	description: z.string().optional(),
+	required: z.coerce.boolean().optional(),
+})
+
+interface BlockSettingsSheetProps {
+	formId: ReturnType<typeof useBuilderForm>[2]
+	formPageId: string
 	index: number
 }
 
-export function BuilderBlock({ type, label, id, index }: BuilderBlockProps) {
-	const store = useBuilderStore()
-	const labelId = useId()
+function BlockSettingsSheet({
+	formId,
+	formPageId,
+	index,
+}: BlockSettingsSheetProps) {
+	const baseForm = useFormMetadata(formId)
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const fieldItems = baseForm.value?.fields?.[formPageId]?.[index] as any
+
+	const [form, fields] = useForm({
+		id: 'data-form',
+		constraint: getZodConstraint(Schema),
+
+		onValidate({ formData }) {
+			return parseWithZod(formData, { schema: Schema })
+		},
+		shouldRevalidate: 'onBlur',
+		onSubmit(event, { submission }) {
+			event.preventDefault()
+			event.stopPropagation()
+
+			if (submission?.payload) {
+				baseForm.update({
+					name: baseForm
+						.getFieldset()
+						.fields.getFieldset()
+						[formPageId].getFieldList()[index].name,
+					value: {
+						...fieldItems,
+						...submission.payload,
+					},
+				})
+			}
+		},
+		defaultValue: {
+			description: fieldItems?.description,
+			placeholder: fieldItems?.placeholder,
+			required: fieldItems?.required,
+		},
+	})
+
 	return (
-		<Card>
-			<Card.Header>
-				<div className="flex items-center justify-between">
-					<div>
-						<label className="sr-only" htmlFor={labelId}>
-							label
-						</label>
-						<input id={labelId} type="text" defaultValue={label} />
-					</div>
+		<Sheet>
+			<Button aria-label="Menu" size="square-petite" appearance="outline">
+				<IconSettings />
+			</Button>
 
-					<div>
-						<Menu>
-							<Button
-								aria-label="Menu"
-								size="square-petite"
-								appearance="outline"
-							>
-								<IconSettings />
-							</Button>
-
-							<Menu.Content>
-								<Menu.Separator />
-								<Menu.Item
-									onAction={() => {
-										store.send({ type: 'removeField', index })
-									}}
-									isDanger
-								>
-									<IconTrash /> Delete
-								</Menu.Item>
-							</Menu.Content>
-						</Menu>
-					</div>
-				</div>
-			</Card.Header>
-		</Card>
+			<Sheet.Content>
+				<Sheet.Header>
+					<Sheet.Title>Update User Settings</Sheet.Title>
+					<Sheet.Description>
+						Adjust your preferences and configurations here.
+					</Sheet.Description>
+				</Sheet.Header>
+				<Sheet.Body>
+					<Form method="POST" {...getFormProps(form)} className="space-y-4">
+						<TextField
+							label="Placeholder"
+							{...getInputProps(fields.placeholder, { type: 'text' })}
+							errors={fields.placeholder.errors}
+						/>
+						<Textarea
+							label="Description"
+							{...getTextareaProps(fields.description)}
+							errors={fields.description.errors}
+						/>
+						<Switch
+							defaultSelected={fields.required.initialValue === 'on'}
+							{...getInputProps(fields.required, { type: 'checkbox' })}
+						>
+							Required
+						</Switch>
+					</Form>
+				</Sheet.Body>
+				<Sheet.Footer>
+					<Sheet.Close>Cancel</Sheet.Close>
+					<Button form={form.id} intent="primary" type="submit">
+						Save Changes
+					</Button>
+				</Sheet.Footer>
+			</Sheet.Content>
+		</Sheet>
 	)
 }

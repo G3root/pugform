@@ -1,22 +1,26 @@
+import { useFormMetadata } from '@conform-to/react'
 import { IconPlus } from 'justd-icons'
 import { Button } from '~/components/ui/button'
 import { Menu } from '~/components/ui/menu'
 import { Tooltip } from '~/components/ui/tooltip'
 import { newId } from '~/utils/uuid'
 import { FIELD_LIST } from '../constants'
-import { useBuilderStore } from '../providers/builder-store-provider'
+import type { useBuilderForm } from '../hooks/use-builder-form'
 
 interface AddQuestionMenuProps {
 	formPageId: string
+	formId: ReturnType<typeof useBuilderForm>[2]
 }
 
-export function AddQuestionMenu({ formPageId }: AddQuestionMenuProps) {
-	const store = useBuilderStore()
+export function AddQuestionMenu({ formPageId, formId }: AddQuestionMenuProps) {
+	const form = useFormMetadata(formId)
+
+	const field = form.getFieldset().fields.getFieldset()[formPageId]
 
 	const getLabel = () => {
-		const index = store.getSnapshot().context.fields.length
+		const fieldList = field.getFieldList()
 
-		return `field ${index + 1}`
+		return `field ${fieldList.length + 1}`
 	}
 
 	return (
@@ -36,13 +40,12 @@ export function AddQuestionMenu({ formPageId }: AddQuestionMenuProps) {
 				{FIELD_LIST.map((item) => (
 					<Menu.Item
 						onAction={() => {
-							store.send({
-								type: 'addField',
-								field: {
+							form.insert({
+								name: field.name,
+								defaultValue: {
 									type: item.type,
 									label: getLabel(),
 									id: newId('field'),
-									formPageId,
 								},
 							})
 						}}
