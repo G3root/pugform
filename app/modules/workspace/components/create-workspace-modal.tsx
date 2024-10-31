@@ -7,7 +7,10 @@ import { OverlayTriggerStateContext } from 'react-aria-components'
 import { Button } from '~/components/ui/button'
 import { Modal } from '~/components/ui/modal'
 import { TextField } from '~/components/ui/text-field'
-import type { TCreateWorkspaceAction } from '~/routes/(application)/(dashboard)/workspace/all-workspaces'
+import {
+	type TCreateWorkspaceAction,
+	workspaceCreateActionIntent,
+} from '~/routes/(application)/(dashboard)/workspace/all-workspaces'
 import { CreateWorkspaceSchema } from '../schema'
 
 export function CreateWorkspaceModal() {
@@ -41,32 +44,37 @@ export function CreateWorkspaceModal() {
 							errors={fields.name.errors}
 						/>
 					</Form>
+					{/* <CloseForm /> */}
 				</Modal.Body>
 				<Modal.Footer className="justify-end">
-					<Button form={form.id} type="submit">
+					<Button
+						name="intent"
+						value={workspaceCreateActionIntent}
+						form={form.id}
+						type="submit"
+					>
 						Save
 					</Button>
-					<CloseForm />
 				</Modal.Footer>
 			</Modal.Content>
 		</Modal>
 	)
 }
 
-function CloseForm() {
-	const navigation = useNavigation()
-	const actionData = useActionData<TCreateWorkspaceAction>()
-	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-	const state = useContext(OverlayTriggerStateContext)!
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(
-		function resetFormOnSuccess() {
-			if (navigation.state === 'idle' && actionData?.status === 'success') {
-				state.close()
-			}
-		},
-		[navigation.state, actionData?.status],
-	)
+// function CloseForm() {
+// 	const navigation = useNavigation()
+// 	const actionData = useActionData<TCreateWorkspaceAction>()
+// 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+// 	const state = useContext(OverlayTriggerStateContext)!
+// 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+// 	useEffect(
+// 		function resetFormOnSuccess() {
+// 			if (navigation.state === 'idle' && actionData?.status === 'success') {
+// 				state.close()
+// 			}
+// 		},
+// 		[navigation.state],
+// 	)
 
-	return null
-}
+// 	return null
+// }

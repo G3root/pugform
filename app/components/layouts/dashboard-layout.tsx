@@ -20,7 +20,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function Header() {
 	return (
-		<header className="sticky justify-between sm:justify-start top-0 bg-bg h-[3.57rem] px-4 border-b flex items-center gap-x-2">
+		<header className="sticky justify-between sm:justify-start top-0 h-[3.57rem] px-4 flex items-center gap-x-2">
 			<span className="flex items-center">
 				<Sidebar.Trigger className="-ml-1" />
 			</span>

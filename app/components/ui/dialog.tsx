@@ -193,8 +193,13 @@ const Close = ({
 		<Button
 			className={className}
 			appearance={appearance}
-			onPress={() => state.close()}
 			{...props}
+			onPress={(e) => {
+				state.close()
+				if (props?.onPress) {
+					props.onPress(e)
+				}
+			}}
 		/>
 	)
 }

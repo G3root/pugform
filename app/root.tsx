@@ -78,7 +78,7 @@ function Document({
 }: DocumentProps) {
 	const navigate = useNavigate()
 	return (
-		<html lang="en" className={`${theme} h-full`}>
+		<html lang="en" className={`${theme}`}>
 			<head>
 				<ClientHintCheck nonce={nonce} />
 				<Meta />
@@ -87,7 +87,7 @@ function Document({
 
 				<Links />
 			</head>
-			<body className="flex h-full flex-col bg-background text-foreground">
+			<body className="min-h-screen">
 				<RouterProvider navigate={navigate} useHref={useHref}>
 					{children}
 				</RouterProvider>
