@@ -1,7 +1,7 @@
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { useRef, useState } from 'react'
 import type { DialogTriggerProps } from 'react-aria-components'
-import { Button } from '~/components/ui/button'
+import { Button, buttonStyles } from '~/components/ui/button'
 import { Modal } from '~/components/ui/modal'
 import { Stack } from '~/components/ui/stack'
 import { Table } from '~/components/ui/table'
@@ -25,7 +25,10 @@ export function WorkspaceList() {
 					<Table.Column />
 				</Table.Header>
 
-				<Table.Body items={workspaces}>
+				<Table.Body
+					items={workspaces}
+					renderEmptyState={() => 'No results found.'}
+				>
 					{(item) => (
 						<Table.Row id={item.id}>
 							<Table.Cell>{item.name}</Table.Cell>
@@ -44,9 +47,15 @@ export function WorkspaceList() {
 											Delete
 										</Button>
 
-										<Button appearance="outline" size="extra-small">
+										<Link
+											to={`/dashboard/workspaces/${item.publicId}`}
+											className={buttonStyles({
+												appearance: 'outline',
+												size: 'extra-small',
+											})}
+										>
 											View
-										</Button>
+										</Link>
 									</Stack>
 								</div>
 							</Table.Cell>

@@ -59,6 +59,16 @@ export default defineConfig({
 									index: true,
 								},
 							)
+							route(
+								'workspaces/:workspaceId',
+								buildApplicationPath(
+									'dashboard',
+									'workspace/[workspaceId].tsx',
+								),
+								{
+									index: true,
+								},
+							)
 						},
 					)
 				})

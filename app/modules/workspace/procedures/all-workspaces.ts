@@ -7,7 +7,7 @@ export const AllWorkspacesProcedure = withAuthProcedure.query(
 		const workspaces = await ctx.db
 			.selectFrom('workspace')
 			.where('organizationId', '=', organizationId)
-			.select(['name', 'id', 'createdAt'])
+			.select(['name', 'id', 'createdAt', 'publicId'])
 			.orderBy('createdAt', 'desc')
 			.execute()
 

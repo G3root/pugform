@@ -98,8 +98,9 @@ model Session {
 }
 
 model Workspace {
-  id   String @id @default(cuid())
-  name String
+  id       String @id @default(cuid())
+  name     String
+  publicId String
 
   creator   Membership @relation(fields: [creatorId], references: [id])
   creatorId String
@@ -111,6 +112,7 @@ model Workspace {
   updatedAt DateTime @default(now())
   Form      Form[]
 
+  @@unique([publicId, organizationId])
   @@map("workspace")
 }
 
