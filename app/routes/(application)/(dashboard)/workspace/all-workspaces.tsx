@@ -4,16 +4,31 @@ import {
 	type LoaderFunctionArgs,
 	data,
 } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { Container } from '~/components/ui/container'
 import { Heading } from '~/components/ui/heading'
+import { Separator } from '~/components/ui/separator'
+import { Stack } from '~/components/ui/stack'
 import { CreateWorkspaceModal } from '~/modules/workspace/components/create-workspace-modal'
+import { WorkspaceList } from '~/modules/workspace/components/workspace-list'
 import { CreateWorkspaceSchema } from '~/modules/workspace/schema'
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
 import { createToastHeaders } from '~/utils/toast.server'
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
 	requireAuth(context)
-	return {}
+
+	const { workspaces } = await trpcServer({
+		context,
+		request,
+	}).workspace.allWorkspaces()
+
+	return {
+		data: {
+			workspaces,
+		},
+	}
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -50,15 +65,25 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export type TCreateWorkspaceAction = typeof action
+export type TAllWorkspaceLoader = typeof loader
 
 export default function AllWorkspacesPage() {
+	const {
+		data: { workspaces },
+	} = useLoaderData<typeof loader>()
 	return (
-		<div>
-			<div className="flex items-center justify-between">
-				<Heading>Workspaces</Heading>
+		<Container>
+			<Stack>
+				<Stack direction="row" className="items-center justify-between">
+					<Heading>Workspaces</Heading>
 
-				<CreateWorkspaceModal />
-			</div>
-		</div>
+					<CreateWorkspaceModal />
+				</Stack>
+
+				<Separator />
+
+				<WorkspaceList />
+			</Stack>
+		</Container>
 	)
 }
