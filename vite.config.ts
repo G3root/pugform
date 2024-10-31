@@ -69,6 +69,13 @@ export default defineConfig({
 									index: true,
 								},
 							)
+							route(
+								'workspaces/:workspaceId/form',
+								buildApplicationPath('dashboard', 'forms/create-form.tsx'),
+								{
+									index: true,
+								},
+							)
 						},
 					)
 				})
