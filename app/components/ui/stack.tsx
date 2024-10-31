@@ -27,8 +27,6 @@ const stackStyles = tv({
 	},
 })
 
-const ClassName = 'justify'
-
 const calculateGap = (val: number) => `${val * 0.25}rem`
 
 export const Stack = forwardRef<
