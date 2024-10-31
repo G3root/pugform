@@ -8,6 +8,18 @@ const stackStyles = tv({
 			column: 'flex-col',
 			row: 'flex-row',
 		},
+		align: {
+			center: 'items-center',
+			start: 'items-start',
+			end: 'items-end',
+		},
+		justify: {
+			center: 'justify-center',
+			between: 'justify-between',
+		},
+		fullWidth: {
+			true: 'w-full',
+		},
 	},
 
 	defaultVariants: {
@@ -15,18 +27,31 @@ const stackStyles = tv({
 	},
 })
 
+const ClassName = 'justify'
+
 const calculateGap = (val: number) => `${val * 0.25}rem`
 
 export const Stack = forwardRef<
 	HTMLDivElement,
 	React.HTMLAttributes<HTMLDivElement> &
 		VariantProps<typeof stackStyles> & { gap?: number }
->(({ className, direction, gap = 4, ...props }, ref) => (
-	<div
-		ref={ref}
-		style={{ gap: calculateGap(gap) }}
-		className={stackStyles({ direction, className })}
-		{...props}
-	/>
-))
+>(
+	(
+		{ className, direction, align, justify, fullWidth, gap = 4, ...props },
+		ref,
+	) => (
+		<div
+			ref={ref}
+			style={{ gap: calculateGap(gap) }}
+			className={stackStyles({
+				direction,
+				align,
+				justify,
+				fullWidth,
+				className,
+			})}
+			{...props}
+		/>
+	),
+)
 Stack.displayName = 'Stack'

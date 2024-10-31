@@ -1,7 +1,7 @@
 import { type LoaderFunctionArgs, data } from '@remix-run/node'
-import { useActionData, useLoaderData } from '@remix-run/react'
+import { Link, useActionData, useLoaderData, useParams } from '@remix-run/react'
 import { IconPlus } from 'justd-icons'
-import { Button } from '~/components/ui/button'
+import { Button, buttonStyles } from '~/components/ui/button'
 import { Container } from '~/components/ui/container'
 import { Heading } from '~/components/ui/heading'
 import { Separator } from '~/components/ui/separator'
@@ -28,15 +28,20 @@ export default function WorkspaceIdPage() {
 	const {
 		data: { workspace },
 	} = useLoaderData<TWorkspaceIdLoader>()
+
+	const params = useParams()
 	return (
 		<Container>
 			<Stack>
-				<Stack direction="row" className="items-center justify-between">
+				<Stack direction="row" align="center" justify="between">
 					<Heading>{workspace.name}</Heading>
 
-					<Button>
+					<Link
+						className={buttonStyles()}
+						to={`/dashboard/workspaces/${params.workspaceId}/form`}
+					>
 						<IconPlus /> New form
-					</Button>
+					</Link>
 				</Stack>
 
 				<Separator />
@@ -46,5 +51,3 @@ export default function WorkspaceIdPage() {
 		</Container>
 	)
 }
-
-function Title() {}

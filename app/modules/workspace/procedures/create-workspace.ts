@@ -1,6 +1,6 @@
 import { withAuthProcedure } from '~/trpc/init'
-import { newId } from '~/utils/uuid'
-import { CreateWorkspaceSchema } from '../schema'
+import { newId, shortId } from '~/utils/uuid'
+import { CreateWorkspaceSchema, workspacePublicIdLength } from '../schema'
 
 export const createWorkspaceProcedure = withAuthProcedure
 	.input(CreateWorkspaceSchema)
@@ -15,6 +15,7 @@ export const createWorkspaceProcedure = withAuthProcedure
 				creatorId: membershipId,
 				name: input.name,
 				id: newId('workspace'),
+				publicId: shortId(workspacePublicIdLength),
 			})
 			.execute()
 
