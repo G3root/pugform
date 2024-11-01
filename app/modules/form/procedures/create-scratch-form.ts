@@ -1,5 +1,6 @@
 import { withAuthProcedure } from '~/trpc/init'
 import { shortId } from '~/utils/uuid'
+import { FORM_ID_LENGTH } from '../constants'
 import { CreateScratchFormSchema } from '../schema'
 
 export const createScratchFormProcedure = withAuthProcedure
@@ -21,7 +22,7 @@ export const createScratchFormProcedure = withAuthProcedure
 				organizationId,
 				workspaceId: workspace.id,
 				title: `Untitled ${input.layout === 'CARD' ? 'card' : 'classic'} form`,
-				id: shortId(9),
+				id: shortId(FORM_ID_LENGTH),
 				layout: input.layout,
 			})
 			.returning(['id'])

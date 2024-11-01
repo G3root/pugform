@@ -6,14 +6,20 @@ import { BuilderFormList } from '~/modules/builder/components/builder-form-list'
 import { BuilderHeader } from '~/modules/builder/components/builder-header'
 import { useBuilderForm } from '~/modules/builder/hooks/use-builder-form'
 import { BuilderStoreProvider } from '~/modules/builder/providers/builder-store-provider'
+import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
 
 export async function action({ request, context }: ActionFunctionArgs) {
+	requireAuth(context)
 	return {}
 }
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, context, params }: LoaderFunctionArgs) {
 	requireAuth(context)
+
+	const formId = params.formId as string
+
+	const {} = await trpcServer({ context, request }).form.get({ formId })
 	return {}
 }
 
