@@ -116,12 +116,25 @@ model Workspace {
   @@map("workspace")
 }
 
+enum FormLayout {
+  CLASSIC
+  CARD
+}
+
+enum FormStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+}
+
 model Form {
   id String @id @default(cuid())
 
   title       String
   description String?
-  isActive    Boolean @default(true)
+  isActive    Boolean    @default(true)
+  layout      FormLayout @default(CLASSIC)
+  status      FormStatus @default(DRAFT)
 
   creator   Membership @relation(fields: [creatorId], references: [id])
   creatorId String

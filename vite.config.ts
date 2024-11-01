@@ -39,8 +39,8 @@ export default defineConfig({
 						index: true,
 					})
 					route(
-						'dashboard/forms/create',
-						buildApplicationPath('dashboard', 'forms/create.tsx'),
+						'dashboard/forms/:formId/edit',
+						buildApplicationPath('dashboard', 'forms/form-edit.tsx'),
 						{
 							index: true,
 						},

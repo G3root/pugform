@@ -10,9 +10,11 @@ export const DeleteWorkspaceSchema = z.object({
 
 export const workspacePublicIdLength = 6
 
+export const WorkspacePublicIdSchema = z
+	.string()
+	.max(workspacePublicIdLength)
+	.min(workspacePublicIdLength)
+
 export const WorkspaceByPublicIdSchema = z.object({
-	publicId: z
-		.string()
-		.max(workspacePublicIdLength)
-		.min(workspacePublicIdLength),
+	publicId: WorkspacePublicIdSchema,
 })
