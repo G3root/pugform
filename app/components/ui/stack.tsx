@@ -16,6 +16,7 @@ const stackStyles = tv({
 		justify: {
 			center: 'justify-center',
 			between: 'justify-between',
+			end: 'justify-end',
 		},
 		fullWidth: {
 			true: 'w-full',
