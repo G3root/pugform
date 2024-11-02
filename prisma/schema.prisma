@@ -154,7 +154,8 @@ model Form {
 }
 
 model FormPage {
-  id String @id @default(cuid())
+  id    String @id @default(cuid())
+  index Int
 
   form   Form   @relation(fields: [formId], references: [id])
   formId String

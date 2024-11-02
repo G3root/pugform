@@ -17,18 +17,21 @@ import { Sheet } from '~/components/ui/sheet'
 import { Switch } from '~/components/ui/switch'
 import { TextField } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
+import type { useBuilderForm } from '../../form/hooks/use-builder-form'
 import { humanizedFieldType } from '../constants'
-import type { useBuilderForm } from '../hooks/use-builder-form'
 
 interface BuilderBlockProps {
 	formId: ReturnType<typeof useBuilderForm>[2]
-	formPageId: string
+	formPageIndex: number
 }
 
-export function BuilderBlock({ formId, formPageId }: BuilderBlockProps) {
+export function BuilderBlock({ formId, formPageIndex }: BuilderBlockProps) {
 	const form = useFormMetadata(formId)
 
-	const fieldItems = form.getFieldset().fields.getFieldset()[formPageId]
+	const fieldItems = form
+		.getFieldset()
+		.pages.getFieldList()
+		[formPageIndex].getFieldset().fields
 	const fields = fieldItems.getFieldList()
 
 	return (
@@ -62,7 +65,7 @@ export function BuilderBlock({ formId, formPageId }: BuilderBlockProps) {
 										<BlockSettingsSheet
 											index={index}
 											formId={formId}
-											formPageId={formPageId}
+											formPageIndex={formPageIndex}
 										/>
 
 										{/* <Menu>
@@ -141,19 +144,19 @@ const Schema = z.object({
 
 interface BlockSettingsSheetProps {
 	formId: ReturnType<typeof useBuilderForm>[2]
-	formPageId: string
+	formPageIndex: number
 	index: number
 }
 
 function BlockSettingsSheet({
 	formId,
-	formPageId,
+	formPageIndex,
 	index,
 }: BlockSettingsSheetProps) {
 	const baseForm = useFormMetadata(formId)
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const fieldItems = baseForm.value?.fields?.[formPageId]?.[index] as any
+	//@ts-expect-error
+	const fieldItems = baseForm.value?.pages?.[formPageIndex]?.fields?.[index]
 
 	const [form, fields] = useForm({
 		id: 'data-form',
@@ -171,8 +174,9 @@ function BlockSettingsSheet({
 				baseForm.update({
 					name: baseForm
 						.getFieldset()
-						.fields.getFieldset()
-						[formPageId].getFieldList()[index].name,
+						.pages.getFieldList()
+						[formPageIndex].getFieldset()
+						.fields.getFieldList()[index].name,
 					value: {
 						...fieldItems,
 						...submission.payload,

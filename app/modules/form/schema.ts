@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { FormLayout } from '~/generated/enums'
+import { FieldType, FormLayout, FormStatus } from '~/generated/enums'
 import { WorkspacePublicIdSchema } from '../workspace/schema'
 import { FORM_ID_MAX_LENGTH, FORM_ID_MIN_LENGTH } from './constants'
 
@@ -16,3 +16,30 @@ export const FormIdSchema = z
 export const GetFormSchema = z.object({
 	formId: FormIdSchema,
 })
+
+export const UpdateFormSchema = z.object({
+	form: z
+		.object({
+			title: z.string(),
+			status: z.nativeEnum(FormStatus),
+		})
+		.partial(),
+
+	pages: z.array(
+		z.object({
+			id: z.string(),
+			fields: z.array(
+				z.object({
+					label: z.string(),
+					type: z.nativeEnum(FieldType),
+					id: z.string(),
+					required: z.coerce.boolean(),
+					description: z.string().optional(),
+					placeholder: z.string().optional(),
+				}),
+			),
+		}),
+	),
+})
+
+export type TUpdateFormSchema = z.infer<typeof UpdateFormSchema>

@@ -4,18 +4,24 @@ import { Button } from '~/components/ui/button'
 import { Menu } from '~/components/ui/menu'
 import { Tooltip } from '~/components/ui/tooltip'
 import { newId } from '~/utils/uuid'
+import type { useBuilderForm } from '../../form/hooks/use-builder-form'
 import { FIELD_LIST } from '../constants'
-import type { useBuilderForm } from '../hooks/use-builder-form'
 
 interface AddQuestionMenuProps {
-	formPageId: string
+	formPageIndex: number
 	formId: ReturnType<typeof useBuilderForm>[2]
 }
 
-export function AddQuestionMenu({ formPageId, formId }: AddQuestionMenuProps) {
+export function AddQuestionMenu({
+	formPageIndex,
+	formId,
+}: AddQuestionMenuProps) {
 	const form = useFormMetadata(formId)
 
-	const field = form.getFieldset().fields.getFieldset()[formPageId]
+	const field = form
+		.getFieldset()
+		.pages.getFieldList()
+		[formPageIndex].getFieldset().fields
 
 	const getLabel = () => {
 		const fieldList = field.getFieldList()

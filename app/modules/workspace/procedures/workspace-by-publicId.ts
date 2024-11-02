@@ -6,14 +6,12 @@ export const workspaceByPublicIdProcedure = withAuthProcedure
 	.input(WorkspaceByPublicIdSchema)
 	.mutation(async ({ ctx, input }) => {
 		const organizationId = ctx.session.organizationId
-		const membershipId = ctx.session.membershipId
 
 		const workspace = await ctx.db
 			.selectFrom('workspace as w')
 			.where('organizationId', '=', organizationId)
 			.where('publicId', '=', input.publicId)
 			.select((eb) => [
-				// pets
 				jsonArrayFrom(
 					eb
 						.selectFrom('form as f')
