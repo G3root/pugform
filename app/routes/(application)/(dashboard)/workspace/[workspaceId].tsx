@@ -8,13 +8,14 @@ import { Container } from '~/components/ui/container'
 import { Heading } from '~/components/ui/heading'
 import { Separator } from '~/components/ui/separator'
 import { Stack } from '~/components/ui/stack'
-import { DeleteFormSchema } from '~/modules/form/schema'
+import { DeleteFormSchema, RenameFormSchema } from '~/modules/form/schema'
 import { FormsList } from '~/modules/workspace/components/forms-list'
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
 import { createToastHeaders } from '~/utils/toast.server'
 
 export const deleteFormActionIntent = 'delete-form'
+export const renameFormActionIntent = 'rename-form'
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	requireAuth(context)
@@ -26,6 +27,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	switch (intent) {
 		case deleteFormActionIntent:
 			return deleteFormAction({ context, formData, request })
+		case renameFormActionIntent:
+			return renameFormAction({ context, formData, request })
 
 		default: {
 			throw new Response(`Invalid intent "${intent}"`, { status: 400 })
@@ -61,6 +64,43 @@ async function deleteFormAction({ formData, context, request }: TActionArgs) {
 		context,
 		request,
 	}).form.delete(submission.value)
+
+	return data(
+		{
+			result: submission.reply(),
+		},
+		{
+			status: 200,
+			headers: await createToastHeaders({
+				type: 'success',
+				description: message,
+			}),
+		},
+	)
+}
+
+async function renameFormAction({ formData, context, request }: TActionArgs) {
+	const submission = parseWithZod(formData, {
+		schema: RenameFormSchema,
+	})
+
+	if (submission.status !== 'success') {
+		return data(
+			{ result: submission.reply(), status: 'failed' as const },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+				headers: await createToastHeaders({
+					type: 'error',
+					description: 'failed to rename form!',
+				}),
+			},
+		)
+	}
+
+	const { message } = await trpcServer({
+		context,
+		request,
+	}).form.rename(submission.value)
 
 	return data(
 		{
