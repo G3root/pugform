@@ -13,6 +13,10 @@ export const FormIdSchema = z
 	.min(FORM_ID_MIN_LENGTH)
 	.max(FORM_ID_MAX_LENGTH)
 
+export const DeleteFormSchema = z.object({
+	formId: FormIdSchema,
+})
+
 export const GetFormSchema = z.object({
 	formId: FormIdSchema,
 })

@@ -1,14 +1,80 @@
+import { parseWithZod } from '@conform-to/zod'
+import type { ActionFunctionArgs, AppLoadContext } from '@remix-run/node'
 import { type LoaderFunctionArgs, data } from '@remix-run/node'
-import { Link, useActionData, useLoaderData, useParams } from '@remix-run/react'
+import { Link, useLoaderData, useParams } from '@remix-run/react'
 import { IconPlus } from 'justd-icons'
-import { Button, buttonStyles } from '~/components/ui/button'
+import { buttonStyles } from '~/components/ui/button'
 import { Container } from '~/components/ui/container'
 import { Heading } from '~/components/ui/heading'
 import { Separator } from '~/components/ui/separator'
 import { Stack } from '~/components/ui/stack'
+import { DeleteFormSchema } from '~/modules/form/schema'
 import { FormsList } from '~/modules/workspace/components/forms-list'
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
+import { createToastHeaders } from '~/utils/toast.server'
+
+export const deleteFormActionIntent = 'delete-form'
+
+export async function action({ request, context }: ActionFunctionArgs) {
+	requireAuth(context)
+
+	const formData = await request.formData()
+
+	const intent = formData.get('intent')
+
+	switch (intent) {
+		case deleteFormActionIntent:
+			return deleteFormAction({ context, formData, request })
+
+		default: {
+			throw new Response(`Invalid intent "${intent}"`, { status: 400 })
+		}
+	}
+}
+
+type TActionArgs = {
+	request: Request
+	formData: FormData
+	context: AppLoadContext
+}
+
+async function deleteFormAction({ formData, context, request }: TActionArgs) {
+	const submission = parseWithZod(formData, {
+		schema: DeleteFormSchema,
+	})
+
+	if (submission.status !== 'success') {
+		return data(
+			{ result: submission.reply(), status: 'failed' as const },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+				headers: await createToastHeaders({
+					type: 'error',
+					description: 'failed to delete form!',
+				}),
+			},
+		)
+	}
+
+	const { message } = await trpcServer({
+		context,
+		request,
+	}).form.delete(submission.value)
+
+	return data(
+		{
+			result: submission.reply(),
+		},
+		{
+			status: 200,
+			headers: await createToastHeaders({
+				type: 'success',
+				description: message,
+			}),
+		},
+	)
+}
 
 export async function loader({ request, context, params }: LoaderFunctionArgs) {
 	requireAuth(context)

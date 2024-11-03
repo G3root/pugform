@@ -1,16 +1,20 @@
-import { useLoaderData } from '@remix-run/react'
+import { useLoaderData, useSubmit } from '@remix-run/react'
 import { IconDotsVertical } from 'justd-icons'
 import { Card } from '~/components/ui/card'
 import { Menu } from '~/components/ui/menu'
 import { Stack } from '~/components/ui/stack'
 import { Table } from '~/components/ui/table'
-import type { TWorkspaceIdLoader } from '~/routes/(application)/(dashboard)/workspace/[workspaceId]'
+import {
+	type TWorkspaceIdLoader,
+	deleteFormActionIntent,
+} from '~/routes/(application)/(dashboard)/workspace/[workspaceId]'
 
 export function FormsList() {
 	const {
 		data: { workspace },
 	} = useLoaderData<TWorkspaceIdLoader>()
 
+	const submit = useSubmit()
 	return (
 		<Card>
 			<Table>
@@ -37,7 +41,17 @@ export function FormsList() {
 											placement="left"
 										>
 											<Menu.Separator />
-											<Menu.Item isDanger>Delete</Menu.Item>
+											<Menu.Item
+												onAction={() => {
+													const formData = new FormData()
+													formData.append('formId', item.id)
+													formData.append('intent', deleteFormActionIntent)
+													submit(formData, { method: 'post' })
+												}}
+												isDanger
+											>
+												Delete
+											</Menu.Item>
 										</Menu.Content>
 									</Menu>
 								</Stack>
