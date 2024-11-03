@@ -1,4 +1,4 @@
-import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { Link, useFetcher, useLoaderData, useSubmit } from '@remix-run/react'
 import { useRef, useState } from 'react'
 import type { DialogTriggerProps } from 'react-aria-components'
 import { Button, buttonStyles } from '~/components/ui/button'
@@ -73,8 +73,7 @@ interface DeleteDialogProps extends Omit<DialogTriggerProps, 'children'> {
 }
 
 function DeleteDialog({ id, ...rest }: DeleteDialogProps) {
-	const fetcher = useFetcher()
-	const submitRef = useRef<HTMLButtonElement>(null)
+	const submit = useSubmit()
 	return (
 		<Modal.Content {...rest} role="alertdialog">
 			<Modal.Header>
@@ -85,25 +84,14 @@ function DeleteDialog({ id, ...rest }: DeleteDialogProps) {
 				</Modal.Description>
 			</Modal.Header>
 
-			<fetcher.Form method="POST">
-				<input type="hidden" name="id" value={id} readOnly />
-				<button
-					name="intent"
-					value={workspaceDeleteActionIntent}
-					ref={submitRef}
-					aria-hidden
-					className="sr-only"
-					type="submit"
-				>
-					form Submit
-				</button>
-			</fetcher.Form>
-
 			<Modal.Footer>
 				<Modal.Close appearance="outline">Cancel</Modal.Close>
 				<Modal.Close
 					onPress={() => {
-						submitRef.current?.click()
+						const formData = new FormData()
+						formData.append('id', id)
+						formData.append('intent', workspaceDeleteActionIntent)
+						submit(formData, { method: 'post' })
 					}}
 					appearance="solid"
 					intent="danger"
