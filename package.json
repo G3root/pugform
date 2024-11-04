@@ -7,6 +7,9 @@
     "head": "d52803a914ce97cd0f060ccf3c633b9e65f28a52",
     "date": "2024-10-28T21:24:07Z"
   },
+  "justd": {
+    "head": "6d4c13b31053a7af9d969965753ecac19fa2f4f9"
+  },
   "scripts": {
     "build": "remix vite:build",
     "dev": "tsx ./server.ts",

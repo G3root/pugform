@@ -91,6 +91,7 @@ const TextField = ({
 				<Input placeholder={placeholder} />
 				{isRevealable ? (
 					<ButtonPrimitive
+						aria-label="Toggle password visibility"
 						type="button"
 						onPress={handleTogglePasswordVisibility}
 						className="atrs relative [&>[data-slot=icon]]:text-muted-fg focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
