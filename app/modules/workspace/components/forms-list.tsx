@@ -1,8 +1,8 @@
-import { useLoaderData, useSubmit } from '@remix-run/react'
+import { Link, useLoaderData, useSubmit } from '@remix-run/react'
 import { IconDotsVertical } from 'justd-icons'
 import { useState } from 'react'
 import type { DialogTriggerProps } from 'react-aria-components'
-import { Button } from '~/components/ui/button'
+import { Button, buttonStyles } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Menu } from '~/components/ui/menu'
 import { Modal } from '~/components/ui/modal'
@@ -41,6 +41,16 @@ export function FormsList() {
 								<Table.Cell>{item.title}</Table.Cell>
 								<Table.Cell>
 									<Stack direction="row" justify="end">
+										<Link
+											to={`/dashboard/forms/${item.id}/edit`}
+											className={buttonStyles({
+												appearance: 'outline',
+												size: 'extra-small',
+											})}
+										>
+											Edit
+										</Link>
+
 										<Menu>
 											<Menu.Trigger>
 												<IconDotsVertical />

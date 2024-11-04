@@ -9,6 +9,7 @@ import pg from 'pg'
 import type {
 	DB as Database,
 	Field as FieldTable,
+	FormPage as FormPageTable,
 	Membership as MembershipTable,
 	Organization as OrganizationTable,
 	User as UserTable,
@@ -46,3 +47,7 @@ export type OrganizationUpdate = Updateable<OrganizationTable>
 export type Membership = Selectable<MembershipTable>
 export type NewMembership = Insertable<MembershipTable>
 export type MembershipUpdate = Updateable<MembershipTable>
+
+export type FormPage = Selectable<FormPageTable>
+export type NewFormPage = Insertable<FormPageTable>
+export type FormPageUpdate = Updateable<FormPageTable>

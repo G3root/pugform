@@ -2,7 +2,7 @@ import { FormProvider, getFormProps, getInputProps } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import type { LoaderFunctionArgs } from '@remix-run/node'
-import { Form, data, useLoaderData } from '@remix-run/react'
+import { Form, data, useLoaderData, useParams } from '@remix-run/react'
 import { BuilderFormList } from '~/modules/builder/components/builder-form-list'
 import { BuilderHeader } from '~/modules/builder/components/builder-header'
 import { BuilderStoreProvider } from '~/modules/builder/providers/builder-store-provider'
@@ -29,7 +29,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const value = submission.value
 
-	console.log({ value })
+	await trpcServer({
+		context,
+		request,
+	}).form.update(value)
 
 	return data({ result: submission.reply() }, { status: 200 })
 }
@@ -47,14 +50,17 @@ export type TFormEditPageAction = typeof action
 export type TFormEditPageLoader = typeof loader
 
 export default function FormEditPage() {
+	const params = useParams()
+
 	const { data } = useLoaderData<TFormEditPageLoader>()
 	const [form, _field, formId] = useBuilderForm({
-		form: data.form,
+		form: { id: params.formId as string, status: data.form.status },
 		pages: data.pages,
 	})
 
 	const formValues = form.getFieldset().form.getFieldset()
-	const title = formValues.title
+
+	const id = formValues.id
 	const status = formValues.status
 	return (
 		<div className="flex flex-col w-full min-h-screen bg-[hsl(var(--secondary)/80%)]">
@@ -68,10 +74,7 @@ export default function FormEditPage() {
 							{...getFormProps(form)}
 							className="flex flex-col items-center gap-4 justify-center w-full"
 						>
-							<input
-								{...getInputProps(title, { type: 'hidden' })}
-								key={title.key}
-							/>
+							<input {...getInputProps(id, { type: 'hidden' })} key={id.key} />
 
 							<input
 								{...getInputProps(status, { type: 'hidden' })}

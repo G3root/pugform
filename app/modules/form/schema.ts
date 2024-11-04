@@ -27,12 +27,10 @@ export const RenameFormSchema = z.object({
 })
 
 export const UpdateFormSchema = z.object({
-	form: z
-		.object({
-			title: z.string(),
-			status: z.nativeEnum(FormStatus),
-		})
-		.partial(),
+	form: z.object({
+		id: FormIdSchema,
+		status: z.nativeEnum(FormStatus),
+	}),
 
 	pages: z.array(
 		z.object({
