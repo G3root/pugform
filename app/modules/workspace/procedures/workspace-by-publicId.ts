@@ -16,6 +16,7 @@ export const workspaceByPublicIdProcedure = withAuthProcedure
 					eb
 						.selectFrom('form as f')
 						.select(['f.title', 'f.id', 'f.isActive'])
+						.orderBy('createdAt', 'desc')
 						.whereRef('f.workspaceId', '=', 'w.id'),
 				).as('forms'),
 			])
