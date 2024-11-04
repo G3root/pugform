@@ -1,4 +1,5 @@
 import { vitePlugin as remix } from '@remix-run/dev'
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin'
 import { remixDevTools } from 'remix-development-tools'
 import { defineConfig } from 'vite'
 import { envOnlyMacros } from 'vite-env-only'
@@ -32,12 +33,17 @@ export default defineConfig({
 				v3_lazyRouteDiscovery: true,
 				unstable_optimizeDeps: true,
 			},
+
 			routes(defineRoutes) {
 				return defineRoutes((route) => {
 					route('/', 'routes/_index.tsx', { index: true })
+					route(':formId', 'routes/(subDomain)/public-form-view.tsx', {
+						index: true,
+					})
 					route('dashboard/login', buildApplicationPath('auth', 'login.tsx'), {
 						index: true,
 					})
+
 					route(
 						'dashboard/forms/:formId/edit',
 						buildApplicationPath('dashboard', 'forms/form-edit.tsx'),
@@ -76,12 +82,36 @@ export default defineConfig({
 									index: true,
 								},
 							)
+
+							route(
+								'forms/:formId',
+								buildApplicationPath('dashboard', 'forms/_layout.tsx'),
+								() => {
+									route(
+										'',
+										buildApplicationPath('dashboard', 'forms/form-summary.tsx'),
+										{
+											index: true,
+										},
+									)
+									route(
+										'responses',
+										buildApplicationPath(
+											'dashboard',
+											'forms/form-responses.tsx',
+										),
+										{
+											index: true,
+										},
+									)
+								},
+							)
 						},
 					)
 				})
 			},
 		}),
-
+		vanillaExtractPlugin(),
 		tsconfigPaths(),
 	],
 })
