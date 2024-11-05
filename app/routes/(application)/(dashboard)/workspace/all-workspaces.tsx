@@ -22,16 +22,7 @@ import { createToastHeaders } from '~/utils/toast.server'
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	requireAuth(context)
 
-	const { workspaces } = await trpcServer({
-		context,
-		request,
-	}).workspace.all()
-
-	return {
-		data: {
-			workspaces,
-		},
-	}
+	return {}
 }
 
 export const workspaceCreateActionIntent = 'workspace-create'

@@ -33,11 +33,18 @@ export const getFormProcedure = withAuthProcedure
 					.where('organizationId', '=', organizationId)
 					.where('formId', '=', fromId)
 					.select((eb) => [
-						// pets
 						jsonArrayFrom(
 							eb
 								.selectFrom('field as f')
-								.select(['f.label', 'f.id', 'f.type', 'f.required', 'f.order'])
+								.select([
+									'f.label',
+									'f.id',
+									'f.type',
+									'f.required',
+									'f.order',
+									'f.description',
+									'f.placeholder',
+								])
 								.whereRef('f.formPageId', '=', 'formPage.id'),
 						).as('fields'),
 					])

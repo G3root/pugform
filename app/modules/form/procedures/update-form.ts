@@ -1,114 +1,166 @@
-import type { Field, FieldUpdate, NewField, NewFormPage } from '~/lib/db.server'
+import type { Field, NewField, NewFormPage, TKyselyDb } from '~/lib/db.server'
 import { withAuthProcedure } from '~/trpc/init'
-import { UpdateFormSchema } from '../schema'
+import { type TUpdateFormSchema, UpdateFormSchema } from '../schema'
+
+const fieldKeys: Record<keyof Field, string> = {
+	createdAt: '',
+	description: '',
+	type: '',
+	required: '',
+	placeholder: '',
+	updatedAt: '',
+	options: '',
+	order: '',
+	formId: '',
+	formPageId: '',
+	id: '',
+	label: '',
+}
 
 export const updateFormProcedure = withAuthProcedure
 	.input(UpdateFormSchema)
 	.mutation(async ({ ctx, input }) => {
 		const organizationId = ctx.session.organizationId
+		await ctx.db.transaction().execute(async (trx) => {
+			const [form, existingPages] = await Promise.all([
+				getForm(trx, input.form.id, organizationId),
+				getExistingPages(trx, organizationId, input.form.id),
+			])
 
-		const form = await ctx.db
-			.selectFrom('form')
-			.where('id', '=', input.form.id)
-			.where('organizationId', '=', organizationId)
-			.select(['id'])
-			.executeTakeFirstOrThrow()
+			const { deletedPageIds, createdPages, updatedFields } = processFormUpdate(
+				form.id,
+				organizationId,
+				input.pages,
+				existingPages,
+			)
 
-		const existingPages = await ctx.db
-			.selectFrom('formPage')
-			.where('organizationId', '=', organizationId)
-			.where('formId', '=', form.id)
-			.select('id')
-			.execute()
-
-		const currentFormFields = await ctx.db
-			.selectFrom('field')
-			.where('formId', '=', form.id)
-			.select(['id', 'formPageId'])
-			.execute()
-
-		// Preprocess existing and new page IDs
-		const newPagesId = new Set(input.pages.map((page) => page.id))
-		const existingPagesId = new Set(existingPages.map((page) => page.id))
-
-		// Prepare pages and fields for insertion and deletion
-		const pagesToCreate: NewFormPage[] = []
-		const pagesToDelete = new Set<string>()
-		const fieldsToDelete: string[] = []
-		const fieldsToCreate: NewField[] = []
-
-		// Determine pages to delete and fields associated with those pages
-		for (const pageId of existingPagesId) {
-			if (!newPagesId.has(pageId)) {
-				pagesToDelete.add(pageId)
-			}
-		}
-
-		for (const field of currentFormFields) {
-			if (pagesToDelete.has(field.formPageId)) {
-				fieldsToDelete.push(field.id)
-			}
-		}
-
-		// Populate pages and fields to create based on input
-		for (const [index, page] of input.pages.entries()) {
-			if (!existingPagesId.has(page.id)) {
-				pagesToCreate.push({
-					formId: form.id,
-					id: page.id,
-					organizationId,
-					index,
-				})
-			}
-
-			if (!pagesToDelete.has(page.id)) {
-				page.fields.forEach((field, fieldIndex) => {
-					fieldsToCreate.push({
-						...field,
-						formPageId: page.id,
-						formId: form.id,
-						order: fieldIndex,
-					})
-				})
-			}
-		}
-
-		// Batch delete fields if necessary
-		if (fieldsToDelete.length > 0) {
-			await ctx.db
-				.deleteFrom('field')
-				.where('id', 'in', fieldsToDelete)
-				.execute()
-		}
-
-		// Batch delete pages if necessary
-		if (pagesToDelete.size > 0) {
-			await ctx.db
-				.deleteFrom('formPage')
-				.where('id', 'in', Array.from(pagesToDelete))
-				.execute()
-		}
-
-		// Batch insert pages if necessary
-		if (pagesToCreate.length > 0) {
-			await ctx.db.insertInto('formPage').values(pagesToCreate).execute()
-		}
-
-		// Batch insert fields with conflict resolution
-		if (fieldsToCreate.length > 0) {
-			await ctx.db
-				.insertInto('field')
-				.values(fieldsToCreate)
-				.onConflict((oc) =>
-					oc.column('id').doUpdateSet((eb) => {
-						const keys = Object.keys(fieldsToCreate[0]) as (keyof Field)[]
-						const definedEntries = keys
-							.filter((key) => fieldsToCreate[0][key] !== undefined)
-							.map((key) => [key, eb.ref(`excluded.${key}`)])
-
-						return Object.fromEntries(definedEntries)
-					}),
-				)
-				.execute()
-		}
+			await Promise.all([
+				deleteFields(trx, getFieldsToDelete(updatedFields, deletedPageIds)),
+				deletePages(trx, Array.from(deletedPageIds)),
+				createPages(trx, createdPages),
+				upsertFields(trx, updatedFields),
+			])
+		})
 	})
+
+async function getForm(
+	db: TKyselyDb,
+	formId: string,
+	organizationId: string,
+): Promise<{ id: string }> {
+	return db
+		.selectFrom('form')
+		.where('id', '=', formId)
+		.where('organizationId', '=', organizationId)
+		.select(['id'])
+		.executeTakeFirstOrThrow()
+}
+
+function processFormUpdate(
+	formId: string,
+	organizationId: string,
+	inputPages: TUpdateFormSchema['pages'],
+	existingPages: { id: string }[],
+) {
+	const existingPageIds = new Set(existingPages.map((p) => p.id))
+	const inputPageIds = new Set(inputPages.map((p) => p.id))
+
+	return {
+		deletedPageIds: difference(existingPageIds, inputPageIds),
+		createdPages: getCreatedPages(
+			inputPages,
+			existingPageIds,
+			formId,
+			organizationId,
+		),
+		updatedFields: getUpdatedFields(inputPages, formId),
+	}
+}
+
+async function getExistingPages(
+	db: TKyselyDb,
+	organizationId: string,
+	formId: string,
+) {
+	return db
+		.selectFrom('formPage')
+		.where('organizationId', '=', organizationId)
+		.where('formId', '=', formId)
+		.select(['id'])
+		.execute()
+}
+
+function getCreatedPages(
+	inputPages: TUpdateFormSchema['pages'],
+	existingPageIds: Set<string>,
+	formId: string,
+	organizationId: string,
+): NewFormPage[] {
+	return inputPages
+		.filter((p) => !existingPageIds.has(p.id))
+		.map((p, index) => ({
+			formId,
+			id: p.id,
+			organizationId,
+			index,
+		}))
+}
+
+function getUpdatedFields(
+	inputPages: TUpdateFormSchema['pages'],
+	formId: string,
+): NewField[] {
+	return inputPages.flatMap(({ id: pageId, fields }, pageIndex) =>
+		fields.map((field, fieldIndex) => ({
+			...field,
+			formPageId: pageId,
+			formId,
+			order: fieldIndex,
+		})),
+	)
+}
+
+function getFieldsToDelete(
+	updatedFields: NewField[],
+	deletedPageIds: Set<string>,
+): string[] {
+	return updatedFields
+		.filter((field) => deletedPageIds.has(field.formPageId))
+		.map((field) => field.id)
+}
+
+async function deleteFields(db: TKyselyDb, fieldIds: string[]) {
+	if (!fieldIds.length) return
+
+	await db.deleteFrom('field').where('id', 'in', fieldIds).execute()
+}
+async function deletePages(db: TKyselyDb, pageIds: string[]) {
+	if (!pageIds.length) return
+
+	await db.deleteFrom('formPage').where('id', 'in', pageIds).execute()
+}
+
+async function createPages(db: TKyselyDb, pages: NewFormPage[]) {
+	if (!pages.length) return
+
+	await db.insertInto('formPage').values(pages).execute()
+}
+async function upsertFields(db: TKyselyDb, fields: NewField[]) {
+	if (!fields.length) return
+	await db
+		.insertInto('field')
+		.values(fields)
+		.onConflict((oc) =>
+			oc.column('id').doUpdateSet((eb) => {
+				const keys = Object.keys(fieldKeys) as (keyof Field)[]
+				return Object.fromEntries(
+					keys.map((key) => [key, eb.ref(`excluded.${key}`)]),
+				)
+			}),
+		)
+		.execute()
+}
+
+function difference<T>(set1: Set<T>, set2: Set<T>): Set<T> {
+	return new Set([...set1].filter((x) => !set2.has(x)))
+}
