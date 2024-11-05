@@ -185,8 +185,10 @@ enum FieldType {
 }
 
 model Field {
-  id    String @id @default(cuid())
-  label String
+  id          String  @id @default(cuid())
+  label       String
+  description String?
+  placeholder String?
 
   type     FieldType
   required Boolean   @default(false)
