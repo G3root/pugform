@@ -21,6 +21,10 @@ export const GetFormSchema = z.object({
 	formId: FormIdSchema,
 })
 
+export const GetFormResponse = z.object({
+	formId: FormIdSchema,
+})
+
 export const RenameFormSchema = z.object({
 	formId: FormIdSchema,
 	title: z.string().max(100),

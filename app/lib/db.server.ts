@@ -7,6 +7,7 @@ import {
 } from 'kysely'
 import pg from 'pg'
 import type {
+	Answer as AnswerTable,
 	DB as Database,
 	Field as FieldTable,
 	FormPage as FormPageTable,
@@ -51,3 +52,7 @@ export type MembershipUpdate = Updateable<MembershipTable>
 export type FormPage = Selectable<FormPageTable>
 export type NewFormPage = Insertable<FormPageTable>
 export type FormPageUpdate = Updateable<FormPageTable>
+
+export type Answer = Selectable<AnswerTable>
+export type NewAnswer = Insertable<AnswerTable>
+export type AnswerUpdate = Updateable<AnswerTable>

@@ -13,6 +13,8 @@ const prefixes = {
 	member: 'mbr',
 	form: 'frm',
 	workspace: 'ws',
+	response: 'res',
+	answer: 'ans',
 } as const
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

@@ -51,6 +51,16 @@ export function FormsList() {
 											Edit
 										</Link>
 
+										<Link
+											to={`/dashboard/forms/${item.id}`}
+											className={buttonStyles({
+												appearance: 'outline',
+												size: 'extra-small',
+											})}
+										>
+											View
+										</Link>
+
 										<Menu>
 											<Menu.Trigger>
 												<IconDotsVertical />
