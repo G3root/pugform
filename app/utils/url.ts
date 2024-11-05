@@ -1,3 +1,5 @@
+import { APP_DOMAIN } from '~/constants'
+
 export function getHost(request: Request) {
 	const host =
 		request.headers.get('X-Forwarded-Host') ??
@@ -6,21 +8,20 @@ export function getHost(request: Request) {
 	return host
 }
 
-// export const getSubDomain = (request: Request) => {
-// 	const appDomain = process.env.PUBLIC_APP_DOMAIN
-// 	const host = getHost(request).replace(
-// 		'.localhost:3000',
-// 		`.${appDomain}`,
-// 	) as string
+export const getSubDomain = (request: Request) => {
+	const host = getHost(request).replace(
+		'.localhost:3000',
+		`.${APP_DOMAIN}`,
+	) as string
 
-// 	const hostParts = host.split('.')
+	const hostParts = host.split('.')
 
-// 	if (hostParts.length > appDomain.split('.').length) {
-// 		return hostParts[0]
-// 	}
+	if (hostParts.length > APP_DOMAIN.split('.').length) {
+		return hostParts[0]
+	}
 
-// 	return null
-// }
+	return null
+}
 
 export function getDomainUrl(request: Request) {
 	const host = getHost(request)
