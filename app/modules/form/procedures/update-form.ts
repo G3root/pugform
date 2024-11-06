@@ -21,11 +21,13 @@ export const updateFormProcedure = withAuthProcedure
 	.input(UpdateFormSchema)
 	.mutation(async ({ ctx, input }) => {
 		const organizationId = ctx.session.organizationId
+
 		await ctx.db.transaction().execute(async (trx) => {
-			const [form, existingPages] = await Promise.all([
-				getForm(trx, input.form.id, organizationId),
-				getExistingPages(trx, organizationId, input.form.id),
-			])
+			const {
+				form,
+				pages: existingPages,
+				fields: existingFields,
+			} = await getFormData(trx, input.form.id, organizationId)
 
 			const { deletedPageIds, createdPages, updatedFields } = processFormUpdate(
 				form.id,
@@ -34,8 +36,14 @@ export const updateFormProcedure = withAuthProcedure
 				existingPages,
 			)
 
+			const fieldsToDelete = getFieldsToDelete(
+				existingFields,
+				updatedFields,
+				deletedPageIds,
+			)
+
 			await Promise.all([
-				deleteFields(trx, getFieldsToDelete(updatedFields, deletedPageIds)),
+				deleteFields(trx, fieldsToDelete),
 				deletePages(trx, Array.from(deletedPageIds)),
 				createPages(trx, createdPages),
 				upsertFields(trx, updatedFields),
@@ -43,17 +51,34 @@ export const updateFormProcedure = withAuthProcedure
 		})
 	})
 
-async function getForm(
+async function getFormData(
 	db: TKyselyDb,
 	formId: string,
 	organizationId: string,
-): Promise<{ id: string }> {
-	return db
-		.selectFrom('form')
-		.where('id', '=', formId)
-		.where('organizationId', '=', organizationId)
-		.select(['id'])
-		.executeTakeFirstOrThrow()
+) {
+	const [form, pages, fields] = await Promise.all([
+		db
+			.selectFrom('form')
+			.where('id', '=', formId)
+			.where('organizationId', '=', organizationId)
+			.select(['id'])
+			.executeTakeFirstOrThrow(),
+
+		db
+			.selectFrom('formPage')
+			.where('formId', '=', formId)
+			.where('organizationId', '=', organizationId)
+			.select(['id'])
+			.execute(),
+
+		db
+			.selectFrom('field')
+			.where('formId', '=', formId)
+			.select(['id', 'formPageId'])
+			.execute(),
+	])
+
+	return { form, pages, fields }
 }
 
 function processFormUpdate(
@@ -75,19 +100,6 @@ function processFormUpdate(
 		),
 		updatedFields: getUpdatedFields(inputPages, formId),
 	}
-}
-
-async function getExistingPages(
-	db: TKyselyDb,
-	organizationId: string,
-	formId: string,
-) {
-	return db
-		.selectFrom('formPage')
-		.where('organizationId', '=', organizationId)
-		.where('formId', '=', formId)
-		.select(['id'])
-		.execute()
 }
 
 function getCreatedPages(
@@ -121,12 +133,23 @@ function getUpdatedFields(
 }
 
 function getFieldsToDelete(
+	existingFields: { id: string; formPageId: string }[],
 	updatedFields: NewField[],
 	deletedPageIds: Set<string>,
 ): string[] {
-	return updatedFields
-		.filter((field) => deletedPageIds.has(field.formPageId))
-		.map((field) => field.id)
+	const idsToDelete: string[] = []
+	const updatedFieldIds = new Set(updatedFields.map((item) => item.id))
+
+	for (const field of existingFields) {
+		if (
+			!updatedFieldIds.has(field.id) ||
+			deletedPageIds.has(field.formPageId)
+		) {
+			idsToDelete.push(field.id)
+		}
+	}
+
+	return idsToDelete
 }
 
 async function deleteFields(db: TKyselyDb, fieldIds: string[]) {
@@ -162,5 +185,11 @@ async function upsertFields(db: TKyselyDb, fields: NewField[]) {
 }
 
 function difference<T>(set1: Set<T>, set2: Set<T>): Set<T> {
-	return new Set([...set1].filter((x) => !set2.has(x)))
+	const result = new Set<T>()
+	for (const item of set1) {
+		if (!set2.has(item)) {
+			result.add(item)
+		}
+	}
+	return result
 }
