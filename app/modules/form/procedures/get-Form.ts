@@ -43,6 +43,7 @@ export const getFormProcedure = withAuthProcedure
 									'f.required',
 									'f.description',
 									'f.placeholder',
+									'f.options',
 								])
 								.whereRef('f.formPageId', '=', 'formPage.id'),
 						).as('fields'),

@@ -3,6 +3,7 @@ import { IconPlus } from 'justd-icons'
 import { Button } from '~/components/ui/button'
 import { Menu } from '~/components/ui/menu'
 import { Tooltip } from '~/components/ui/tooltip'
+import { FIELDS_WITH_OPTIONS } from '~/modules/form/constants'
 import { newId } from '~/utils/uuid'
 import type { useBuilderForm } from '../../form/hooks/use-builder-form'
 import { FIELD_LIST } from '../constants'
@@ -46,12 +47,17 @@ export function AddQuestionMenu({
 				{FIELD_LIST.map((item) => (
 					<Menu.Item
 						onAction={() => {
+							const isFieldWithOptions = FIELDS_WITH_OPTIONS.includes(item.type)
+
 							form.insert({
 								name: field.name,
 								defaultValue: {
 									type: item.type,
 									label: getLabel(),
 									id: newId('field'),
+									...(isFieldWithOptions && {
+										options: [''],
+									}),
 								},
 							})
 						}}

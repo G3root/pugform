@@ -18,6 +18,8 @@ import { Stack } from '~/components/ui/stack'
 import { Switch } from '~/components/ui/switch'
 import { TextField } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
+import type { FieldType } from '~/generated/enums'
+import { FIELDS_WITH_OPTIONS } from '~/modules/form/constants'
 import type { useBuilderForm } from '../../form/hooks/use-builder-form'
 import { humanizedFieldType } from '../constants'
 
@@ -46,6 +48,7 @@ export function BuilderBlock({ formId, formPageIndex }: BuilderBlockProps) {
 					const required = itemFieldset.required
 					const placeholder = itemFieldset.placeholder
 					const description = itemFieldset.description
+					const options = itemFieldset.options.getFieldList()
 
 					return (
 						<Card key={item.key}>
@@ -99,30 +102,88 @@ export function BuilderBlock({ formId, formPageIndex }: BuilderBlockProps) {
 									readOnly
 								/>
 
-								<Stack direction="row">
-									<div className="flex-1">
-										<label className="sr-only" htmlFor={`label-${item.key}`}>
-											label
-										</label>
-										<Input
-											{...getInputProps(label, { type: 'text' })}
-											key={label.key}
-											placeholder="type a question"
-											id={`label-${item.key}`}
-											className="border-b focus:border-primary"
-										/>
-									</div>
-									<Button
-										aria-label="delete field"
-										appearance="outline"
-										size="square-petite"
-										intent="danger"
-										onPress={() => {
-											form.remove({ index, name: fieldItems.name })
-										}}
-									>
-										<IconTrash />
-									</Button>
+								<Stack>
+									<Stack direction="row">
+										<div className="flex-1">
+											<label className="sr-only" htmlFor={`label-${index}`}>
+												label
+											</label>
+											<Input
+												{...getInputProps(label, { type: 'text' })}
+												key={label.key}
+												placeholder="type a question"
+												id={`label-${index}`}
+												className="border-b focus:border-primary"
+											/>
+										</div>
+										<Button
+											aria-label="delete field"
+											appearance="outline"
+											size="square-petite"
+											intent="danger"
+											onPress={() => {
+												form.remove({ index, name: fieldItems.name })
+											}}
+										>
+											<IconTrash />
+										</Button>
+									</Stack>
+
+									{FIELDS_WITH_OPTIONS.includes(type.value as FieldType) ? (
+										<Stack gap={1}>
+											<p className="text-sm">Options:</p>
+
+											{options.map((optionItem) => {
+												return (
+													<Stack direction="row" key={optionItem.key}>
+														<div>
+															<label
+																className="sr-only"
+																htmlFor={`option-${optionItem.key}`}
+															>
+																option
+															</label>
+															<Input
+																{...getInputProps(optionItem, { type: 'text' })}
+																key={label.key}
+																placeholder="option"
+																id={`option-${optionItem.key}`}
+																className="border-b focus:border-primary"
+																required
+															/>
+														</div>
+														<Button
+															aria-label="remove option"
+															appearance="outline"
+															size="square-petite"
+															intent="danger"
+															onPress={() => {
+																form.remove({
+																	index,
+																	name: itemFieldset.options.name,
+																})
+															}}
+														>
+															<IconTrash />
+														</Button>
+													</Stack>
+												)
+											})}
+
+											<Button
+												onPress={() => {
+													form.insert({
+														name: itemFieldset.options.name,
+														defaultValue: '',
+													})
+												}}
+												appearance="outline"
+												size="extra-small"
+											>
+												Add more option
+											</Button>
+										</Stack>
+									) : null}
 								</Stack>
 							</Card.Content>
 						</Card>

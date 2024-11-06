@@ -47,6 +47,7 @@ export const UpdateFormSchema = z.object({
 					required: z.coerce.boolean(),
 					description: z.string().nullish(),
 					placeholder: z.string().nullish(),
+					options: z.array(z.string()),
 				}),
 			),
 		}),
