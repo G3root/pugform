@@ -6,6 +6,7 @@ const schema = z.object({
 	HONEYPOT_SECRET: z.string(),
 	SESSION_SECRET: z.string(),
 	INTERNAL_COMMAND_TOKEN: z.string(),
+	ENCRYPTION_KEY: z.string(),
 })
 
 declare global {

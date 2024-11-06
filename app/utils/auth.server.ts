@@ -1,8 +1,21 @@
 import { type AppLoadContext, redirect } from '@remix-run/node'
 import { db } from '~/lib/db.server'
+import { createOrganization } from '~/modules/organization/services'
+import { createUser } from '~/modules/user/services'
+import { createWorkSpaceHandler } from '~/modules/workspace/procedures/create-workspace'
 import { hashPassword, verifyPasswordHash } from './password.server'
 import { createSession, generateSessionToken } from './session.server'
 import { shortId } from './uuid'
+
+export async function checkEmailAvailability(email: string) {
+	const emailAvailable = await db
+		.selectFrom('user')
+		.where('email', '=', email)
+		.select('id')
+		.executeTakeFirst()
+
+	return !!emailAvailable
+}
 
 interface loginOptions {
 	email: string
@@ -87,4 +100,40 @@ export function verifyRequestOrigin(
 		}
 	}
 	return false
+}
+
+interface SignupOptions {
+	email: string
+	name: string
+	password: string
+}
+
+export async function signUp({ email, name, password }: SignupOptions) {
+	const user = await createUser({ email, name, password }, db)
+
+	const userId = user.id
+
+	const organization = await createOrganization(db, {
+		name: `${name} org`,
+		userId,
+	})
+
+	const membershipId = organization.membership.id
+	const organizationId = organization.organization.id
+
+	await createWorkSpaceHandler({
+		db,
+		membershipId: organization.membership.id,
+		organizationId: organization.organization.id,
+		name: 'my workspace',
+	})
+
+	const sessionToken = generateSessionToken()
+
+	const session = await createSession(
+		{ token: sessionToken, membershipId, organizationId, userId },
+		db,
+	)
+
+	return { ...session, sessionToken }
 }

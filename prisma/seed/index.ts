@@ -12,6 +12,9 @@ const main = async () => {
 			email: 'user1@example.com',
 			password: 'P@ssw0rd!',
 			name: randFullName(),
+			additionalProperties: {
+				emailVerified: true,
+			},
 		},
 		db,
 	)

@@ -1,4 +1,8 @@
 import type { NewUser, TKyselyDb } from '~/lib/db.server'
+import {
+	encryptString,
+	generateRandomRecoveryCode,
+} from '~/utils/crypto.server'
 import { hashPassword } from '~/utils/password.server'
 import { newId } from '~/utils/uuid'
 
@@ -7,12 +11,16 @@ interface createUserOptions {
 	name: string
 	password: string
 	additionalProperties?: Partial<
-		Omit<NewUser, 'email' | 'name' | 'passwordHash'>
+		Omit<NewUser, 'email' | 'name' | 'passwordHash' | 'recoveryCode'>
 	>
 }
 
 export async function createUser(options: createUserOptions, db: TKyselyDb) {
 	const passwordHash = await hashPassword(options.password)
+
+	const recoveryCode = generateRandomRecoveryCode()
+	const encryptedRecoveryCode = encryptString(recoveryCode)
+
 	return db
 		.insertInto('user')
 		.values({
@@ -20,6 +28,8 @@ export async function createUser(options: createUserOptions, db: TKyselyDb) {
 			passwordHash,
 			email: options.email,
 			name: options.name,
+			recoveryCode: Buffer.from(encryptedRecoveryCode),
+			emailVerified: false,
 			...(options.additionalProperties && { ...options.additionalProperties }),
 		})
 		.returningAll()

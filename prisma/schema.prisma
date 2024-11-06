@@ -66,10 +66,13 @@ enum GlobalRole {
 model User {
   id String @id @default(cuid())
 
-  name         String
-  email        String     @unique
-  passwordHash String?
-  role         GlobalRole @default(CUSTOMER)
+  name          String
+  email         String     @unique
+  passwordHash  String?
+  role          GlobalRole @default(CUSTOMER)
+  emailVerified Boolean    @default(false)
+  totpKey       Bytes?
+  recoveryCode  Bytes
 
   memberships Membership[]
 

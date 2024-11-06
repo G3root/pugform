@@ -43,6 +43,13 @@ export default defineConfig({
 					route('dashboard/login', buildApplicationPath('auth', 'login.tsx'), {
 						index: true,
 					})
+					route(
+						'dashboard/sign-up',
+						buildApplicationPath('auth', 'sign-up.tsx'),
+						{
+							index: true,
+						},
+					)
 
 					route(
 						'dashboard/forms/:formId/edit',

@@ -103,7 +103,7 @@ export default function Login() {
 	})
 
 	return (
-		<div className="flex items-center justify-center w-full h-full">
+		<div className="h-screen flex flex-col items-center justify-center">
 			<Form method="POST" {...getFormProps(form)}>
 				<Card className="max-w-md mx-auto">
 					<Card.Header>
