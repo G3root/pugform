@@ -3,6 +3,7 @@ import { parseWithZod } from '@conform-to/zod'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import type { LoaderFunctionArgs } from '@remix-run/node'
 import { Form, data, useLoaderData, useParams } from '@remix-run/react'
+import { Button, type ButtonProps } from '~/components/ui/button'
 import { BuilderFormList } from '~/modules/builder/components/builder-form-list'
 import { BuilderHeader } from '~/modules/builder/components/builder-header'
 import { BuilderStoreProvider } from '~/modules/builder/providers/builder-store-provider'
@@ -10,6 +11,7 @@ import { useBuilderForm } from '~/modules/form/hooks/use-builder-form'
 import { UpdateFormSchema } from '~/modules/form/schema'
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
+import { newId } from '~/utils/uuid'
 
 export async function action({ request, context }: ActionFunctionArgs) {
 	requireAuth(context)
@@ -62,6 +64,18 @@ export default function FormEditPage() {
 
 	const id = formValues.id
 	const status = formValues.status
+
+	const addPagesHandler = () => {
+		const page = form.getFieldset().pages
+
+		form.insert({
+			name: page.name,
+			defaultValue: {
+				id: newId('page'),
+				fields: [],
+			},
+		})
+	}
 	return (
 		<div className="flex flex-col w-full min-h-screen bg-[hsl(var(--secondary)/80%)]">
 			<FormProvider context={form.context}>
@@ -82,10 +96,18 @@ export default function FormEditPage() {
 							/>
 
 							<BuilderFormList formId={formId} />
+
+							<AddNewPageButton onPress={addPagesHandler} />
 						</Form>
 					</div>
 				</BuilderStoreProvider>
 			</FormProvider>
 		</div>
 	)
+}
+
+interface AddNewPageButtonProps extends ButtonProps {}
+
+function AddNewPageButton(props: AddNewPageButtonProps) {
+	return <Button {...props}>add new page</Button>
 }

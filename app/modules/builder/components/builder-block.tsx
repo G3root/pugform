@@ -7,13 +7,14 @@ import {
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { Form } from '@remix-run/react'
-import { IconSettings } from 'justd-icons'
+import { IconSettings, IconTrash } from 'justd-icons'
 import { z } from 'zod'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Input } from '~/components/ui/field'
 import { Sheet } from '~/components/ui/sheet'
+import { Stack } from '~/components/ui/stack'
 import { Switch } from '~/components/ui/switch'
 import { TextField } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
@@ -67,41 +68,11 @@ export function BuilderBlock({ formId, formPageIndex }: BuilderBlockProps) {
 											formId={formId}
 											formPageIndex={formPageIndex}
 										/>
-
-										{/* <Menu>
-											<Button
-												aria-label="Menu"
-												size="square-petite"
-												appearance="outline"
-											>
-												<IconSettings />
-											</Button>
-
-											<Menu.Content>
-												<Menu.Separator />
-												<Menu.Item
-													onAction={() => {
-														form.remove({ index, name: fieldItems.name })
-													}}
-													isDanger
-												>
-													<IconTrash /> Delete
-												</Menu.Item>
-											</Menu.Content>
-										</Menu> */}
 									</div>
 								</div>
 							</Card.Header>
 
 							<Card.Content>
-								<label className="sr-only" htmlFor={''}>
-									label
-								</label>
-								<Input
-									{...getInputProps(label, { type: 'text' })}
-									key={label.key}
-									placeholder="type a question"
-								/>
 								<input
 									{...getInputProps(type, { type: 'hidden' })}
 									key={type.key}
@@ -127,6 +98,32 @@ export function BuilderBlock({ formId, formPageIndex }: BuilderBlockProps) {
 									key={description.key}
 									readOnly
 								/>
+
+								<Stack direction="row">
+									<div className="flex-1">
+										<label className="sr-only" htmlFor={`label-${item.key}`}>
+											label
+										</label>
+										<Input
+											{...getInputProps(label, { type: 'text' })}
+											key={label.key}
+											placeholder="type a question"
+											id={`label-${item.key}`}
+											className="border-b focus:border-primary"
+										/>
+									</div>
+									<Button
+										aria-label="delete field"
+										appearance="outline"
+										size="square-petite"
+										intent="danger"
+										onPress={() => {
+											form.remove({ index, name: fieldItems.name })
+										}}
+									>
+										<IconTrash />
+									</Button>
+								</Stack>
 							</Card.Content>
 						</Card>
 					)
@@ -180,6 +177,7 @@ function BlockSettingsSheet({
 					value: {
 						...fieldItems,
 						...submission.payload,
+						required: submission?.payload?.required ?? false,
 					},
 				})
 			}
@@ -217,8 +215,8 @@ function BlockSettingsSheet({
 							errors={fields.description.errors}
 						/>
 						<Switch
-							defaultSelected={fields.required.initialValue === 'on'}
 							{...getInputProps(fields.required, { type: 'checkbox' })}
+							defaultSelected={fields.required.initialValue === 'on'}
 						>
 							Required
 						</Switch>

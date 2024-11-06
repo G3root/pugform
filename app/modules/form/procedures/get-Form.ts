@@ -41,7 +41,6 @@ export const getFormProcedure = withAuthProcedure
 									'f.id',
 									'f.type',
 									'f.required',
-									'f.order',
 									'f.description',
 									'f.placeholder',
 								])
