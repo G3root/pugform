@@ -18,7 +18,10 @@ export function useResponseForm() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const Schema = useMemo(() => {
-		const fields = data.pages?.[currentStep].fields
+		const fields =
+			data.form.layout === 'CARD'
+				? data.fields
+				: data.pages?.[currentStep].fields
 
 		return fields ? createFieldSchema(fields) : z.object({})
 	}, [currentStep])

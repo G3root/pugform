@@ -39,14 +39,19 @@ export const getFormPublicProcedure = baseProcedure
 			totalPages:
 				form.layout === 'CLASSIC'
 					? pages.length
-					: (pages?.[0]?.fields.length ?? 1),
+					: pages.flatMap((item) => item.fields).length,
 		}
+
+		const fieldData =
+			form.layout === 'CLASSIC'
+				? { pages }
+				: { fields: pages.flatMap((item) => item.fields) }
 
 		return {
 			data: {
 				form,
-				pages,
 				meta,
+				...fieldData,
 			},
 		}
 	})
