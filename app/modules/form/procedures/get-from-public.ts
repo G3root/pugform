@@ -25,7 +25,7 @@ export const getFormPublicProcedure = baseProcedure
 					jsonArrayFrom(
 						eb
 							.selectFrom('field as f')
-							.select(['f.label', 'f.id', 'f.type', 'f.required', 'f.order'])
+							.selectAll()
 							.whereRef('f.formPageId', '=', 'formPage.id'),
 					).as('fields'),
 				])
@@ -35,10 +35,18 @@ export const getFormPublicProcedure = baseProcedure
 			return { pages, form }
 		})
 
+		const meta = {
+			totalPages:
+				form.layout === 'CLASSIC'
+					? pages.length
+					: (pages?.[0]?.fields.length ?? 1),
+		}
+
 		return {
 			data: {
 				form,
 				pages,
+				meta,
 			},
 		}
 	})

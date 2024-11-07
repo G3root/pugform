@@ -4,6 +4,7 @@ import { data, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { type NewAnswer, db } from '~/lib/db.server'
 import { ClassicForm } from '~/modules/form/components/classic-form'
+import { FormMachineContext } from '~/modules/form/state-machines/form-machine'
 
 import { trpcServer } from '~/trpc/server'
 import { newId } from '~/utils/uuid'
@@ -84,7 +85,13 @@ export type TFormViewLoader = typeof loader
 export default function PublicFormView() {
 	const { data } = useLoaderData<TFormViewLoader>()
 
-	if (data.form.layout === 'CLASSIC') {
-		return <ClassicForm />
-	}
+	return (
+		<FormMachineContext.Provider
+			options={{
+				input: { currentPage: 0, totalPage: data.meta.totalPages },
+			}}
+		>
+			{data.form.layout === 'CLASSIC' ? <ClassicForm /> : null}
+		</FormMachineContext.Provider>
+	)
 }
