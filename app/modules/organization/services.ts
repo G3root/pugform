@@ -3,9 +3,22 @@ import { newId } from '~/utils/uuid'
 
 export async function createOrganization(
 	db: TKyselyDb,
-	organizationOptions: Omit<NewOrganization, 'id'> & { userId: string },
+	organizationOptions: Omit<
+		NewOrganization,
+		'id' | 'createdAt' | 'updatedAt'
+	> & {
+		userId: string
+	},
 	membershipOptions?: Partial<
-		Omit<NewMembership, 'id' | 'organizationId' | 'userId'>
+		Omit<
+			NewMembership,
+			| 'id'
+			| 'organizationId'
+			| 'userId'
+			| 'createdAt'
+			| 'lastAccessed'
+			| 'updatedAt'
+		>
 	>,
 ) {
 	const { userId, ...rest } = organizationOptions
@@ -13,6 +26,8 @@ export async function createOrganization(
 		.insertInto('organization')
 		.values({
 			id: newId('organization'),
+			createdAt: new Date(),
+			updatedAt: new Date(),
 			...rest,
 		})
 
@@ -25,6 +40,9 @@ export async function createOrganization(
 			organizationId: organization.id,
 			userId,
 			id: newId('member'),
+			lastAccessed: new Date(),
+			createdAt: new Date(),
+			updatedAt: new Date(),
 			...(membershipOptions && { ...membershipOptions }),
 		})
 		.returning(['id'])

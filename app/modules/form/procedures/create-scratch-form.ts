@@ -25,6 +25,8 @@ export const createScratchFormProcedure = withAuthProcedure
 					title: `Untitled ${input.layout === 'CARD' ? 'card' : 'classic'} form`,
 					id: shortId(FORM_ID_LENGTH),
 					layout: input.layout,
+					createdAt: new Date(),
+					updatedAt: new Date(),
 				})
 				.returning(['id'])
 				.executeTakeFirstOrThrow()
@@ -36,6 +38,8 @@ export const createScratchFormProcedure = withAuthProcedure
 					formId: form.id,
 					id: newId('page'),
 					index: 0,
+					createdAt: new Date(),
+					updatedAt: new Date(),
 				})
 				.execute()
 

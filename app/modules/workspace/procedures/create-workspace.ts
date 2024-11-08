@@ -41,6 +41,8 @@ export async function createWorkSpaceHandler({
 			name,
 			id: newId('workspace'),
 			publicId: shortId(WORKSPACE_PUBLIC_ID_LENGTH),
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		})
 		.execute()
 }

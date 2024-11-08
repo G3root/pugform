@@ -25,8 +25,8 @@ model Organization {
   id   String @id @default(cuid())
   name String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
 
   membership Membership[]
   Workspace  Workspace[]
@@ -44,13 +44,13 @@ model Membership {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  lastAccessed DateTime @default(now())
+  lastAccessed DateTime
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now())
+  createdAt DateTime
+  updatedAt DateTime
   Form      Form[]
   Session   Session[]
   Workspace Workspace[]
@@ -76,8 +76,8 @@ model User {
 
   memberships Membership[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
+  createdAt DateTime
+  updatedAt DateTime
   Session   Session[]
 
   @@map("user")
@@ -95,8 +95,8 @@ model Session {
   user         User         @relation(fields: [userId], references: [id])
   membership   Membership   @relation(fields: [membershipId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
 
   @@map("session")
 }
@@ -112,8 +112,8 @@ model Workspace {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
   Form      Form[]
 
   @@unique([publicId, organizationId])
@@ -149,8 +149,8 @@ model Form {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
 
   FormPage FormPage[]
   Response Response[]
@@ -169,8 +169,8 @@ model FormPage {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
   Field     Field[]
 
   @@map("formPage")
@@ -205,8 +205,8 @@ model Field {
 
   options String[] @default([])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
   Answers   Answer[]
 
   @@map("field")
@@ -223,8 +223,8 @@ model Response {
 
   answers Answer[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
 
   @@map("response")
 }
@@ -243,8 +243,8 @@ model Answer {
   Response   Response @relation(fields: [responseId], references: [id])
   responseId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  createdAt DateTime
+  updatedAt DateTime
 
   @@map("answer")
 }

@@ -49,6 +49,8 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 			formId: form.id,
 			id: newId('response'),
 			organizationId: form.organizationId,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		})
 		.returning(['id'])
 		.executeTakeFirstOrThrow()
@@ -72,6 +74,8 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 				responseId: response.id,
 				type: field.type,
 				fieldId: field.id,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			})
 		}
 	}

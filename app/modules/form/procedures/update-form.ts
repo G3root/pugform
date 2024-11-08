@@ -2,8 +2,9 @@ import type { Field, NewField, NewFormPage, TKyselyDb } from '~/lib/db.server'
 import { withAuthProcedure } from '~/trpc/init'
 import { type TUpdateFormSchema, UpdateFormSchema } from '../schema'
 
-const fieldKeys: Record<keyof Field, string> = {
-	createdAt: '',
+type Keys = keyof Field
+
+const fieldKeys: Record<Exclude<Keys, 'createdAt'>, string> = {
 	description: '',
 	type: '',
 	required: '',
@@ -115,6 +116,8 @@ function getCreatedPages(
 			id: p.id,
 			organizationId,
 			index,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		}))
 }
 
@@ -128,6 +131,8 @@ function getUpdatedFields(
 			formPageId: pageId,
 			formId,
 			order: fieldIndex,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		})),
 	)
 }

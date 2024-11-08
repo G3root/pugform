@@ -130,6 +130,8 @@ export async function createSession(
 			userId: session.userId,
 			expiresAt: Math.floor(session.expiresAt.getTime() / 1000),
 			membershipId: session.membershipId,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		})
 		.executeTakeFirstOrThrow()
 	return session

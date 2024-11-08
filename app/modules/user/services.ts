@@ -11,7 +11,15 @@ interface createUserOptions {
 	name: string
 	password: string
 	additionalProperties?: Partial<
-		Omit<NewUser, 'email' | 'name' | 'passwordHash' | 'recoveryCode'>
+		Omit<
+			NewUser,
+			| 'email'
+			| 'name'
+			| 'passwordHash'
+			| 'recoveryCode'
+			| 'createdAt'
+			| 'updatedAt'
+		>
 	>
 }
 
@@ -30,6 +38,8 @@ export async function createUser(options: createUserOptions, db: TKyselyDb) {
 			name: options.name,
 			recoveryCode: Buffer.from(encryptedRecoveryCode),
 			emailVerified: false,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 			...(options.additionalProperties && { ...options.additionalProperties }),
 		})
 		.returningAll()
