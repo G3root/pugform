@@ -16,7 +16,6 @@ export const getResponsesProcedure = withAuthProcedure
 					eb
 						.selectFrom('answer as a')
 						.select(['a.question', 'a.answer', 'a.type', 'a.order', 'a.id'])
-						.orderBy('createdAt', 'desc')
 						.whereRef('r.id', '=', 'a.responseId'),
 				).as('answers'),
 			])
@@ -26,18 +25,27 @@ export const getResponsesProcedure = withAuthProcedure
 
 		const labels = Array.from(
 			new Set(responses.flatMap((r) => r.answers.map((a) => a.question))),
-		).sort((a, b) => {
-			const orderA =
-				responses[0].answers.find((ans) => ans.question === a)?.order ?? 0
-			const orderB =
-				responses[0].answers.find((ans) => ans.question === b)?.order ?? 0
-			return orderA - orderB
+		)
+
+		const structuredResponses = responses.map((response) => {
+			const orderedAnswers = labels.map((question, index) => {
+				const answerObj = response.answers.find((a) => a.question === question)
+				return answerObj
+					? { id: answerObj.id, answer: answerObj.answer, type: answerObj.type }
+					: { id: `placeholder-${index}`, answer: null, type: null } // Placeholder for missing answers
+			})
+
+			return {
+				id: response.id,
+				answers: orderedAnswers,
+				createdAt: response.createdAt,
+			}
 		})
 
 		return {
 			data: {
 				labels,
-				responses,
+				responses: structuredResponses,
 			},
 		}
 	})
