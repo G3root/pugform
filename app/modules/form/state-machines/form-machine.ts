@@ -7,6 +7,7 @@ const formMachine = setup({
 			currentPage: number
 			totalPages: number
 			data: Record<string, string>
+			progressPercentage: number
 		},
 		events: {} as
 			| { type: 'NEXT' }
@@ -23,9 +24,13 @@ const formMachine = setup({
 	actions: {
 		incrementPage: assign({
 			currentPage: ({ context }) => context.currentPage + 1,
+			progressPercentage: ({ context }) =>
+				((context.currentPage + 1) / context.totalPages) * 100,
 		}),
 		decrementPage: assign({
 			currentPage: ({ context }) => context.currentPage - 1,
+			progressPercentage: ({ context }) =>
+				((context.currentPage - 1) / context.totalPages) * 100,
 		}),
 
 		updateData: assign({
@@ -36,6 +41,9 @@ const formMachine = setup({
 							...event.data,
 						}
 					: context.data,
+		}),
+		setCompleteProgress: assign({
+			progressPercentage: () => 100,
 		}),
 	},
 	guards: {
@@ -49,6 +57,7 @@ const formMachine = setup({
 		currentPage: input.currentPage,
 		totalPages: input.totalPage,
 		data: {},
+		progressPercentage: (input.currentPage / input.totalPage) * 100,
 	}),
 	states: {
 		page: {
@@ -57,6 +66,7 @@ const formMachine = setup({
 					{
 						guard: 'isLastPage',
 						target: 'ending',
+						actions: 'setCompleteProgress',
 					},
 					{
 						actions: 'incrementPage',

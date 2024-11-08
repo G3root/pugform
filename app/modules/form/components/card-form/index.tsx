@@ -7,13 +7,17 @@ import type { TFormViewLoader } from '~/routes/(subDomain)/public-form-view'
 import { FormMachineContext } from '../../state-machines/form-machine'
 import { ResponseForm } from '../response-form'
 import { CardFormFieldRenderer } from './card-form-renderer'
+import { ProgressBar } from './progress-bar'
 
 export function CardForm() {
 	return (
-		<ResponseForm className="flex items-center justify-center min-h-screen">
-			<FormPage />
-			<EndingPage />
-		</ResponseForm>
+		<>
+			<ResponseForm className="flex flex-col items-center justify-center min-h-screen">
+				<ProgressBar />
+				<FormPage />
+				<EndingPage />
+			</ResponseForm>
+		</>
 	)
 }
 
@@ -49,7 +53,7 @@ function FormPage() {
 	const field = data?.fields?.[currentStep]
 
 	return field ? (
-		<Container className="max-w-3xl bg-bg rounded-xl w-full border h-full">
+		<Container className="max-w-3xl w-full h-full">
 			<Stack direction="column" className="p-6">
 				<CardFormFieldRenderer key={field.id} {...field} />
 

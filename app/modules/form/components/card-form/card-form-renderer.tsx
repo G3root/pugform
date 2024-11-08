@@ -1,5 +1,6 @@
 import { useListData } from 'react-stately'
 import { Checkbox } from '~/components/ui/checkbox'
+import { Input, InputPrimitive, Label } from '~/components/ui/field'
 import {
 	MultipleSelect,
 	type SelectedKey,
@@ -7,7 +8,7 @@ import {
 import { NumberField } from '~/components/ui/number-field'
 import { Radio, RadioGroup } from '~/components/ui/radio'
 import { Select } from '~/components/ui/select'
-import { TextField } from '~/components/ui/text-field'
+import { TextField, TextFieldPrimitive } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
 import type { FieldType } from '~/generated/enums'
 
@@ -33,7 +34,19 @@ export function CardFormFieldRenderer({
 
 	switch (type) {
 		case 'SHORT_ANSWER':
-			return <TextField label={label} isRequired={required} name={id} />
+			return (
+				<TextFieldPrimitive
+					isRequired={required}
+					name={id}
+					className="group flex flex-col gap-2"
+				>
+					<Label className="text-3xl sm:text-4xl font-bold leading-tight">
+						{label}
+					</Label>
+
+					<InputPrimitive className="text-xl sm:text-2xl focus:border-primary border-input  border-b-2 bg-transparent focus:outline-none transition forced-colors:bg-[Field]" />
+				</TextFieldPrimitive>
+			)
 
 		case 'LONG_ANSWER':
 			return <Textarea label={label} isRequired={required} name={id} />
