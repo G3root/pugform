@@ -1,4 +1,5 @@
 import { createActorContext } from '@xstate/react'
+import { create } from 'mutative'
 import { assign, setup } from 'xstate'
 
 const formMachine = setup({
@@ -6,7 +7,7 @@ const formMachine = setup({
 		context: {} as {
 			currentPage: number
 			totalPages: number
-			data: Record<string, string>
+			data: Record<string, string>[]
 			progressPercentage: number
 		},
 		events: {} as
@@ -35,12 +36,11 @@ const formMachine = setup({
 
 		updateData: assign({
 			data: ({ context, event }) =>
-				event.type === 'UPDATE_DATA'
-					? {
-							...context.data,
-							...event.data,
-						}
-					: context.data,
+				create(context.data, (draft) => {
+					if (event.type === 'UPDATE_DATA') {
+						draft.push(event.data)
+					}
+				}),
 		}),
 		setCompleteProgress: assign({
 			progressPercentage: () => 100,
@@ -56,7 +56,7 @@ const formMachine = setup({
 	context: ({ input }) => ({
 		currentPage: input.currentPage,
 		totalPages: input.totalPage,
-		data: {},
+		data: [],
 		progressPercentage: (input.currentPage / input.totalPage) * 100,
 	}),
 	states: {

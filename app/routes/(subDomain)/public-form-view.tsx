@@ -31,7 +31,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
 	if (submission.status !== 'success') {
 		return data(
-			{ result: submission.reply() },
+			{ result: submission.reply(), status: 'failed' as const },
 			{ status: submission.status === 'error' ? 400 : 200 },
 		)
 	}
@@ -78,10 +78,14 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
 	await db.insertInto('answer').values(answersToCreate).execute()
 
-	return {}
+	return data(
+		{ result: submission.reply(), status: 'success' as const },
+		{ status: 200 },
+	)
 }
 
 export type TFormViewLoader = typeof loader
+export type TFormViewAction = typeof action
 
 export default function PublicFormView() {
 	const { data } = useLoaderData<TFormViewLoader>()
