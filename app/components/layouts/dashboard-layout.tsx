@@ -35,7 +35,7 @@ function AppSidebar() {
 		<Sidebar intent="inset">
 			<Sidebar.Content>
 				<Sidebar.Section>
-					<Sidebar.Item isCurrent icon={IconDashboard} href="#">
+					<Sidebar.Item icon={IconDashboard} href="/dashboard">
 						Dashboard
 					</Sidebar.Item>
 				</Sidebar.Section>
