@@ -2,6 +2,7 @@ import { useRouteLoaderData } from '@remix-run/react'
 import { IconDashboard } from 'justd-icons'
 import type { ReactNode } from 'react'
 import type { TDashboardLoader } from '~/routes/(application)/(dashboard)/_layout'
+import { Separator } from '../ui/separator'
 import { Sidebar } from '../ui/sidebar'
 
 interface DashboardLayoutProps {
@@ -22,9 +23,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function Header() {
 	return (
-		<header className="sticky justify-between sm:justify-start top-0 h-[3.57rem] px-4 flex items-center gap-x-2">
-			<span className="flex items-center">
-				<Sidebar.Trigger className="-ml-1" />
+		<header className="sticky justify-between sm:justify-start top-0 bg-bg h-[3.57rem] px-4 border-b flex items-center gap-x-2">
+			<span className="flex items-center gap-x-3">
+				<Sidebar.Trigger className="-mx-2" />
+				<Separator className="h-6 sm:block hidden" orientation="vertical" />
 			</span>
 		</header>
 	)
@@ -32,7 +34,7 @@ function Header() {
 
 function AppSidebar() {
 	return (
-		<Sidebar intent="inset">
+		<Sidebar>
 			<Sidebar.Content>
 				<Sidebar.Section>
 					<Sidebar.Item icon={IconDashboard} href="/dashboard">

@@ -1,5 +1,6 @@
 import { createTRPCRouter } from '~/trpc/init'
 import { addSubmissionProcedure } from './add-submission'
+import { allFormProcedure } from './all-form'
 import { createScratchFormProcedure } from './create-scratch-form'
 import { deleteFormProcedure } from './delete-form'
 import { getFormProcedure } from './get-Form'
@@ -17,4 +18,5 @@ export const formRouter = createTRPCRouter({
 	update: updateFormProcedure,
 	addSubmission: addSubmissionProcedure,
 	responses: getResponsesProcedure,
+	all: allFormProcedure,
 })
