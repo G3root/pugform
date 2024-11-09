@@ -8,14 +8,20 @@ import {
 } from '@remix-run/node'
 import {
 	Form,
+	Link,
 	useActionData,
 	useLoaderData,
 	useSearchParams,
 } from '@remix-run/react'
+
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Stack } from '~/components/ui/stack'
+
 import { TextField } from '~/components/ui/text-field'
 import { login, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
@@ -26,6 +32,7 @@ const LoginFormSchema = z.object({
 	email: EmailSchema,
 	password: PasswordSchema,
 	redirectTo: z.string().optional(),
+	remember: z.boolean().optional(),
 })
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
@@ -103,14 +110,22 @@ export default function Login() {
 	})
 
 	return (
-		<div className="h-screen flex flex-col items-center justify-center">
-			<Form method="POST" {...getFormProps(form)}>
-				<Card className="max-w-md mx-auto">
+		<div className="flex min-h-screen flex-col items-center pt-16 sm:justify-center sm:pt-0">
+			<Form
+				className="relative mt-6 w-full max-w-lg"
+				method="POST"
+				{...getFormProps(form)}
+			>
+				<Card>
 					<Card.Header>
 						<Card.Title>Login</Card.Title>
+						<Card.Description>
+							Welcome back, please enter your credentials to continue.
+						</Card.Description>
 					</Card.Header>
 					<Card.Content className="space-y-6">
 						<ErrorList errors={form.errors} id={form.errorId} />
+						<HoneypotInputs />
 						<TextField
 							label="Email"
 							placeholder="Enter your email"
@@ -124,17 +139,34 @@ export default function Login() {
 							{...getInputProps(fields.password, { type: 'password' })}
 							errors={fields.password.errors}
 						/>
+
 						<div className="flex justify-between items-center">
-							{/* <Checkbox>Remember me</Checkbox> */}
-							{/* <Link intent="primary" href="#">
-            Forgot password?
-          </Link> */}
+							<Checkbox>Remember me</Checkbox>
+							<Link
+								className="text-sm text-fg underline"
+								to="/dashboard/forgot-password"
+							>
+								Forgot password?
+							</Link>
 						</div>
+						<input {...getInputProps(fields.redirectTo, { type: 'hidden' })} />
 					</Card.Content>
 					<Card.Footer>
-						<Button type="submit" className="w-full">
-							Login
-						</Button>
+						<Stack
+							fullWidth
+							direction="row"
+							align="center"
+							justify="between"
+							gap={3}
+						>
+							<Link
+								className="text-sm text-fg underline"
+								to="/dashboard/sign-up"
+							>
+								Create an account
+							</Link>
+							<Button type="submit">Login</Button>
+						</Stack>
 					</Card.Footer>
 				</Card>
 			</Form>

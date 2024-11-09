@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import {
 	Form,
+	Link,
 	data,
 	redirect,
 	useActionData,
@@ -82,6 +83,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 export default function SignUp() {
 	const actionData = useActionData<typeof action>()
 	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo')
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
@@ -95,9 +97,13 @@ export default function SignUp() {
 	})
 
 	return (
-		<div className="h-screen flex flex-col items-center justify-center">
-			<Form method="POST" {...getFormProps(form)}>
-				<Card className="max-w-md mx-auto">
+		<div className="flex min-h-screen flex-col items-center pt-16 sm:justify-center sm:pt-0">
+			<Form
+				className="relative mt-6 w-full max-w-lg"
+				method="POST"
+				{...getFormProps(form)}
+			>
+				<Card>
 					<Card.Header>
 						<Card.Title>Sign Up</Card.Title>
 						<Card.Description>
@@ -136,9 +142,18 @@ export default function SignUp() {
 						</Stack>
 					</Card.Content>
 					<Card.Footer>
-						<Button type="submit" className="w-full">
-							Create an account
-						</Button>
+						<Stack
+							fullWidth
+							direction="row"
+							align="center"
+							justify="between"
+							gap={3}
+						>
+							<Link className="text-sm text-fg underline" to="/dashboard/login">
+								already have an account?
+							</Link>
+							<Button type="submit">Create an account</Button>
+						</Stack>
 					</Card.Footer>
 				</Card>
 			</Form>
