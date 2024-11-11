@@ -16,24 +16,19 @@ import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Stack } from '~/components/ui/stack'
 import { TextField } from '~/components/ui/text-field'
-import {
-	checkEmailAvailability,
-	requireAnonymous,
-	signUp,
-} from '~/utils/auth.server'
+import { db } from '~/lib/db.server'
+import { checkEmailAvailability, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
-import { setSessionTokenCookie } from '~/utils/session.server'
+import { EmailSchema } from '~/utils/user-validation'
 import {
-	EmailSchema,
-	PasswordAndConfirmPasswordSchema,
-} from '~/utils/user-validation'
+	type TVerificationType,
+	prepareVerification,
+	verifySessionStorage,
+} from '~/utils/verification.server'
 
-const SignUpSchema = z
-	.object({
-		email: EmailSchema,
-		name: z.string(),
-	})
-	.and(PasswordAndConfirmPasswordSchema)
+const SignUpSchema = z.object({
+	email: EmailSchema,
+})
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
 	requireAnonymous(context)
@@ -66,18 +61,41 @@ export async function action({ request, context }: ActionFunctionArgs) {
 		)
 	}
 
-	const { email, name, password } = submission.value
+	const { email } = submission.value
 
-	const session = await signUp({ email, name, password })
+	const target = email
+	const type: TVerificationType = 'email-verification'
 
-	return redirect('/dashboard/verify-email', {
+	const verificationRequest = await db.transaction().execute((trx) => {
+		return prepareVerification(
+			{
+				request,
+				target: email,
+				type,
+				verifyUrlPath: '/dashboard/verify-email',
+			},
+			trx,
+		)
+	})
+
+	sendVerificationEmail(email, verificationRequest.otp)
+
+	const session = await verifySessionStorage.getSession(
+		request.headers.get('Cookie'),
+	)
+
+	session.set('target', target)
+	session.set('type', type)
+
+	return redirect(verificationRequest.redirectTo.toString(), {
 		headers: {
-			'Set-Cookie': setSessionTokenCookie(
-				session.sessionToken,
-				session.expiresAt,
-			),
+			'Set-Cookie': await verifySessionStorage.commitSession(session),
 		},
 	})
+}
+
+function sendVerificationEmail(email: string, code: string): void {
+	console.log(`To ${email}: Your verification code is ${code}`)
 }
 
 export default function SignUp() {
@@ -107,7 +125,7 @@ export default function SignUp() {
 					<Card.Header>
 						<Card.Title>Sign Up</Card.Title>
 						<Card.Description>
-							Enter your information to create an account
+							Enter your email to create an account
 						</Card.Description>
 					</Card.Header>
 					<Card.Content>
@@ -118,26 +136,6 @@ export default function SignUp() {
 								label="Email"
 								{...getInputProps(fields.email, { type: 'email' })}
 								errors={fields.email.errors}
-							/>
-
-							<TextField
-								label="Name"
-								{...getInputProps(fields.name, { type: 'text' })}
-								errors={fields.name.errors}
-							/>
-
-							<TextField
-								label="Password"
-								isRevealable
-								{...getInputProps(fields.password, { type: 'password' })}
-								errors={fields.password.errors}
-							/>
-
-							<TextField
-								label="Confirm Password"
-								isRevealable
-								{...getInputProps(fields.confirmPassword, { type: 'password' })}
-								errors={fields.confirmPassword.errors}
 							/>
 						</Stack>
 					</Card.Content>

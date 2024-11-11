@@ -50,6 +50,21 @@ export default defineConfig({
 							index: true,
 						},
 					)
+					route(
+						'dashboard/onboarding',
+						buildApplicationPath('auth', 'onboarding.tsx'),
+						{
+							index: true,
+						},
+					)
+
+					route(
+						'dashboard/verify-email',
+						buildApplicationPath('auth', 'verify-email.tsx'),
+						{
+							index: true,
+						},
+					)
 
 					route(
 						'dashboard/forms/:formId/edit',

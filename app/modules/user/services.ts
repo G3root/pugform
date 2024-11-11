@@ -37,7 +37,6 @@ export async function createUser(options: createUserOptions, db: TKyselyDb) {
 			email: options.email,
 			name: options.name,
 			recoveryCode: Buffer.from(encryptedRecoveryCode),
-			emailVerified: false,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 			...(options.additionalProperties && { ...options.additionalProperties }),
