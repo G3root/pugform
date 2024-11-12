@@ -54,7 +54,7 @@ function AppSidebar() {
 
 function WorkspaceList() {
 	const data = useRouteLoaderData<TDashboardLoader>(
-		'routes/(application)/(dashboard)/_layout',
+		'./routes/(application)/(dashboard)/_layout',
 	)
 	return data && data.workspaces.length > 0
 		? data.workspaces.map((item) => (

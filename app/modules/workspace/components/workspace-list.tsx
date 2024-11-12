@@ -10,7 +10,7 @@ import { workspaceDeleteActionIntent } from '~/routes/(application)/(dashboard)/
 
 export function WorkspaceList() {
 	const data = useRouteLoaderData<TDashboardLoader>(
-		'routes/(application)/(dashboard)/_layout',
+		'./routes/(application)/(dashboard)/_layout',
 	)
 
 	const [open, setOpen] = useState(false)
