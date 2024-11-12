@@ -1,5 +1,5 @@
+import { FieldType } from '@pugform/database/enums'
 import { z } from 'zod'
-import { FieldType } from '~/generated/enums'
 
 export const FieldSchema = z.object({
 	id: z.string(),

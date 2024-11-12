@@ -1,5 +1,5 @@
+import { FieldType, FormLayout, FormStatus } from '@pugform/database/enums'
 import { z } from 'zod'
-import { FieldType, FormLayout, FormStatus } from '~/generated/enums'
 import { WorkspacePublicIdSchema } from '../workspace/schema'
 import { FORM_ID_MAX_LENGTH, FORM_ID_MIN_LENGTH } from './constants'
 

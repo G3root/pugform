@@ -1,7 +1,7 @@
+import { db } from '@pugform/database'
 import type { AppLoadContext } from '@remix-run/node'
 import { TRPCError, initTRPC } from '@trpc/server'
 import superjson from 'superjson'
-import { db } from '~/lib/db.server'
 
 export interface createTRPCContextOptions {
 	context: AppLoadContext

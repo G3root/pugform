@@ -1,4 +1,8 @@
-import type { NewMembership, NewOrganization, TKyselyDb } from '~/lib/db.server'
+import type {
+	NewMembership,
+	NewOrganization,
+	TKyselyDb,
+} from '@pugform/database'
 import { newId } from '~/utils/uuid'
 
 export async function createOrganization(

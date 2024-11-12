@@ -1,3 +1,4 @@
+import type { FieldType } from '@pugform/database/enums'
 import { useListData } from 'react-stately'
 import { Checkbox } from '~/components/ui/checkbox'
 import {
@@ -9,7 +10,6 @@ import { Radio, RadioGroup } from '~/components/ui/radio'
 import { Select } from '~/components/ui/select'
 import { TextField } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
-import type { FieldType } from '~/generated/enums'
 
 interface ClassicFieldRendererProps {
 	type: FieldType

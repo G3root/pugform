@@ -1,5 +1,5 @@
+import type { Field } from '@pugform/database'
 import { z } from 'zod'
-import type { Field } from '~/lib/db.server'
 import { EmailSchema } from '~/utils/user-validation'
 
 export function createFieldSchema(fields: Field[]) {

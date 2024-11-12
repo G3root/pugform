@@ -1,3 +1,4 @@
+import type { FieldType } from '@pugform/database/enums'
 import { useListData } from 'react-stately'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Input, InputPrimitive, Label } from '~/components/ui/field'
@@ -10,7 +11,6 @@ import { Radio, RadioGroup } from '~/components/ui/radio'
 import { Select } from '~/components/ui/select'
 import { TextField, TextFieldPrimitive } from '~/components/ui/text-field'
 import { Textarea } from '~/components/ui/textarea'
-import type { FieldType } from '~/generated/enums'
 
 interface CardFormFieldRendererProps {
 	type: FieldType

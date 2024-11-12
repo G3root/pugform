@@ -14,7 +14,7 @@ import type {
 	Membership as MembershipTable,
 	Organization as OrganizationTable,
 	User as UserTable,
-} from '~/generated/db-types'
+} from './generated/db-types'
 
 const DATABASE_URL = process.env.DATABASE_URL
 
@@ -30,6 +30,12 @@ export const db = new Kysely<Database>({
 		pool,
 	}),
 })
+
+export {
+	jsonArrayFrom,
+	jsonBuildObject,
+	jsonObjectFrom,
+} from 'kysely/helpers/postgres'
 
 export type TKyselyDb = typeof db
 

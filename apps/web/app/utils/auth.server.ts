@@ -1,5 +1,5 @@
+import { db } from '@pugform/database'
 import { type AppLoadContext, redirect } from '@remix-run/node'
-import { db } from '~/lib/db.server'
 import { createOrganization } from '~/modules/organization/services'
 import { createUser } from '~/modules/user/services'
 import { createWorkSpaceHandler } from '~/modules/workspace/procedures/create-workspace'

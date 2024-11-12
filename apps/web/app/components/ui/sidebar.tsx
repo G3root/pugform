@@ -75,6 +75,7 @@ const Provider = React.forwardRef<
 			[setOpenProp, open],
 		)
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		const toggleSidebar = React.useCallback(() => {
 			return isMobile
 				? setOpenMobile((open) => !open)
@@ -95,6 +96,7 @@ const Provider = React.forwardRef<
 
 		const state = open ? 'expanded' : 'collapsed'
 
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 		const contextValue = React.useMemo<SidebarContextProps>(
 			() => ({
 				state,

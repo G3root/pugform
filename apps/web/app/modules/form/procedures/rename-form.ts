@@ -1,4 +1,4 @@
-import { db } from '~/lib/db.server'
+import { db } from '@pugform/database'
 import { withAuthProcedure } from '~/trpc/init'
 import { RenameFormSchema } from '../schema'
 

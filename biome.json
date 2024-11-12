@@ -1,5 +1,6 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -12,7 +13,8 @@
 		"indentStyle": "tab",
 		"indentWidth": 2,
 		"lineEnding": "lf",
-		"lineWidth": 80
+		"lineWidth": 80,
+		"ignore": [".vscode/remix.code-snippets"]
 	},
 	"organizeImports": {
 		"enabled": true
@@ -24,7 +26,8 @@
 			"correctness": {
 				"useExhaustiveDependencies": "warn"
 			}
-		}
+		},
+		"ignore": [".vscode/remix.code-snippets"]
 	},
 	"javascript": {
 		"formatter": {

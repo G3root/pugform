@@ -1,4 +1,4 @@
-import type { TKyselyDb } from '~/lib/db.server'
+import type { TKyselyDb } from '@pugform/database'
 import { withAuthProcedure } from '~/trpc/init'
 import { newId, shortId } from '~/utils/uuid'
 import { WORKSPACE_PUBLIC_ID_LENGTH } from '../constants'

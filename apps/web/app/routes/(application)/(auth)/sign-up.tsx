@@ -1,5 +1,6 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { db } from '@pugform/database'
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import {
 	Form,
@@ -16,7 +17,6 @@ import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Stack } from '~/components/ui/stack'
 import { TextField } from '~/components/ui/text-field'
-import { db } from '~/lib/db.server'
 import { checkEmailAvailability, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import { EmailSchema } from '~/utils/user-validation'

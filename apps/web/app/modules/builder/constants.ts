@@ -1,4 +1,4 @@
-import type { FieldType } from '~/generated/enums'
+import type { FieldType } from '@pugform/database/enums'
 
 export const FIELD_LIST: { type: FieldType; label: string }[] = [
 	{ type: 'SHORT_ANSWER', label: 'Short Answer' },

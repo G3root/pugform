@@ -1,4 +1,4 @@
-import { jsonArrayFrom } from 'kysely/helpers/postgres'
+import { jsonArrayFrom } from '@pugform/database'
 import { withAuthProcedure } from '~/trpc/init'
 import { GetFormSchema } from '../schema'
 

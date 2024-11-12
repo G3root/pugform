@@ -1,4 +1,4 @@
-import type { NewUser, TKyselyDb } from '~/lib/db.server'
+import type { NewUser, TKyselyDb } from '@pugform/database'
 import {
 	encryptString,
 	generateRandomRecoveryCode,

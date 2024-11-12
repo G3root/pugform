@@ -3,8 +3,8 @@ import {
 	encodeBase32LowerCaseNoPadding,
 	encodeHexLowerCase,
 } from '@oslojs/encoding'
+import type { TKyselyDb } from '@pugform/database'
 import * as cookies from 'cookie'
-import type { TKyselyDb } from '~/lib/db.server'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>

@@ -1,4 +1,4 @@
-import type { FieldType } from '~/generated/enums'
+import type { FieldType } from '@pugform/database/enums'
 
 export const FORM_ID_LENGTH = 9
 export const FORM_ID_MAX_LENGTH = FORM_ID_LENGTH

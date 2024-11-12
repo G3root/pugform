@@ -1,4 +1,4 @@
-import type { Field, NewField, NewFormPage, TKyselyDb } from '~/lib/db.server'
+import type { Field, NewField, NewFormPage, TKyselyDb } from '@pugform/database'
 import { withAuthProcedure } from '~/trpc/init'
 import { type TUpdateFormSchema, UpdateFormSchema } from '../schema'
 

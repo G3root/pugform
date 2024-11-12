@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import crypto from 'node:crypto'
+import { db } from '@pugform/database'
 import { createRequestHandler } from '@remix-run/express'
 import { ip as ipAddress } from 'address'
 import chalk from 'chalk'
@@ -10,7 +11,6 @@ import { rateLimit } from 'express-rate-limit'
 import getPort, { portNumbers } from 'get-port'
 // import helmet from "helmet";
 import morgan from 'morgan'
-import { db } from '~/lib/db.server.js'
 import { verifyRequestOrigin } from '~/utils/auth.server.js'
 import {
 	deleteSessionTokenCookie,

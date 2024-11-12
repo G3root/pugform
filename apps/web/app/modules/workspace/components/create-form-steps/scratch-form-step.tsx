@@ -1,8 +1,8 @@
+import { FormLayout } from '@pugform/database/enums'
 import { useFetcher, useParams } from '@remix-run/react'
 import { ButtonPrimitive } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Stack } from '~/components/ui/stack'
-import { FormLayout } from '~/generated/enums'
 import { scratchFormActionIntent } from '~/routes/(application)/(dashboard)/forms/create-form'
 
 export function ScratchFormStep() {
