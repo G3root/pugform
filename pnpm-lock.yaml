@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dotenv-cli:
+        specifier: ^7.4.2
+        version: 7.4.2
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -110,6 +114,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       express:
         specifier: ^4.21.1
         version: 4.21.1
@@ -216,9 +223,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.20(postcss@8.4.47)
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       postcss:
         specifier: ^8.4.38
         version: 8.4.47
@@ -3143,6 +3147,14 @@ packages:
 
   domutils@3.1.0:
     resolution: {integrity: sha512-H78uMmQtI2AhgDJjWeQmHwJJ2bLPD3GMmO7Zja/ZZh84wkm+4ut+IUnUdRa8uCGX88DiVx1j6FRe1XfxEgjEZA==}
+
+  dotenv-cli@7.4.2:
+    resolution: {integrity: sha512-SbUj8l61zIbzyhIbg0FwPJq6+wjbzdn9oEtozQpZ6kW2ihCcapKVZj49oCT3oPM+mgQm+itgvUQcG5szxVrZTA==}
+    hasBin: true
+
+  dotenv-expand@10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
@@ -9012,6 +9024,15 @@ snapshots:
       dom-serializer: 2.0.0
       domelementtype: 2.3.0
       domhandler: 5.0.3
+
+  dotenv-cli@7.4.2:
+    dependencies:
+      cross-spawn: 7.0.3
+      dotenv: 16.4.5
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+
+  dotenv-expand@10.0.0: {}
 
   dotenv@16.0.3: {}
 
