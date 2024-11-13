@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
-    "dev": "pnpm with-env tsx ./server.ts",
+    "dev": "dotenvx run -f ../../.env -- tsx ./server.ts",
     "format": "biome format ./ --write",
     "lint": "biome lint ./ --apply",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc",
-    "with-env": "dotenv -e ../../.env --"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@conform-to/react": "^1.2.2",
