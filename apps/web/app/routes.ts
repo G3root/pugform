@@ -66,7 +66,6 @@ const workspaceRoutes = prefix('workspaces', [
 			buildApplicationRoutePath(DASHBOARD_SEGMENT, 'forms/create-form.tsx'),
 		),
 	]),
-	...prefix('forms/:formId', formRoutes),
 ])
 
 const settingsRoutes = [
@@ -82,6 +81,7 @@ const dashboardRoutes = [
 		index(buildApplicationRoutePath(DASHBOARD_SEGMENT, 'dashboard.tsx')),
 		...workspaceRoutes,
 		...prefix('settings', [...settingsRoutes]),
+		...prefix('forms/:formId', formRoutes),
 	]),
 ]
 
