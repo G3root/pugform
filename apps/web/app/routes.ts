@@ -44,6 +44,13 @@ const formRoutes = [
 			'responses',
 			buildApplicationRoutePath(DASHBOARD_SEGMENT, 'forms/form-responses.tsx'),
 		),
+		route(
+			'integrations',
+			buildApplicationRoutePath(
+				DASHBOARD_SEGMENT,
+				'forms/form-integrations.tsx',
+			),
+		),
 	]),
 ]
 
