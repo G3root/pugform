@@ -69,6 +69,10 @@ const workspaceRoutes = prefix('workspaces', [
 	...prefix('forms/:formId', formRoutes),
 ])
 
+const settingsRoutes = [
+	index(buildApplicationRoutePath(DASHBOARD_SEGMENT, 'settings/profile.tsx')),
+]
+
 const dashboardRoutes = [
 	route(
 		'forms/:formId/edit',
@@ -77,19 +81,12 @@ const dashboardRoutes = [
 	layout(buildApplicationRoutePath(DASHBOARD_SEGMENT, '_layout.tsx'), [
 		index(buildApplicationRoutePath(DASHBOARD_SEGMENT, 'dashboard.tsx')),
 		...workspaceRoutes,
+		...prefix('settings', [...settingsRoutes]),
 	]),
-]
-
-const settingsRoutes = [
-	index(buildApplicationRoutePath(DASHBOARD_SEGMENT, 'settings/profile.tsx')),
 ]
 
 export const routes: RouteConfig = [
 	index(buildRoutePath('_index.tsx')),
 	route(':formId', buildRoutePath('(subDomain)/public-form-view.tsx')),
-	...prefix('dashboard', [
-		...authRoutes,
-		...dashboardRoutes,
-		...prefix('settings', [...settingsRoutes]),
-	]),
+	...prefix('dashboard', [...authRoutes, ...dashboardRoutes]),
 ]
