@@ -1,6 +1,7 @@
-import { useRouteLoaderData } from '@remix-run/react'
+import { useMatches, useRouteLoaderData } from '@remix-run/react'
 import { IconDashboard, IconSettings } from 'justd-icons'
 import type { ReactNode } from 'react'
+import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
 import type { TDashboardLoader } from '~/routes/(application)/(dashboard)/_layout'
 import { Separator } from '../ui/separator'
 import { Sidebar } from '../ui/sidebar'
@@ -32,17 +33,38 @@ function Header() {
 	)
 }
 
+export const NavItems = [
+	{
+		label: 'Dashboard',
+		href: '/dashboard',
+		segment: 'dashboard',
+		icon: IconDashboard,
+	},
+	{
+		label: 'Settings',
+		href: '/dashboard/settings',
+		segment: 'settings',
+		icon: IconSettings,
+	},
+]
+
 function AppSidebar() {
+	const segment = useCurrentRouteHandle<{ segment?: string }>()?.segment
+
 	return (
 		<Sidebar>
 			<Sidebar.Content>
 				<Sidebar.Section>
-					<Sidebar.Item icon={IconDashboard} href="/dashboard">
-						Dashboard
-					</Sidebar.Item>
-					<Sidebar.Item icon={IconSettings} href="/dashboard/settings">
-						Settings
-					</Sidebar.Item>
+					{NavItems.map((item) => (
+						<Sidebar.Item
+							key={item.label}
+							isCurrent={segment === item.segment}
+							icon={item.icon}
+							href={item.href}
+						>
+							{item.label}
+						</Sidebar.Item>
+					))}
 				</Sidebar.Section>
 
 				<Sidebar.Section collapsible title="Workspaces">

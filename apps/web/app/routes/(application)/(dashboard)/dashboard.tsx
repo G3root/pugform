@@ -11,6 +11,10 @@ export default function DashboardPage() {
 	)
 }
 
+export const handle = {
+	segment: 'dashboard',
+}
+
 function DummyCard() {
 	return (
 		<Card>
