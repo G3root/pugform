@@ -80,8 +80,16 @@ const dashboardRoutes = [
 	]),
 ]
 
+const settingsRoutes = [
+	index(buildApplicationRoutePath(DASHBOARD_SEGMENT, 'settings/profile.tsx')),
+]
+
 export const routes: RouteConfig = [
 	index(buildRoutePath('_index.tsx')),
 	route(':formId', buildRoutePath('(subDomain)/public-form-view.tsx')),
-	...prefix('dashboard', [...authRoutes, ...dashboardRoutes]),
+	...prefix('dashboard', [
+		...authRoutes,
+		...dashboardRoutes,
+		...prefix('settings', [...settingsRoutes]),
+	]),
 ]

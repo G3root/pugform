@@ -1,5 +1,5 @@
 import { useRouteLoaderData } from '@remix-run/react'
-import { IconDashboard } from 'justd-icons'
+import { IconDashboard, IconSettings } from 'justd-icons'
 import type { ReactNode } from 'react'
 import type { TDashboardLoader } from '~/routes/(application)/(dashboard)/_layout'
 import { Separator } from '../ui/separator'
@@ -40,7 +40,11 @@ function AppSidebar() {
 					<Sidebar.Item icon={IconDashboard} href="/dashboard">
 						Dashboard
 					</Sidebar.Item>
+					<Sidebar.Item icon={IconSettings} href="/dashboard/settings">
+						Settings
+					</Sidebar.Item>
 				</Sidebar.Section>
+
 				<Sidebar.Section collapsible title="Workspaces">
 					<Sidebar.Item href="/dashboard/workspaces">
 						All workspaces
