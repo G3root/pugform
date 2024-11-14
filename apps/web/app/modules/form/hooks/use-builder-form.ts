@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { useActionData } from '@remix-run/react'
+import { useActionData } from 'react-router';
 
 import type { TFormEditPageAction } from '~/routes/(application)/(dashboard)/forms/form-edit'
 import { type TUpdateFormSchema, UpdateFormSchema } from '../schema'

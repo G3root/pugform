@@ -25,3 +25,6 @@ apps/**/build
 
 # generated files
 **/generated
+
+# react-router
+apps/**/.react-router

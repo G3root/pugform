@@ -5,15 +5,14 @@ import {
 	type LoaderFunctionArgs,
 	data,
 	redirect,
-} from '@remix-run/node'
+} from 'react-router'
 import {
 	Form,
 	Link,
 	useActionData,
 	useLoaderData,
 	useSearchParams,
-} from '@remix-run/react'
-
+} from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
@@ -21,7 +20,6 @@ import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Stack } from '~/components/ui/stack'
-
 import { TextField } from '~/components/ui/text-field'
 import { login, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
@@ -81,7 +79,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const { session } = submission.value
 
-	return redirect('/', {
+	redirect('/', {
 		headers: {
 			'Set-Cookie': setSessionTokenCookie(
 				session.sessionToken,
@@ -98,6 +96,8 @@ export default function Login() {
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
+	// biome-ignore lint/complexity/useOptionalChain: <explanation>
+	const p = actionData && actionData.result
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getZodConstraint(LoginFormSchema),

@@ -1,4 +1,4 @@
-import { useLoaderData } from '@remix-run/react'
+import { useLoaderData } from 'react-router';
 import { IconGrid4 } from 'justd-icons'
 import { Breadcrumbs } from '~/components/ui/breadcrumbs'
 import { Button } from '~/components/ui/button'

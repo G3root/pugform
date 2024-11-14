@@ -1,5 +1,6 @@
 import { db } from '@pugform/database'
-import { type AppLoadContext, redirect } from '@remix-run/node'
+import { redirect } from 'react-router'
+import type { AppLoadContext } from 'react-router'
 import { createOrganization } from '~/modules/organization/services'
 import { createUser } from '~/modules/user/services'
 import { createWorkSpaceHandler } from '~/modules/workspace/procedures/create-workspace'

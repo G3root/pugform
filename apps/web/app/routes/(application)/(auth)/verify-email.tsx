@@ -1,15 +1,20 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { data, redirect } from '@remix-run/node'
-import type { AppLoadContext } from '@remix-run/node'
-import { Form, useActionData, useSearchParams } from '@remix-run/react'
+import type {
+	ActionFunctionArgs,
+	AppLoadContext,
+	LoaderFunctionArgs,
+} from 'react-router'
+import { data, redirect } from 'react-router'
+
+import { Form, useActionData, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
 import { Button } from '~/components/ui/button'
 import { Card } from '~/components/ui/card'
 import { InputOTP } from '~/components/ui/input-otp'
+
 import { requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import {
@@ -90,7 +95,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	verifySession.set('type', 'onboarding')
 
-	return redirect('/dashboard/onboarding', {
+	redirect('/dashboard/onboarding', {
 		headers: {
 			'set-cookie': await verifySessionStorage.commitSession(verifySession),
 		},

@@ -1,7 +1,7 @@
 import { parseWithZod } from '@conform-to/zod'
 import { type NewAnswer, db } from '@pugform/database'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { data, useLoaderData } from '@remix-run/react'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
+import { data, useLoaderData } from 'react-router';
 import { z } from 'zod'
 import { CardForm } from '~/modules/form/components/card-form'
 import { ClassicForm } from '~/modules/form/components/classic-form'

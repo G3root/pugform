@@ -1,6 +1,6 @@
-import { useMatches, useRouteLoaderData } from '@remix-run/react'
 import { IconDashboard, IconSettings } from 'justd-icons'
 import type { ReactNode } from 'react'
+import { useRouteLoaderData } from 'react-router'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
 import type { TDashboardLoader } from '~/routes/(application)/(dashboard)/_layout'
 import { Separator } from '../ui/separator'
@@ -80,7 +80,7 @@ function AppSidebar() {
 
 function WorkspaceList() {
 	const data = useRouteLoaderData<TDashboardLoader>(
-		'./routes/(application)/(dashboard)/_layout',
+		'routes/(application)/(dashboard)/_layout',
 	)
 	return data && data.workspaces.length > 0
 		? data.workspaces.map((item) => (

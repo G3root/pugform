@@ -1,4 +1,4 @@
-import { useMatches } from '@remix-run/react'
+import { useMatches } from 'react-router';
 
 export function useCurrentRouteHandle<T>() {
 	const matches = useMatches()

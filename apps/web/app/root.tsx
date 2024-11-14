@@ -1,5 +1,6 @@
-import { type LoaderFunctionArgs, data } from '@remix-run/node'
-import type { HeadersFunction } from '@remix-run/node'
+import { RouterProvider } from 'react-aria-components'
+import { type LoaderFunctionArgs, data } from 'react-router'
+import type { HeadersFunction } from 'react-router'
 import {
 	Links,
 	Meta,
@@ -9,8 +10,7 @@ import {
 	useHref,
 	useLoaderData,
 	useNavigate,
-} from '@remix-run/react'
-import { RouterProvider } from 'react-aria-components'
+} from 'react-router'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { GeneralErrorBoundary } from './components/error-boundary'
 import { Toast } from './components/ui/toast'

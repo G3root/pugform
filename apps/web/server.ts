@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import crypto from 'node:crypto'
 import { db } from '@pugform/database'
-import { createRequestHandler } from '@remix-run/express'
+import { createRequestHandler } from '@react-router/express'
 import { ip as ipAddress } from 'address'
 import chalk from 'chalk'
 import closeWithGrace from 'close-with-grace'
@@ -221,10 +221,10 @@ app.all(
 			user: res.locals.user,
 		}),
 
+		//@ts-expect-error
 		build: viteDevServer
-			? () => viteDevServer.ssrLoadModule('virtual:remix/server-build')
-			: // @ts-expect-error
-				await import('./build/server/index.js'),
+			? () => viteDevServer.ssrLoadModule('virtual:react-router/server-build')
+			: await import('./build/server/index.js'),
 	}),
 )
 

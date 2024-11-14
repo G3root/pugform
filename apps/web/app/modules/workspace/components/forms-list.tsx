@@ -1,4 +1,4 @@
-import { Link, useLoaderData, useSubmit } from '@remix-run/react'
+import { Link, useLoaderData, useSubmit } from 'react-router';
 import { IconDotsVertical } from 'justd-icons'
 import { useState } from 'react'
 import type { DialogTriggerProps } from 'react-aria-components'

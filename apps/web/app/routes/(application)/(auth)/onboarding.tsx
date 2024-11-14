@@ -1,10 +1,6 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import type {
-	ActionFunctionArgs,
-	AppLoadContext,
-	LoaderFunctionArgs,
-} from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
 import {
 	Form,
 	Link,
@@ -12,7 +8,8 @@ import {
 	redirect,
 	useActionData,
 	useSearchParams,
-} from '@remix-run/react'
+} from 'react-router'
+import type { AppLoadContext } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
@@ -116,7 +113,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const { session } = submission.value
 
-	return redirect('/dashboard', {
+	redirect('/dashboard', {
 		headers: {
 			'Set-Cookie': setSessionTokenCookie(
 				session.sessionToken,

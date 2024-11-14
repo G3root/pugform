@@ -1,7 +1,7 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { db } from '@pugform/database'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
 import {
 	Form,
 	Link,
@@ -9,7 +9,7 @@ import {
 	redirect,
 	useActionData,
 	useSearchParams,
-} from '@remix-run/react'
+} from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
@@ -87,7 +87,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	session.set('target', target)
 	session.set('type', type)
 
-	return redirect(verificationRequest.redirectTo.toString(), {
+	redirect(verificationRequest.redirectTo.toString(), {
 		headers: {
 			'Set-Cookie': await verifySessionStorage.commitSession(session),
 		},

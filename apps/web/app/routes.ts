@@ -4,9 +4,9 @@ import {
 	layout,
 	prefix,
 	route,
-} from '@remix-run/route-config'
+} from '@react-router/dev/routes'
 
-const ROUTES_DIR = './routes'
+const ROUTES_DIR = 'routes'
 const APPLICATION_DIR = '(application)'
 const AUTH_SEGMENT = 'auth'
 const DASHBOARD_SEGMENT = 'dashboard'

@@ -7,7 +7,7 @@ import {
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import type { FieldType } from '@pugform/database/enums'
-import { Form } from '@remix-run/react'
+import { Form } from 'react-router';
 import { IconSettings, IconTrash } from 'justd-icons'
 import { z } from 'zod'
 import { Badge } from '~/components/ui/badge'

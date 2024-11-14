@@ -2,7 +2,7 @@ import { decodeBase64, encodeBase64 } from '@oslojs/encoding'
 import { generateTOTP, verifyTOTP } from '@oslojs/otp'
 import { type TKyselyDb, db } from '@pugform/database'
 import type { Verification } from '@pugform/database/db-types'
-import { createCookieSessionStorage } from '@remix-run/node'
+import { createCookieSessionStorage } from 'react-router';
 import { TimeSpan, createDate, isWithinExpirationDate } from './date'
 import { getDomainUrl } from './url'
 import { newId } from './uuid'

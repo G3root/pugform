@@ -1,6 +1,6 @@
-import { Link, useRouteLoaderData, useSubmit } from '@remix-run/react'
 import { useRef, useState } from 'react'
 import type { DialogTriggerProps } from 'react-aria-components'
+import { Link, useRouteLoaderData, useSubmit } from 'react-router'
 import { Button, buttonStyles } from '~/components/ui/button'
 import { Modal } from '~/components/ui/modal'
 import { Stack } from '~/components/ui/stack'
@@ -10,7 +10,7 @@ import { workspaceDeleteActionIntent } from '~/routes/(application)/(dashboard)/
 
 export function WorkspaceList() {
 	const data = useRouteLoaderData<TDashboardLoader>(
-		'./routes/(application)/(dashboard)/_layout',
+		'routes/(application)/(dashboard)/_layout',
 	)
 
 	const [open, setOpen] = useState(false)

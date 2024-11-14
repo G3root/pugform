@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import type { LoaderFunctionArgs } from 'react-router';
+import { useLoaderData } from 'react-router';
 import { Card } from '~/components/ui/card'
 import { Table } from '~/components/ui/table'
 import { dayjsExt } from '~/lib/day-js'

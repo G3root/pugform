@@ -4,7 +4,7 @@ import {
 	type AppLoadContext,
 	type LoaderFunctionArgs,
 	data,
-} from '@remix-run/node'
+} from 'react-router'
 import { Container } from '~/components/ui/container'
 import { Heading } from '~/components/ui/heading'
 import { Separator } from '~/components/ui/separator'

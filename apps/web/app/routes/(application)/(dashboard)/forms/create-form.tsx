@@ -5,7 +5,7 @@ import {
 	type LoaderFunctionArgs,
 	data,
 	redirect,
-} from '@remix-run/node'
+} from 'react-router'
 import { Container } from '~/components/ui/container'
 import { Description } from '~/components/ui/field'
 import { Heading } from '~/components/ui/heading'
