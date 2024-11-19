@@ -6,6 +6,9 @@ import { z } from 'zod'
 import { CardForm } from '~/modules/form/components/card-form'
 import { ClassicForm } from '~/modules/form/components/classic-form'
 import { FormMachineContext } from '~/modules/form/state-machines/form-machine'
+import { IntegrationRegistry } from '~/modules/integration/registry'
+import { IntegrationService } from '~/modules/integration/services'
+import type { IntegrationFormData } from '~/modules/integration/types'
 
 import { trpcServer } from '~/trpc/server'
 import { newId } from '~/utils/uuid'
@@ -40,7 +43,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 	const form = await db
 		.selectFrom('form')
 		.where('id', '=', formId)
-		.select(['id', 'organizationId'])
+		.select(['id', 'organizationId', 'title'])
 		.executeTakeFirstOrThrow()
 
 	const response = await db
@@ -52,7 +55,7 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		})
-		.returning(['id'])
+		.returning(['id', 'createdAt'])
 		.executeTakeFirstOrThrow()
 
 	const fields = await db
@@ -63,11 +66,21 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 
 	const answersToCreate: NewAnswer[] = []
 
+	const responseData: IntegrationFormData = {
+		id: response.id,
+		formId: formId,
+		formName: form.title,
+		timeStamp: response.createdAt.toISOString(),
+		responses: [],
+	}
+
 	for (const field of fields) {
 		const submission = submissionValues?.[field.id]
 		if (submission) {
+			const answerId = newId('answer')
+
 			answersToCreate.push({
-				id: newId('answer'),
+				id: answerId,
 				answer: submission,
 				order: field.order,
 				question: field.label,
@@ -77,10 +90,27 @@ export async function action({ request, context, params }: ActionFunctionArgs) {
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			})
+			responseData.responses.push({
+				id: answerId,
+				answer: submission,
+				question: field.label,
+				type: field.type,
+			})
 		}
 	}
 
 	await db.insertInto('answer').values(answersToCreate).execute()
+
+	const integrationService = new IntegrationService(new IntegrationRegistry())
+
+	await integrationService.processFormSubmission({
+		formData: responseData,
+		context: {
+			formId: form.id,
+			responseId: response.id,
+			organizationId: form.organizationId,
+		},
+	})
 
 	return data(
 		{ result: submission.reply(), status: 'success' as const },

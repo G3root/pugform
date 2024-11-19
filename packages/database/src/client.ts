@@ -11,6 +11,7 @@ import type {
 	DB as Database,
 	Field as FieldTable,
 	FormPage as FormPageTable,
+	Integration as IntegrationTable,
 	Membership as MembershipTable,
 	Organization as OrganizationTable,
 	User as UserTable,
@@ -62,3 +63,7 @@ export type FormPageUpdate = Updateable<FormPageTable>
 export type Answer = Selectable<AnswerTable>
 export type NewAnswer = Insertable<AnswerTable>
 export type AnswerUpdate = Updateable<AnswerTable>
+
+export type Integration = Selectable<IntegrationTable>
+export type NewIntegration = Insertable<IntegrationTable>
+export type IntegrationUpdate = Updateable<IntegrationTable>

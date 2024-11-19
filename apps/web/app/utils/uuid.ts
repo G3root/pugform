@@ -16,6 +16,8 @@ const prefixes = {
 	response: 'res',
 	answer: 'ans',
 	verification: 'ver',
+	integrationLog: 'intLog',
+	integration: 'int',
 } as const
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

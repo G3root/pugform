@@ -3,7 +3,7 @@
 		"prefix": "/loader",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import { type LoaderFunctionArgs, unstable_data as data } from \"@remix-run/node\"",
+			"import { type LoaderFunctionArgs, data } from \"react-router\"",
 			"",
 			"export async function loader({ request }: LoaderFunctionArgs) {",
 			"  return {}",
@@ -14,7 +14,7 @@
 		"prefix": "/action",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import { type ActionFunctionArgs, json } from \"@remix-run/node\"",
+			"import { type ActionFunctionArgs, data } from \"react-router\"",
 			"",
 			"export async function action({ request }: ActionFunctionArgs) {",
 			"  return {}",
@@ -38,7 +38,7 @@
 		"prefix": "/headers",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import type { HeadersFunction } from '@remix-run/node'",
+			"import type { HeadersFunction } from 'react-router'",
 			"",
 			"export const headers: HeadersFunction = ({ loaderHeaders }) => ({",
 			"  'Cache-Control': loaderHeaders.get('Cache-Control') ?? '',",
@@ -49,7 +49,7 @@
 		"prefix": "/links",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import type { LinksFunction } from '@remix-run/node'",
+			"import type { LinksFunction } from 'react-router'",
 			"",
 			"export const links: LinksFunction = () => {",
 			"  return []",
@@ -60,7 +60,7 @@
 		"prefix": "/meta",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import type { MetaFunction } from '@remix-run/node'",
+			"import type { MetaFunction } from 'react-router'",
 			"",
 			"export const meta: MetaFunction<typeof loader> = ({ data }) => [{",
 			"  title: 'Title',",
@@ -71,7 +71,7 @@
 		"prefix": "/shouldRevalidate",
 		"scope": "typescriptreact,javascriptreact,typescript,javascript",
 		"body": [
-			"import type { ShouldRevalidateFunction } from '@remix-run/react'",
+			"import type { ShouldRevalidateFunction } from 'react-router'",
 			"",
 			"export const shouldRevalidate: ShouldRevalidateFunction = ({",
 			"  defaultShouldRevalidate",

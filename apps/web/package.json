@@ -53,6 +53,7 @@
     "morgan": "^1.10.0",
     "mutative": "^1.0.11",
     "nanoid": "^5.0.7",
+    "neverthrow": "^8.1.1",
     "react": "^18.2.0",
     "react-aria": "^3.35.1",
     "react-aria-components": "^1.4.1",

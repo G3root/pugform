@@ -1,5 +1,5 @@
-import { useLocation, useParams } from 'react-router';
 import type { ReactNode } from 'react'
+import { useLocation, useParams } from 'react-router'
 import { Tabs } from '~/components/ui/tabs'
 
 interface FormLayoutProps {
@@ -18,6 +18,12 @@ export function FormLayout({ children }: FormLayoutProps) {
 				</Tabs.Tab>
 				<Tabs.Tab id={`${baseUrl}/responses`} href={`${baseUrl}/responses`}>
 					Responses
+				</Tabs.Tab>
+				<Tabs.Tab
+					id={`${baseUrl}/integrations`}
+					href={`${baseUrl}/integrations`}
+				>
+					Integrations
 				</Tabs.Tab>
 			</Tabs.List>
 

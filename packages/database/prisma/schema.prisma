@@ -28,12 +28,14 @@ model Organization {
   createdAt DateTime
   updatedAt DateTime
 
-  membership Membership[]
-  Workspace  Workspace[]
-  Form       Form[]
-  FormPage   FormPage[]
-  Session    Session[]
-  Response   Response[]
+  membership     Membership[]
+  Workspace      Workspace[]
+  Form           Form[]
+  FormPage       FormPage[]
+  Session        Session[]
+  Response       Response[]
+  IntegrationLog IntegrationLog[]
+  Integration    Integration[]
 
   @@map("organization")
 }
@@ -151,9 +153,11 @@ model Form {
   createdAt DateTime
   updatedAt DateTime
 
-  FormPage FormPage[]
-  Response Response[]
-  Field    Field[]
+  FormPage       FormPage[]
+  Response       Response[]
+  Field          Field[]
+  Integration    Integration[]
+  IntegrationLog IntegrationLog[]
 
   @@map("form")
 }
@@ -222,8 +226,9 @@ model Response {
 
   answers Answer[]
 
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt      DateTime
+  updatedAt      DateTime
+  IntegrationLog IntegrationLog[]
 
   @@map("response")
 }
@@ -272,4 +277,51 @@ model Verification {
 
   @@unique([target, type])
   @@map("verification")
+}
+
+model Integration {
+  id            String  @id @default(uuid())
+  integrationId String
+  enabled       Boolean @default(true)
+  config        Json
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  formId String
+  form   Form   @relation(fields: [formId], references: [id])
+
+  createdAt      DateTime
+  updatedAt      DateTime
+  IntegrationLog IntegrationLog[]
+
+  @@map("integration")
+}
+
+model IntegrationLog {
+  id String @id @default(cuid())
+
+  integration   Integration @relation(fields: [integrationId], references: [id])
+  integrationId String
+
+  form   Form   @relation(fields: [formId], references: [id])
+  formId String
+
+  response   Response @relation(fields: [responseId], references: [id])
+  responseId String
+
+  success Boolean
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  // Error details
+  errorMessage String?
+
+  // Metadata
+  metadata Json?
+
+  timeStamp DateTime
+
+  @@map("integrationLog")
 }
