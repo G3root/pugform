@@ -32,4 +32,12 @@ export class IntegrationRegistry {
 	getAllMetadata() {
 		return this.allMetadata
 	}
+
+	getMetadata(type: TIntegrationIds) {
+		const metadata = this.handlerInstances.get(type)?.metadata
+		if (!metadata) {
+			throw new Error(`No metadata found for integration type: ${type}`)
+		}
+		return metadata
+	}
 }

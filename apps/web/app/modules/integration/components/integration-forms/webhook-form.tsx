@@ -4,6 +4,7 @@ import { Form, useActionData } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { Modal } from '~/components/ui/modal'
 import { TextField } from '~/components/ui/text-field'
+import { addIntegrationIntent } from '~/routes/(application)/(dashboard)/forms/form-integrations'
 import { WebhookConfigSchema } from '../../integrations/_schema'
 import type { TIntegrationIds } from '../../schema'
 
@@ -30,6 +31,7 @@ export function WebHookForm({ id }: WebHookFormProps) {
 			<Modal.Body>
 				<Form method="POST" {...getFormProps(form)}>
 					<input value={id} type="hidden" name="integrationId" />
+					<input value={addIntegrationIntent} type="hidden" name="intent" />
 					<TextField
 						label="Endpoint URL"
 						{...getInputProps(fields.webhookUrl, { type: 'url' })}

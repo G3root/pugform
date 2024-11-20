@@ -27,5 +27,7 @@ export const AddIntegrationProcedure = withAuthProcedure
 			ctx.db,
 		)
 
-		return {}
+		return {
+			message: 'integration added successfully',
+		}
 	})
