@@ -11,7 +11,7 @@ import {
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
 import { createToastHeaders } from '~/utils/toast.server'
-import type { Route } from './+types.form-integrations'
+import type { Route } from './+types/form-integrations'
 
 const registry = new IntegrationRegistry()
 const allIntegrations = registry.getAllMetadata()
@@ -19,13 +19,7 @@ const allIntegrations = registry.getAllMetadata()
 export const addIntegrationIntent = 'add-integration'
 export const deleteIntegrationIntent = 'delete-integration'
 
-export async function loader({
-	context: context_,
-	params,
-	request,
-}: Route.LoaderArgs) {
-	const context = context_ as AppLoadContext
-
+export async function loader({ context, params, request }: Route.LoaderArgs) {
 	requireAuth(context)
 
 	const { data: connectedIntegrations } = await trpcServer({
@@ -41,12 +35,7 @@ export async function loader({
 	}
 }
 
-export async function action({
-	request,
-	context: context_,
-	params,
-}: Route.ActionArgs) {
-	const context = context_ as AppLoadContext
+export async function action({ request, context, params }: Route.ActionArgs) {
 	requireAuth(context)
 	const formData = await request.formData()
 

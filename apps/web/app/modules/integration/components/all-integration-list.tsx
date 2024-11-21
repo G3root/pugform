@@ -3,10 +3,10 @@ import { Card } from '~/components/ui/card'
 import { Heading } from '~/components/ui/heading'
 import { Stack } from '~/components/ui/stack'
 import { AddIntegrationModal } from './add-integration-modal'
-import type { Route } from '.react-router/types/app/routes/(application)/(dashboard)/forms/+types.form-integrations'
+import type { Info } from '.react-router/types/app/routes/(application)/(dashboard)/forms/+types/form-integrations'
 
 export function AllIntegrationList() {
-	const loaderData = useLoaderData<Route.LoaderData>()
+	const loaderData = useLoaderData<Info['loaderData']>()
 	return (
 		<Stack>
 			<div>

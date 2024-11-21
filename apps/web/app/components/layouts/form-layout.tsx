@@ -7,13 +7,13 @@ import { useCopyToClipboard } from '~/hooks/use-copy-to-clipboard'
 import { Button, buttonStyles } from '../ui/button'
 import { Heading } from '../ui/heading'
 import { Stack } from '../ui/stack'
-import type { Route } from '.react-router/types/app/routes/(application)/(dashboard)/forms/+types._layout'
+import type { Info } from '.react-router/types/app/routes/(application)/(dashboard)/forms/+types/_layout'
 interface FormLayoutProps {
 	children: ReactNode
 }
 
 export function FormLayout({ children }: FormLayoutProps) {
-	const data = useLoaderData<Route.LoaderData>()
+	const data = useLoaderData<Info['loaderData']>()
 	const params = useParams<{ formId: string }>()
 	const copy = useCopyToClipboard()[1]
 

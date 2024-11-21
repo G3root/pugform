@@ -164,7 +164,11 @@ app.get(['/img/*', '/favicons/*'], (req, res) => {
 	return res.status(404).send('Not found')
 })
 
-app.use(morgan('tiny'))
+app.use(
+	morgan('tiny', {
+		skip: (req) => req.method === 'GET' && req.url.startsWith('/__manifest'),
+	}),
+)
 
 /**
  * CSRF Protection.
@@ -225,6 +229,8 @@ app.all(
 		build: viteDevServer
 			? () => viteDevServer.ssrLoadModule('virtual:react-router/server-build')
 			: await import('./build/server/index.js'),
+
+		mode: process.env.NODE_ENV,
 	}),
 )
 

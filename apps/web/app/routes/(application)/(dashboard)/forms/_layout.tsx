@@ -6,14 +6,9 @@ import type { AppLoadContext, LoaderFunctionArgs } from 'react-router'
 
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
-import type { Route } from './+types._layout'
+import type { Route } from './+types/_layout'
 
-export async function loader({
-	request,
-	context: context_,
-	params,
-}: Route.LoaderArgs) {
-	const context = context_ as AppLoadContext
+export async function loader({ request, context, params }: Route.LoaderArgs) {
 	requireAuth(context)
 
 	const { data } = await trpcServer({ context, request }).form.getFormData(

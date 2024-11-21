@@ -92,8 +92,8 @@ const dashboardRoutes = [
 	]),
 ]
 
-export const routes: RouteConfig = [
+export default [
 	index(buildRoutePath('_index.tsx')),
 	route(':formId', buildRoutePath('(subDomain)/public-form-view.tsx')),
 	...prefix('dashboard', [...authRoutes, ...dashboardRoutes]),
-]
+] satisfies RouteConfig
