@@ -1,9 +1,5 @@
 import { Outlet } from 'react-router'
-
 import { FormLayout as FormLayoutComponent } from '~/components/layouts/form-layout'
-
-import type { AppLoadContext, LoaderFunctionArgs } from 'react-router'
-
 import { trpcServer } from '~/trpc/server'
 import { requireAuth } from '~/utils/auth.server'
 import type { Route } from './+types/_layout'

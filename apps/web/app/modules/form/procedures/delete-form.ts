@@ -8,6 +8,24 @@ export const deleteFormProcedure = withAuthProcedure
 
 		await ctx.db.transaction().execute(async (trx) => {
 			await trx
+				.deleteFrom('integrationLog')
+				.where('organizationId', '=', organizationId)
+				.where('formId', '=', input.formId)
+				.execute()
+
+			await trx
+				.deleteFrom('integration')
+				.where('organizationId', '=', organizationId)
+				.where('formId', '=', input.formId)
+				.execute()
+
+			await trx
+				.deleteFrom('response')
+				.where('organizationId', '=', organizationId)
+				.where('formId', '=', input.formId)
+				.execute()
+
+			await trx
 				.deleteFrom('formPage')
 				.where('organizationId', '=', organizationId)
 				.where('formId', '=', input.formId)

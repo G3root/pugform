@@ -10,13 +10,17 @@ const ROUTES_DIR = 'routes'
 const APPLICATION_DIR = '(application)'
 const AUTH_SEGMENT = 'auth'
 const DASHBOARD_SEGMENT = 'dashboard'
+const RESOURCES_SEGMENT = 'resources'
 
 const buildPath = (...segments: string[]) => segments.join('/')
 
 const buildRoutePath = (path: string) => buildPath(ROUTES_DIR, path)
 
 const buildApplicationRoutePath = (
-	segment: typeof AUTH_SEGMENT | typeof DASHBOARD_SEGMENT,
+	segment:
+		| typeof AUTH_SEGMENT
+		| typeof DASHBOARD_SEGMENT
+		| typeof RESOURCES_SEGMENT,
 	path: string,
 ) => {
 	return buildPath(ROUTES_DIR, APPLICATION_DIR, `(${segment})`, path)
@@ -52,6 +56,17 @@ const formRoutes = [
 			),
 		),
 	]),
+]
+
+const resourceRoutes = [
+	route(
+		'delete-form',
+		buildApplicationRoutePath(RESOURCES_SEGMENT, 'delete-form.ts'),
+	),
+	route(
+		'rename-form',
+		buildApplicationRoutePath(RESOURCES_SEGMENT, 'rename-form.ts'),
+	),
 ]
 
 const workspaceRoutes = prefix('workspaces', [
@@ -96,4 +111,5 @@ export default [
 	index(buildRoutePath('_index.tsx')),
 	route(':formId', buildRoutePath('(subDomain)/public-form-view.tsx')),
 	...prefix('dashboard', [...authRoutes, ...dashboardRoutes]),
+	...prefix('resources', resourceRoutes),
 ] satisfies RouteConfig

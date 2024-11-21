@@ -1,3 +1,4 @@
+import { jsonObjectFrom } from '@pugform/database'
 import { withAuthProcedure } from '~/trpc/init'
 import { getDomainUrl } from '~/utils/url'
 import { GetFormSchema } from '../schema'
@@ -11,7 +12,17 @@ export const getFormDataProcedure = withAuthProcedure
 			.selectFrom('form')
 			.where('id', '=', input.formId)
 			.where('organizationId', '=', organizationId)
-			.select(['id', 'layout', 'status', 'title', 'workspaceId'])
+			.select((eb) => [
+				jsonObjectFrom(
+					eb
+						.selectFrom('workspace as w')
+						.select(['w.publicId'])
+						.whereRef('w.id', '=', 'form.workspaceId'),
+				)
+					.$notNull()
+					.as('workspace'),
+			])
+			.select(['id', 'layout', 'status', 'title'])
 			.executeTakeFirstOrThrow()
 
 		const host = getDomainUrl(ctx.request)
