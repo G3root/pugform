@@ -4,6 +4,7 @@ import { allFormProcedure } from './all-form'
 import { createScratchFormProcedure } from './create-scratch-form'
 import { deleteFormProcedure } from './delete-form'
 import { getFormProcedure } from './get-Form'
+import { getFormDataProcedure } from './get-form-data'
 import { getFormPublicProcedure } from './get-from-public'
 import { getResponsesProcedure } from './get-responses'
 import { renameFormProcedure } from './rename-form'
@@ -19,4 +20,5 @@ export const formRouter = createTRPCRouter({
 	addSubmission: addSubmissionProcedure,
 	responses: getResponsesProcedure,
 	all: allFormProcedure,
+	getFormData: getFormDataProcedure,
 })
