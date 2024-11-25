@@ -4,28 +4,30 @@
   "private": true,
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/index.umd.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.umd.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
     "clean": "rimraf .turbo node_modules dist",
-    "dev": "vite build --watch --mode dev",
-    "build": "vite build"
+    "build": "tsup",
+    "dev": "tsup --watch"
   },
   "dependencies": {
-    "preact": "^10.24.3"
+    "preact": "^10.24.3",
+    "preact-robot": "^1.0.0",
+    "robot-hooks": "^1.0.0",
+    "robot3": "^1.0.1"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.9.1",
-    "vite": "^5.4.11",
-    "vite-plugin-dts": "^4.3.0",
-    "vite-tsconfig-paths": "^5.1.2"
+    "rimraf": "^6.0.1",
+    "@pugform/database": "workspace:*",
+    "tsup": "^8.3.5"
   }
 }
