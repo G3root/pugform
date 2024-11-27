@@ -2,6 +2,7 @@ import type { NewField } from '@pugform/database'
 import { useId } from 'preact/hooks'
 import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
+import { ClassicFormInput } from './input'
 
 interface ClassicFieldRendererProps {
 	type: NewField['type']
@@ -25,7 +26,7 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input className="pf-classic-input-field" type="text" />
+					<ClassicFormInput type="text" />
 				</FieldContainer>
 			)
 
@@ -33,7 +34,7 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input className="pf-classic-input-field" type="text" />
+					<ClassicFormInput type="text" />
 				</FieldContainer>
 			)
 
@@ -41,7 +42,7 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input className="pf-classic-input-field" type="text" />
+					<ClassicFormInput type="text" />
 				</FieldContainer>
 			)
 
