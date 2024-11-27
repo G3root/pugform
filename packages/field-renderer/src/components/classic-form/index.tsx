@@ -46,8 +46,8 @@ function FormPage() {
 	const fields = data.pages?.[currentStep]?.fields
 
 	return fields && fields.length > 0 ? (
-		<div className="max-w-3xl bg-bg rounded-xl w-full border h-full">
-			<div className="flex flex-col gap-4 p-6">
+		<div className="pf-max-w-3xl pf-bg-bg pf-rounded-xl pf-w-full pf-border pf-h-full">
+			<div className="pf-flex pf-flex-col pf-gap-4 pf-p-6">
 				{fields.map((field) => (
 					<ClassicFieldRenderer key={field.id} {...field} />
 				))}
