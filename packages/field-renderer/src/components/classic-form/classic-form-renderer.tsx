@@ -3,6 +3,7 @@ import { useId } from 'preact/hooks'
 import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
 import { ClassicFormInput } from './input'
+import { ClassicFormLongAnswerInput } from './long-answer-Input'
 
 interface ClassicFieldRendererProps {
 	type: NewField['type']
@@ -34,7 +35,7 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<ClassicFormInput type="text" />
+					<ClassicFormInput type="email" />
 				</FieldContainer>
 			)
 
@@ -42,7 +43,7 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<ClassicFormInput type="text" />
+					<ClassicFormLongAnswerInput />
 				</FieldContainer>
 			)
 
