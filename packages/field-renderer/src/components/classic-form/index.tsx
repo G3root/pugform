@@ -1,6 +1,7 @@
 import { useMachine } from '~/hooks/use-machine'
 import { useFormData } from '~/providers/form-data-provider'
 import { formMachine } from '~/state-machines/form-machine'
+import { Button } from '../common/button'
 import { ClassicFieldRenderer } from './classic-form-renderer'
 
 export function ClassicForm() {
@@ -52,7 +53,7 @@ function FormPage() {
 				))}
 
 				<div>
-					<button type="submit">Save</button>
+					<Button type="submit">Save</Button>
 				</div>
 			</div>
 		</div>

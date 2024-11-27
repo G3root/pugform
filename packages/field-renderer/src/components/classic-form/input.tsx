@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import { clsx } from 'clsx/lite'
 import type { ComponentProps } from 'preact'
 
 export function ClassicFormInput({
