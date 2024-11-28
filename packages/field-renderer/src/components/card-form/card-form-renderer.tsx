@@ -27,7 +27,12 @@ export function CardFormFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<CardFormInput type="text" />
+					<CardFormInput
+						id={fieldId}
+						name={id}
+						required={required}
+						type="text"
+					/>
 				</FieldContainer>
 			)
 
@@ -35,7 +40,12 @@ export function CardFormFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<CardFormInput type="text" />
+					<CardFormInput
+						id={fieldId}
+						name={id}
+						required={required}
+						type="email"
+					/>
 				</FieldContainer>
 			)
 
@@ -43,7 +53,7 @@ export function CardFormFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<CardFormLongAnswerInput />
+					<CardFormLongAnswerInput id={fieldId} name={id} required={required} />
 				</FieldContainer>
 			)
 

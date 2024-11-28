@@ -288,6 +288,9 @@ importers:
 
   packages/field-renderer:
     dependencies:
+      '@preact/signals':
+        specifier: ^1.3.1
+        version: 1.3.1(preact@10.24.3)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -297,15 +300,6 @@ importers:
       preact:
         specifier: ^10.24.3
         version: 10.24.3
-      preact-robot:
-        specifier: ^1.0.0
-        version: 1.0.0(preact@10.24.3)(robot3@1.0.1)
-      robot-hooks:
-        specifier: ^1.0.0
-        version: 1.0.0(robot3@1.0.1)
-      robot3:
-        specifier: ^1.0.1
-        version: 1.0.1
     devDependencies:
       '@pugform/database':
         specifier: workspace:*
@@ -1321,6 +1315,14 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@preact/signals-core@1.8.0':
+    resolution: {integrity: sha512-OBvUsRZqNmjzCZXWLxkZfhcgT+Fk8DDcT/8vD6a1xhDemodyy87UJRJfASMuSD8FaAIeGgGm85ydXhm7lr4fyA==}
+
+  '@preact/signals@1.3.1':
+    resolution: {integrity: sha512-nNvSF2O7RDzxp1Rm7SkA5QhN1a2kN8pGE8J5o6UjgDof0F0Vlg6d6HUUVxxqZ1uJrN9xnH2DpL6rpII3Es0SsQ==}
+    peerDependencies:
+      preact: 10.x
 
   '@prisma/client@5.22.0':
     resolution: {integrity: sha512-M0SVXfyHnQREBKxCgyo7sffrKttwE6R8PMq330MIUF0pTwjUhLbW84pFDlf06B27XyCR++VtjugEnIHdr07SVA==}
@@ -4545,12 +4547,6 @@ packages:
   postgres-range@1.1.4:
     resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
-  preact-robot@1.0.0:
-    resolution: {integrity: sha512-YGrzbzKSnh/wznMRbE+yxDxUEgGbIaPCPjGqOa0hBREfJCk5Trg4/qOxVvS0bUyNqbDUU8Rwghx5OyHiYcV7FA==}
-    peerDependencies:
-      preact: ^10.11.3
-      robot3: ^1.0.0
-
   preact@10.24.3:
     resolution: {integrity: sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==}
 
@@ -4880,19 +4876,6 @@ packages:
   rimraf@6.0.1:
     resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
     engines: {node: 20 || >=22}
-    hasBin: true
-
-  robot-hooks@1.0.0:
-    resolution: {integrity: sha512-yZ8EoBGvgh3tqBDDzYNSCJt7llHcBJKbClGMyUJJTWV0+EPiCRQXFJg+UxkjqLUkd0aVIL0yQGwRXHQPSREb1A==}
-    peerDependencies:
-      robot3: ^1.0.0
-
-  robot3@1.0.1:
-    resolution: {integrity: sha512-jSuklmODv4cd8wR3M+Tnt+3ER7Z0BFbh2L06B3PgeVEwFu96PJoFU7KVYwOugAymG4N3Jzst/ZJUn9lkDZ1aIQ==}
-
-  rollup@2.79.2:
-    resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
-    engines: {node: '>=10.0.0'}
     hasBin: true
 
   rollup@4.24.0:
@@ -6476,6 +6459,13 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@preact/signals-core@1.8.0': {}
+
+  '@preact/signals@1.3.1(preact@10.24.3)':
+    dependencies:
+      '@preact/signals-core': 1.8.0
+      preact: 10.24.3
 
   '@prisma/client@5.22.0(prisma@5.22.0)':
     optionalDependencies:
@@ -10268,13 +10258,6 @@ snapshots:
 
   postgres-range@1.1.4: {}
 
-  preact-robot@1.0.0(preact@10.24.3)(robot3@1.0.1):
-    dependencies:
-      preact: 10.24.3
-      robot-hooks: 1.0.0(robot3@1.0.1)
-      robot3: 1.0.1
-      rollup: 2.79.2
-
   preact@10.24.3: {}
 
   prettier@2.8.8: {}
@@ -10688,16 +10671,6 @@ snapshots:
     dependencies:
       glob: 11.0.0
       package-json-from-dist: 1.0.1
-
-  robot-hooks@1.0.0(robot3@1.0.1):
-    dependencies:
-      robot3: 1.0.1
-
-  robot3@1.0.1: {}
-
-  rollup@2.79.2:
-    optionalDependencies:
-      fsevents: 2.3.3
 
   rollup@4.24.0:
     dependencies:

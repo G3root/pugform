@@ -27,7 +27,12 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<ClassicFormInput type="text" />
+					<ClassicFormInput
+						id={fieldId}
+						name={id}
+						required={required}
+						type="text"
+					/>
 				</FieldContainer>
 			)
 
@@ -35,7 +40,12 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<ClassicFormInput type="email" />
+					<ClassicFormInput
+						id={fieldId}
+						name={id}
+						required={required}
+						type="email"
+					/>
 				</FieldContainer>
 			)
 
@@ -43,7 +53,12 @@ export function ClassicFieldRenderer({
 			return (
 				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<ClassicFormLongAnswerInput />
+
+					<ClassicFormLongAnswerInput
+						id={fieldId}
+						name={id}
+						required={required}
+					/>
 				</FieldContainer>
 			)
 

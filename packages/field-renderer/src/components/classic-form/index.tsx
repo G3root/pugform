@@ -1,21 +1,13 @@
-import { useMachine } from '~/hooks/use-machine'
 import { useFormData } from '~/providers/form-data-provider'
-import { formMachine } from '~/state-machines/form-machine'
+import { useFormState } from '~/providers/form-state-provider'
 import { Button } from '../common/button'
 import { ClassicFieldRenderer } from './classic-form-renderer'
 
 export function ClassicForm() {
-	const data = useFormData()
-	const [current, send] = useMachine(formMachine, {
-		currentPage: 0,
-		totalPages: data.totalPages,
-	})
+	const state = useFormState()
+	const isEnding = state.pageType.value === 'ending'
 
-	return (
-		<>
-			<FormPage />
-		</>
-	)
+	return isEnding ? <EndingPage /> : <FormPage />
 }
 
 function EndingPage() {
@@ -30,18 +22,8 @@ function EndingPage() {
 
 function FormPage() {
 	const data = useFormData()
-
-	const [current, send] = useMachine(formMachine, {
-		currentPage: 0,
-		totalPages: data.totalPages,
-	})
-
-	const isPage = current.name === 'page'
-	const currentStep = current.context.currentPage
-
-	if (!isPage) {
-		return null
-	}
+	const state = useFormState()
+	const currentStep = state.currentPage.value
 
 	const fields = data.pages?.[currentStep]?.fields
 

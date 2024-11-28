@@ -1,21 +1,14 @@
-import { useMachine } from '~/hooks/use-machine'
 import { useFormData } from '~/providers/form-data-provider'
-import { formMachine } from '~/state-machines/form-machine'
+import { useFormState } from '~/providers/form-state-provider'
 import { Button } from '../common/button'
+import { FormSubmitter } from '../common/form-submitter'
 import { CardFormFieldRenderer } from './card-form-renderer'
 
 export function CardForm() {
-	const data = useFormData()
-	const [current, send] = useMachine(formMachine, {
-		currentPage: 0,
-		totalPages: data.totalPages,
-	})
+	const state = useFormState()
+	const isEnding = state.pageType.value === 'ending'
 
-	return (
-		<>
-			<FormPage />
-		</>
-	)
+	return isEnding ? <EndingPage /> : <FormPage />
 }
 
 function EndingPage() {
@@ -30,30 +23,21 @@ function EndingPage() {
 
 function FormPage() {
 	const data = useFormData()
+	const state = useFormState()
 
-	const [current, send] = useMachine(formMachine, {
-		currentPage: 0,
-		totalPages: data.totalPages,
-	})
-
-	const isPage = current.name === 'page'
-	const currentStep = current.context.currentPage
-
-	if (!isPage) {
-		return null
-	}
+	const currentStep = state.currentPage.value
 
 	const field = data?.fields?.[currentStep]
 
 	return field ? (
-		<div className="pf-max-w-3xl pf-bg-bg pf-rounded-xl pf-w-full pf-border pf-h-full">
-			<div className="pf-flex pf-flex-col pf-gap-4 pf-p-6">
+		<div className="pf-max-w-3xl pf-w-full pf-h-full pf-mx-auto pf-flex pf-items-center pf-justify-center">
+			<FormSubmitter className="pf-flex pf-justify-center pf-w-full pf-h-full pf-flex-col pf-gap-4 pf-p-6">
 				<CardFormFieldRenderer key={field.id} {...field} />
 
 				<div>
 					<Button type="submit">Save</Button>
 				</div>
-			</div>
+			</FormSubmitter>
 		</div>
 	) : null
 }
