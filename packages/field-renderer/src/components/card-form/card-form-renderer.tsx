@@ -1,8 +1,11 @@
 import type { NewField } from '@pugform/database'
 import { useId } from 'preact/hooks'
+import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
+import { CardFormInput } from './input'
+import { CardFormLongAnswerInput } from './long-answer-input'
 
-interface CardFormRendererProps {
+interface CardFormFieldRendererProps {
 	type: NewField['type']
 	label: string
 	id: string
@@ -10,38 +13,38 @@ interface CardFormRendererProps {
 	options: string[]
 }
 
-export function CardFormRenderer({
+export function CardFormFieldRenderer({
 	type,
 	label,
 	id,
 	required,
 	options,
-}: CardFormRendererProps) {
+}: CardFormFieldRendererProps) {
 	const fieldId = useId()
 
 	switch (type) {
 		case 'SHORT_ANSWER':
 			return (
-				<div>
+				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input type="text" />
-				</div>
+					<CardFormInput type="text" />
+				</FieldContainer>
 			)
 
 		case 'EMAIL':
 			return (
-				<div>
+				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input type="text" />
-				</div>
+					<CardFormInput type="text" />
+				</FieldContainer>
 			)
 
 		case 'LONG_ANSWER':
 			return (
-				<div>
+				<FieldContainer>
 					<Label id={fieldId} label={label} />
-					<input type="text" />
-				</div>
+					<CardFormLongAnswerInput />
+				</FieldContainer>
 			)
 
 		default:

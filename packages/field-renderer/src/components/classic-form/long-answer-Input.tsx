@@ -14,7 +14,7 @@ export function ClassicFormLongAnswerInput({
 				'focus-within:pf-border-primary/70 focus-within:pf-ring-primary/20 focus-within:pf-ring-4',
 				'pf-border pf-border-input pf-bg-bg',
 				'pf-w-full pf-min-w-0 pf-rounded-lg  pf-px-2.5 pf-py-2 pf-text-base',
-				'pf-shadow-sm pf-outline-none pf-transition pf-duration-200',
+				'pf-shadow-sm pf-transition pf-duration-200',
 				className,
 			)}
 		/>

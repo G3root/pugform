@@ -46,7 +46,7 @@ function FormPage() {
 		state.matches('page'),
 	)
 
-	if (!isPage) {
+	if (!isPage) { 
 		return null
 	}
 
