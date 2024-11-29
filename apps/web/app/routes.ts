@@ -67,6 +67,11 @@ const resourceRoutes = [
 		'rename-form',
 		buildApplicationRoutePath(RESOURCES_SEGMENT, 'rename-form.ts'),
 	),
+
+	route(
+		'form-submission/:formId',
+		buildApplicationRoutePath(RESOURCES_SEGMENT, 'add-form-submission.ts'),
+	),
 ]
 
 const workspaceRoutes = prefix('workspaces', [

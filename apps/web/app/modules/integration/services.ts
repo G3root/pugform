@@ -31,6 +31,10 @@ export class IntegrationService {
 				.select(['id', 'integrationId', 'config', 'formId', 'organizationId'])
 				.execute()
 
+			if (!integrations.length) {
+				return
+			}
+
 			const results = await Promise.allSettled(
 				integrations.map((integration) =>
 					this.processIntegration({ integration, context, formData }),

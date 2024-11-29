@@ -32,7 +32,7 @@ export const getFormPublicProcedure = baseProcedure
 				.select(['formPage.id'])
 				.execute()
 
-			return { pages, form }
+			return { pages, form: { ...form, id: fromId } }
 		})
 
 		const meta = {
