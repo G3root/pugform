@@ -2,7 +2,7 @@ import { decodeBase64, encodeBase64 } from '@oslojs/encoding'
 import { generateTOTP, verifyTOTP } from '@oslojs/otp'
 import { type TKyselyDb, db } from '@pugform/database'
 import type { Verification } from '@pugform/database/db-types'
-import { createCookieSessionStorage } from 'react-router';
+import { createCookieSessionStorage } from 'react-router'
 import { TimeSpan, createDate, isWithinExpirationDate } from './date'
 import { getDomainUrl } from './url'
 import { newId } from './uuid'
@@ -43,15 +43,12 @@ export async function isCodeValid({
 	target: string
 }): Promise<OtpResults> {
 	return db.transaction().execute(async (trx) => {
-		console.log({ code, type, target })
 		const token = await trx
 			.selectFrom('verification')
 			.where('target', '=', target)
 			.where('type', '=', type)
 			.select(['secret', 'expiresAt', 'id', 'period', 'digits'])
 			.executeTakeFirst()
-
-		console.log({ token })
 
 		if (!token) {
 			return 'invalid'
