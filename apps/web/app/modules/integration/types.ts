@@ -26,7 +26,7 @@ export interface IntegrationHandlerContext {
 
 export interface ProcessResult {
 	success: boolean
-	error?: Error
+	error?: string
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	metadata?: Record<string, any>
 	formId: string

@@ -1,4 +1,6 @@
 import { type Integration, type TKyselyDb, db } from '@pugform/database'
+import { ResultAsync, err, errAsync, okAsync } from 'neverthrow'
+import * as Errors from '~/errors'
 import { newId } from '~/utils/uuid'
 import type { IntegrationRegistry } from './registry'
 import type { TIntegrationIds } from './schema'
@@ -20,56 +22,78 @@ interface processIntegrationOption extends ProcessFormSubmissionOptions {
 export class IntegrationService {
 	constructor(private registry: IntegrationRegistry) {}
 
-	async processFormSubmission({
-		formData,
-		context,
-	}: ProcessFormSubmissionOptions) {
-		try {
-			const integrations = await db
+	processFormSubmission({ formData, context }: ProcessFormSubmissionOptions) {
+		return ResultAsync.fromPromise(
+			db
 				.selectFrom('integration')
 				.where('formId', '=', context.formId)
 				.select(['id', 'integrationId', 'config', 'formId', 'organizationId'])
-				.execute()
-
+				.execute(),
+			(error) =>
+				err(
+					Errors.other(
+						'Failed to fetch integrations',
+						error instanceof Error ? error : undefined,
+					),
+				),
+		).andThen((integrations) => {
 			if (!integrations.length) {
-				return
+				return okAsync(undefined)
 			}
 
-			const results = await Promise.allSettled(
-				integrations.map((integration) =>
-					this.processIntegration({ integration, context, formData }),
+			return ResultAsync.fromPromise(
+				Promise.allSettled(
+					integrations.map((integration) =>
+						this.processIntegration({ integration, context, formData }),
+					),
 				),
-			)
+				(error) =>
+					err(
+						Errors.other(
+							'Failed during integration processing',
+							error instanceof Error ? error : undefined,
+						),
+					),
+			).map((results) => {
+				// Map results into a structured format
+				const processedResults: ProcessResult[] = results.map(
+					(result, index) => {
+						const integration = integrations[index]
 
-			const processedResults: ProcessResult[] = results.map((result, index) => {
-				const integration = integrations[index]
+						const data = {
+							...context,
+							integrationId: integration.id,
+						}
 
-				const data = {
-					...context,
-					integrationId: integration.id,
-				}
+						if (result.status === 'fulfilled') {
+							const value = result.value
+							if (value.isOk()) {
+								return { ...value.value, ...data, success: true }
+							}
 
-				if (result.status === 'fulfilled') {
-					return {
-						...result.value,
-						...data,
-					}
-				}
-				return {
-					success: false,
-					error: result.reason,
-					...data,
-				}
+							return {
+								success: false,
+								error: value.error.context,
+								...data,
+							}
+						}
+
+						return {
+							success: false,
+							error:
+								result.reason instanceof Error
+									? result.reason.message
+									: result.reason,
+							...data,
+						}
+					},
+				)
+				return this.logResults(processedResults).map(() => processedResults)
 			})
-			await this.logResults(processedResults)
-			return processedResults
-		} catch (error) {
-			console.error('Integration processing error:', error)
-			throw error
-		}
+		})
 	}
 
-	async addIntegration(
+	addIntegration(
 		{
 			formId,
 			organizationId,
@@ -83,74 +107,127 @@ export class IntegrationService {
 		},
 		trx: TKyselyDb,
 	) {
-		const handler = this.registry.getHandler(integrationId)
-		const config = handler.parseConfig(config_)
-
-		const hasConnection = await handler.testConnection(config)
-		if (!hasConnection) {
-			throw new Error('Failed to connect to integration')
-		}
-
-		await trx
-			.insertInto('integration')
-			.values({
-				id: newId('integration'),
-				enabled: true,
-				formId,
-				organizationId,
-				integrationId,
-				config,
-				updatedAt: new Date(),
-				createdAt: new Date(),
-			})
-			.execute()
+		return ResultAsync.fromPromise(
+			Promise.resolve(this.registry.getHandler(integrationId)),
+			(error) =>
+				err(
+					Errors.other(
+						'Failed to get handler',
+						error instanceof Error ? error : undefined,
+					),
+				),
+		)
+			.andThen((handler) =>
+				ResultAsync.fromPromise(
+					Promise.resolve(handler.parseConfig(config_)),
+					(error) =>
+						Errors.other(
+							'Invalid config',
+							error instanceof Error ? error : undefined,
+						),
+				).andThen((config) =>
+					ResultAsync.fromPromise(handler.testConnection(config), (error) =>
+						Errors.other(
+							'Connection test failed',
+							error instanceof Error ? error : undefined,
+						),
+					).andThen((hasConnection) => {
+						if (!hasConnection) {
+							return errAsync(Errors.other('Connection test failed'))
+						}
+						return okAsync({ handler, config })
+					}),
+				),
+			)
+			.andThen(({ handler, config }) =>
+				ResultAsync.fromPromise(
+					trx
+						.insertInto('integration')
+						.values({
+							id: newId('integration'),
+							enabled: true,
+							formId,
+							organizationId,
+							integrationId,
+							config,
+							updatedAt: new Date(),
+							createdAt: new Date(),
+						})
+						.execute(),
+					(error) =>
+						Errors.other(
+							'Failed to insert integration',
+							error instanceof Error ? error : undefined,
+						),
+				),
+			)
 	}
 
-	private async processIntegration({
+	private processIntegration({
 		integration,
 		formData,
 		context,
 	}: processIntegrationOption) {
-		const handler = this.registry.getHandler(
-			integration.integrationId as TIntegrationIds,
+		return ResultAsync.fromPromise(
+			Promise.resolve(
+				this.registry.getHandler(integration.integrationId as TIntegrationIds),
+			),
+			(error) =>
+				Errors.other(
+					'Failed to get handler',
+					error instanceof Error ? error : undefined,
+				),
+		).andThen((handler) =>
+			ResultAsync.fromPromise(
+				Promise.resolve(handler.parseConfig(integration.config)),
+				(error) =>
+					Errors.other(
+						'Invalid config',
+						error instanceof Error ? error : undefined,
+					),
+			).andThen((config) =>
+				ResultAsync.fromPromise(
+					handler.process({
+						formData,
+						config,
+						context,
+						integrationId: integration.id,
+					}),
+					(error) =>
+						Errors.other(
+							'Processing failed',
+							error instanceof Error ? error : undefined,
+						),
+				),
+			),
 		)
-
-		try {
-			const config = handler.parseConfig(integration.config)
-
-			const result = await handler.process({
-				formData,
-				config,
-				context,
-				integrationId: integration.id,
-			})
-
-			return result
-		} catch (error) {
-			// if (this.shouldRetry(error)) {
-			// 	return this.retryProcessing(integration, options)
-			// }
-			// biome-ignore lint/complexity/noUselessCatch: <explanation>
-			throw error
-		}
 	}
 
-	private async logResults(results: ProcessResult[]): Promise<void> {
-		await db
-			.insertInto('integrationLog')
-			.values(
-				results.map((data) => ({
-					timeStamp: new Date(),
-					id: newId('integrationLog'),
-					formId: data.formId,
-					integrationId: data.integrationId,
-					organizationId: data.organizationId,
-					responseId: data.responseId,
-					success: data.success,
-					metadata: data.metadata,
-					errorMessage: data.error?.message,
-				})),
-			)
-			.execute()
+	private logResults(results: ProcessResult[]) {
+		return ResultAsync.fromPromise(
+			db
+				.insertInto('integrationLog')
+				.values(
+					results.map((data) => ({
+						timeStamp: new Date(),
+						id: newId('integrationLog'),
+						formId: data.formId,
+						integrationId: data.integrationId,
+						organizationId: data.organizationId,
+						responseId: data.responseId,
+						success: data.success,
+						metadata: data.metadata,
+						errorMessage: data?.error,
+					})),
+				)
+				.execute(),
+			(error) =>
+				err(
+					Errors.other(
+						'Failed to log integration Log',
+						error instanceof Error ? error : undefined,
+					),
+				),
+		)
 	}
 }
