@@ -8,7 +8,12 @@ export function CardForm() {
 	const state = useFormState()
 	const isEnding = state.pageType.value === 'ending'
 
-	return isEnding ? <EndingPage /> : <FormPage />
+	return (
+		<>
+			<ProgressBar />
+			{isEnding ? <EndingPage /> : <FormPage />}
+		</>
+	)
 }
 
 function EndingPage() {
@@ -17,6 +22,21 @@ function EndingPage() {
 			<h1 className="font-sans tracking-tight text-fg font-bold text-xl sm:text-2xl">
 				Thanks for completing this form
 			</h1>
+		</div>
+	)
+}
+
+export function ProgressBar() {
+	const state = useFormState()
+
+	const progress = state.progressPercentage.value
+
+	return (
+		<div className="pf-fixed pf-top-0 pf-left-0 pf-w-full pf-h-1 pf-bg-primary/20 pf-z-50">
+			<div
+				className="pf-h-full pf-bg-primary pf-transition-all pf-duration-500 pf-ease-out"
+				style={{ width: `${progress}%` }}
+			/>
 		</div>
 	)
 }
