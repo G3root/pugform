@@ -16,6 +16,7 @@ export function CardFormLongAnswerInput({
 				'focus-within:pf-border-b-2 focus-within:pf-border-primary',
 				className,
 			)}
+			rows={4}
 		/>
 	)
 }

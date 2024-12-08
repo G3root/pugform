@@ -10,4 +10,5 @@ export default defineConfig({
 	jsxFactory: 'h',
 	jsxFragment: 'Fragment',
 	outDir: 'dist/js',
+	bundle: true,
 })
