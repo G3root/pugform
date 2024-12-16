@@ -1,5 +1,5 @@
 import { clsx } from 'clsx/lite'
-import type { ComponentProps } from 'preact'
+import type { ComponentProps } from 'solid-js'
 
 export const fieldContainerStyles = clsx(
 	'pf-field-container',
@@ -7,7 +7,5 @@ export const fieldContainerStyles = clsx(
 )
 
 export function FieldContainer(props: ComponentProps<'div'>) {
-	return (
-		<div {...props} className={clsx(fieldContainerStyles, props.className)} />
-	)
+	return <div {...props} class={fieldContainerStyles} />
 }

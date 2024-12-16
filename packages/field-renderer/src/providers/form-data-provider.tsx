@@ -1,50 +1,51 @@
-import type { FieldType, FormLayout, FormStatus } from '@pugform/database/enums'
-import { type ComponentChildren, createContext } from 'preact'
-import { useContext } from 'preact/hooks'
+import {
+	Match,
+	type ParentComponent,
+	Suspense,
+	Switch,
+	createResource,
+	useContext,
+} from 'solid-js'
+import { FormDataContext, type TFormData } from './form-data-context'
 
-export type TField = {
-	options: string[]
-	type: FieldType
+type TFetchFormDataResp =
+	| { status: 'failed'; errorMsg: string; data?: never }
+	| { status: 'success'; data: TFormData; errorMsg?: never }
+
+const fetchFormData = async (formId: string) => {
+	const response = await fetch(
+		`http://localhost:3000/api/resources/form/${formId}`,
+	)
+	return response.json() as unknown as TFetchFormDataResp
+}
+
+interface FormDataProviderProps {
 	formId: string
-	id: string
-	index: number
-	organizationId: string
-	createdAt: Date
-	updatedAt: Date
-	description: string | null
-	label: string
-	placeholder: string | null
-	required: boolean
-	order: number
-	formPageId: string
 }
 
-export type TPage = {
-	id: string
-	fields: TField[]
-}
+export const FormDataProvider: ParentComponent<FormDataProviderProps> = (
+	props,
+) => {
+	const [formData] = createResource(props.formId, fetchFormData)
+	return (
+		<Suspense>
+			<Switch>
+				<Match when={formData.error}>
+					<span>Error: {formData.error.message}</span>
+				</Match>
 
-export interface TFormDataContext {
-	id: string
-	status: FormStatus
-	title: string
-	layout: FormLayout
-	totalPages: number
-	pages: undefined | TPage[]
-	fields: undefined | TField[]
-}
-
-const Context = createContext<TFormDataContext | null>(null)
-
-export function FormDataProvider({
-	children,
-	...rest
-}: TFormDataContext & { children: ComponentChildren }) {
-	return <Context.Provider value={rest}>{children}</Context.Provider>
+				<Match when={formData() && formData()?.status === 'success'}>
+					<FormDataContext.Provider value={formData()?.data}>
+						{props.children}
+					</FormDataContext.Provider>
+				</Match>
+			</Switch>
+		</Suspense>
+	)
 }
 
 export const useFormData = () => {
-	const data = useContext(Context)
+	const data = useContext(FormDataContext)
 
 	if (!data) {
 		throw new Error('use useFormData inside <FormDataProvider />')

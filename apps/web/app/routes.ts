@@ -8,6 +8,7 @@ import {
 
 const ROUTES_DIR = 'routes'
 const APPLICATION_DIR = '(application)'
+const API_DIR = '(api)'
 const AUTH_SEGMENT = 'auth'
 const DASHBOARD_SEGMENT = 'dashboard'
 const RESOURCES_SEGMENT = 'resources'
@@ -24,6 +25,10 @@ const buildApplicationRoutePath = (
 	path: string,
 ) => {
 	return buildPath(ROUTES_DIR, APPLICATION_DIR, `(${segment})`, path)
+}
+
+const buildResourcesRoutePath = (path: string) => {
+	return buildPath(ROUTES_DIR, API_DIR, `(${RESOURCES_SEGMENT})`, path)
 }
 
 const authRoutes = [
@@ -56,6 +61,10 @@ const formRoutes = [
 			),
 		),
 	]),
+]
+
+const newResourceRoutes = [
+	...prefix('form', [route(':formId', buildResourcesRoutePath('form.$id.ts'))]),
 ]
 
 const resourceRoutes = [
@@ -117,4 +126,5 @@ export default [
 	route(':formId', buildRoutePath('(subDomain)/public-form-view.tsx')),
 	...prefix('dashboard', [...authRoutes, ...dashboardRoutes]),
 	...prefix('resources', resourceRoutes),
+	...prefix('api/resources', newResourceRoutes),
 ] satisfies RouteConfig

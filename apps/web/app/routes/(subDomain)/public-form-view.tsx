@@ -1,45 +1,32 @@
-import { formWidget } from '@pugform/field-renderer'
-import { useEffect } from 'react'
-import { trpcServer } from '~/trpc/server'
+import { useEffect, useState } from 'react'
 import type { Route } from './+types/public-form-view'
 import '@pugform/field-renderer/style.css'
 
-export async function loader({ request, context, params }: Route.LoaderArgs) {
-	const formId = params.formId
-
-	const { data } = await trpcServer({ request, context }).form.getPublic({
-		formId,
-	})
-	return {
-		data,
-	}
+interface WidgetProps {
+	formId: string
 }
 
-export default function PublicFormView({ loaderData }: Route.ComponentProps) {
+function Widget({ formId }: WidgetProps) {
+	const [, setLoaded] = useState(false)
+	const id = performance.now.toString()
+
 	useEffect(() => {
-		const widget = formWidget()
-
-		widget.render({
-			selector: '[data-island="widget"]',
-			initialProps: {
-				...loaderData.data.form,
-				...loaderData.data.meta,
-				fields: loaderData.data.fields,
-				pages: loaderData.data.pages,
-			},
-		})
-
-		return () => {
-			widget.destroy()
-		}
+		;(async () => {
+			import('@pugform/field-renderer')
+			setLoaded(true)
+		})()
 	}, [])
 
+	//@ts-ignore
+	return <pug-form form-id={formId} />
+}
+
+export default function PublicFormView({ params }: Route.ComponentProps) {
 	return (
 		<div className="flex flex-col w-full min-h-screen h-full items-center justify-center">
-			<div
-				className="w-full h-full flex items-center justify-center"
-				data-island="widget"
-			/>
+			<div className="w-full h-full flex items-center justify-center">
+				<Widget formId={params.formId} />
+			</div>
 		</div>
 	)
 }

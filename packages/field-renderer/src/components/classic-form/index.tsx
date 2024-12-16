@@ -1,19 +1,29 @@
+import { For, Match, Show, Switch, createEffect, createSignal } from 'solid-js'
+import type { TField } from '~/providers/form-data-context'
 import { useFormData } from '~/providers/form-data-provider'
 import { useFormState } from '~/providers/form-state-provider'
 import { Button } from '../common/button'
 import { ClassicFieldRenderer } from './classic-form-renderer'
 
 export function ClassicForm() {
-	const state = useFormState()
-	const isEnding = state.pageType.value === 'ending'
+	const [state] = useFormState()
 
-	return isEnding ? <EndingPage /> : <FormPage />
+	return (
+		<Switch>
+			<Match when={state.pageType === 'ending'}>
+				<EndingPage />
+			</Match>
+			<Match when={state.pageType === 'form'}>
+				<FormPage />
+			</Match>
+		</Switch>
+	)
 }
 
 function EndingPage() {
 	return (
 		<div>
-			<h1 className="font-sans tracking-tight text-fg font-bold text-xl sm:text-2xl">
+			<h1 class="font-sans tracking-tight text-fg font-bold text-xl sm:text-2xl">
 				Thanks for completing this form
 			</h1>
 		</div>
@@ -22,24 +32,32 @@ function EndingPage() {
 
 function FormPage() {
 	const data = useFormData()
-	const state = useFormState()
-	const currentStep = state.currentPage.value
+	const [state] = useFormState()
+	const [fields, setFields] = createSignal<TField[] | undefined>(undefined)
 
-	const fields = data.pages?.[currentStep]?.fields
+	createEffect(() => {
+		const currentStep = state.currentPage
 
-	return fields && fields.length > 0 ? (
-		<div className="pf-flex pf-items-center pf-justify-center pf-flex-col pf-w-full pf-max-w-3xl ">
-			<div className="pf-bg-bg pf-rounded-xl pf-w-full pf-border pf-h-full">
-				<div className="pf-flex pf-flex-col pf-gap-4 pf-p-6">
-					{fields.map((field) => (
-						<ClassicFieldRenderer key={field.id} {...field} />
-					))}
+		setFields(data.pages?.[currentStep]?.fields)
+	})
 
-					<div>
-						<Button type="submit">Save</Button>
+	return (
+		<Show when={fields()} keyed fallback={null}>
+			{(fieldValue) => (
+				<div class="pf-flex pf-items-center pf-justify-center pf-flex-col pf-w-full pf-max-w-3xl ">
+					<div class="pf-bg-bg pf-rounded-xl pf-w-full pf-border pf-h-full">
+						<div class="pf-flex pf-flex-col pf-gap-4 pf-p-6">
+							<For each={fieldValue}>
+								{(field) => <ClassicFieldRenderer {...field} />}
+							</For>
+
+							<div>
+								<Button type="submit">Save</Button>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	) : null
+			)}
+		</Show>
+	)
 }

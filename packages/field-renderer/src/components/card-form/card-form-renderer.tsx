@@ -1,10 +1,9 @@
 import type { NewField } from '@pugform/database'
-import { useId } from 'preact/hooks'
+import { createUniqueId } from 'solid-js'
 import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
 import { CardFormInput } from './input'
 import { CardFormLongAnswerInput } from './long-answer-input'
-import { CardFormMultipleChoiceInput } from './multiple-choice-input'
 
 interface CardFormFieldRendererProps {
 	type: NewField['type']
@@ -14,24 +13,18 @@ interface CardFormFieldRendererProps {
 	options: string[]
 }
 
-export function CardFormFieldRenderer({
-	type,
-	label,
-	id,
-	required,
-	options,
-}: CardFormFieldRendererProps) {
-	const fieldId = useId()
+export function CardFormFieldRenderer(props: CardFormFieldRendererProps) {
+	const fieldId = createUniqueId()
 
-	switch (type) {
+	switch (props.type) {
 		case 'SHORT_ANSWER':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
+					<Label id={fieldId} label={props.label} />
 					<CardFormInput
 						id={fieldId}
-						name={id}
-						required={required}
+						name={props.id}
+						required={props.required}
 						type="text"
 					/>
 				</FieldContainer>
@@ -40,11 +33,11 @@ export function CardFormFieldRenderer({
 		case 'EMAIL':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
+					<Label id={fieldId} label={props.label} />
 					<CardFormInput
 						id={fieldId}
-						name={id}
-						required={required}
+						name={props.id}
+						required={props.required}
 						type="email"
 					/>
 				</FieldContainer>
@@ -53,13 +46,17 @@ export function CardFormFieldRenderer({
 		case 'LONG_ANSWER':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
-					<CardFormLongAnswerInput id={fieldId} name={id} required={required} />
+					<Label id={fieldId} label={props.label} />
+					<CardFormLongAnswerInput
+						id={fieldId}
+						name={props.id}
+						required={props.required}
+					/>
 				</FieldContainer>
 			)
 
-		case 'MULTIPLE_CHOICE':
-			return <CardFormMultipleChoiceInput options={options} label={label} />
+		// case 'MULTIPLE_CHOICE':
+		// 	return <CardFormMultipleChoiceInput options={options} label={props.label} />
 
 		default:
 			return null

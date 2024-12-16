@@ -1,27 +1,30 @@
-import {
-	FormDataProvider,
-	type TFormDataContext,
-} from '~/providers/form-data-provider'
-
-import { useMemo } from 'preact/hooks'
-import {
-	FormStateContext,
-	createFormState,
-} from '~/providers/form-state-provider'
+import { Match, Switch } from 'solid-js'
+import { FormDataProvider, useFormData } from '~/providers/form-data-provider'
+import { FormStateContextProvider } from '~/providers/form-state-provider'
 import { CardForm } from './card-form'
-import { ClassicForm } from './classic-form'
 
-export function FieldRenderer({ layout, ...rest }: TFormDataContext) {
-	const formState = useMemo(
-		() => createFormState({ totalPage: rest.totalPages }),
-		[rest.totalPages],
+interface FieldRendererProps {
+	formId: string
+}
+
+export function FieldRenderer(props: FieldRendererProps) {
+	return (
+		<FormDataProvider formId={props.formId}>
+			<FormStateContextProvider>
+				<Renderer />
+			</FormStateContextProvider>
+		</FormDataProvider>
 	)
+}
+
+function Renderer() {
+	const formData = useFormData()
 
 	return (
-		<FormStateContext.Provider value={formState}>
-			<FormDataProvider layout={layout} {...rest}>
-				{layout === 'CARD' ? <CardForm /> : <ClassicForm />}
-			</FormDataProvider>
-		</FormStateContext.Provider>
+		<Switch>
+			<Match when={formData.layout === 'CARD'}>
+				<CardForm />
+			</Match>
+		</Switch>
 	)
 }

@@ -1,5 +1,5 @@
 import type { NewField } from '@pugform/database'
-import { useId } from 'preact/hooks'
+import { createUniqueId } from 'solid-js'
 import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
 import { ClassicFormInput } from './input'
@@ -13,24 +13,18 @@ interface ClassicFieldRendererProps {
 	options: string[]
 }
 
-export function ClassicFieldRenderer({
-	type,
-	label,
-	id,
-	required,
-	options,
-}: ClassicFieldRendererProps) {
-	const fieldId = useId()
+export function ClassicFieldRenderer(props: ClassicFieldRendererProps) {
+	const fieldId = createUniqueId()
 
-	switch (type) {
+	switch (props.type) {
 		case 'SHORT_ANSWER':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
+					<Label id={fieldId} label={props.label} />
 					<ClassicFormInput
 						id={fieldId}
-						name={id}
-						required={required}
+						name={props.id}
+						required={props.required}
 						type="text"
 					/>
 				</FieldContainer>
@@ -39,11 +33,11 @@ export function ClassicFieldRenderer({
 		case 'EMAIL':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
+					<Label id={fieldId} label={props.label} />
 					<ClassicFormInput
 						id={fieldId}
-						name={id}
-						required={required}
+						name={props.id}
+						required={props.required}
 						type="email"
 					/>
 				</FieldContainer>
@@ -52,12 +46,12 @@ export function ClassicFieldRenderer({
 		case 'LONG_ANSWER':
 			return (
 				<FieldContainer>
-					<Label id={fieldId} label={label} />
+					<Label id={fieldId} label={props.label} />
 
 					<ClassicFormLongAnswerInput
 						id={fieldId}
-						name={id}
-						required={required}
+						name={props.id}
+						required={props.required}
 					/>
 				</FieldContainer>
 			)

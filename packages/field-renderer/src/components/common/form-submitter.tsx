@@ -1,30 +1,26 @@
-import { batch } from '@preact/signals'
-import { clsx } from 'clsx/lite'
-import type { ComponentChildren } from 'preact'
+import { type ComponentProps, type ParentProps, splitProps } from 'solid-js'
 import { useFormData } from '~/providers/form-data-provider'
 import { useFormState } from '~/providers/form-state-provider'
 
-interface FormSubmitterProps {
-	className?: string
-	children: ComponentChildren
-}
-
-export function FormSubmitter({ children, className }: FormSubmitterProps) {
-	const formState = useFormState()
+export function FormSubmitter(props: ComponentProps<'form'>) {
+	const [local, others] = splitProps(props, ['children'])
+	const [formState, setFormState] = useFormState()
 	const formData = useFormData()
 	const addData = (data: Record<string, string>) => {
-		batch(() => {
-			formState.data.value = [...formState.data.value, data]
-			formState.currentPage.value++
-		})
+		setFormState((prev) => ({
+			...prev,
+			currentPage: prev.currentPage + 1,
+			data: [...prev.data, data],
+		}))
 	}
 
 	const next = () => {
-		formState.currentPage.value++
+		setFormState((prev) => ({ ...prev, currentPage: prev.currentPage + 1 }))
 	}
 
 	return (
 		<form
+			{...others}
 			onSubmit={async (e) => {
 				e.preventDefault()
 				e.stopPropagation()
@@ -34,11 +30,11 @@ export function FormSubmitter({ children, className }: FormSubmitterProps) {
 					new FormData(form).entries(),
 				) as Record<string, string>
 
-				const isLastPage = formState.isLastPage.peek()
+				const isLastPage = formState.isLastPage
 
 				if (isLastPage) {
 					const mergedData = {
-						...Object.assign({}, ...formState.data.peek()),
+						...Object.assign({}, ...formState.data),
 						...formDataObj,
 					}
 
@@ -66,9 +62,8 @@ export function FormSubmitter({ children, className }: FormSubmitterProps) {
 					addData(formDataObj)
 				}
 			}}
-			className={clsx(className)}
 		>
-			{children}
+			{local.children}
 		</form>
 	)
 }
