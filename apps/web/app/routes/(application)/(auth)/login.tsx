@@ -1,18 +1,7 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
-	data,
-	redirect,
-} from 'react-router'
-import {
-	Form,
-	Link,
-	useActionData,
-	useLoaderData,
-	useSearchParams,
-} from 'react-router'
+import { data, redirect } from 'react-router'
+import { Form, Link, useSearchParams } from 'react-router'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { ErrorList } from '~/components/error-list'
@@ -25,6 +14,7 @@ import { login, requireAnonymous } from '~/utils/auth.server'
 import { checkHoneypot } from '~/utils/honeypot.server'
 import { setSessionTokenCookie } from '~/utils/session.server'
 import { EmailSchema, PasswordSchema } from '~/utils/user-validation'
+import type { Route } from './+types/login'
 
 const LoginFormSchema = z.object({
 	email: EmailSchema,
@@ -33,7 +23,7 @@ const LoginFormSchema = z.object({
 	remember: z.boolean().optional(),
 })
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
 	requireAnonymous(context)
 
 	const isDev = process.env.NODE_ENV === 'development'
@@ -45,7 +35,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 	}
 }
 
-export async function action({ request, context }: ActionFunctionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
 	requireAnonymous(context)
 	const formData = await request.formData()
 	checkHoneypot(formData)
@@ -79,7 +69,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 	const { session } = submission.value
 
-	redirect('/', {
+	return redirect('/', {
 		headers: {
 			'Set-Cookie': setSessionTokenCookie(
 				session.sessionToken,
@@ -89,19 +79,17 @@ export async function action({ request, context }: ActionFunctionArgs) {
 	})
 }
 
-export default function Login() {
-	const actionData = useActionData<typeof action>()
-	const data = useLoaderData<typeof loader>()
-
+export default function Login({
+	loaderData,
+	actionData,
+}: Route.ComponentProps) {
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
-	// biome-ignore lint/complexity/useOptionalChain: <explanation>
-	const p = actionData && actionData.result
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getZodConstraint(LoginFormSchema),
-		defaultValue: { redirectTo, ...data.defaultValues },
+		defaultValue: { redirectTo, ...loaderData.defaultValues },
 		lastResult: actionData?.result,
 		onValidate({ formData }) {
 			return parseWithZod(formData, { schema: LoginFormSchema })
