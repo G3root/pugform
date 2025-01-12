@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -23,6 +25,7 @@
     "dev:tsup": "tsup --watch"
   },
   "devDependencies": {
+    "@kobalte/core": "^0.13.7",
     "@pugform/database": "workspace:*",
     "autoprefixer": "^10.4.19",
     "clsx": "^2.1.1",

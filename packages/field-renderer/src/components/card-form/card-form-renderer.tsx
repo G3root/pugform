@@ -4,6 +4,7 @@ import { FieldContainer } from '../common/field-container'
 import { Label } from '../common/label'
 import { CardFormInput } from './input'
 import { CardFormLongAnswerInput } from './long-answer-input'
+import { CardFormMultipleChoiceInput } from './multiple-choice-input'
 
 interface CardFormFieldRendererProps {
 	type: NewField['type']
@@ -55,8 +56,13 @@ export function CardFormFieldRenderer(props: CardFormFieldRendererProps) {
 				</FieldContainer>
 			)
 
-		// case 'MULTIPLE_CHOICE':
-		// 	return <CardFormMultipleChoiceInput options={options} label={props.label} />
+		case 'MULTIPLE_CHOICE':
+			return (
+				<CardFormMultipleChoiceInput
+					options={props.options}
+					label={props.label}
+				/>
+			)
 
 		default:
 			return null

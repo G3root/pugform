@@ -1,69 +1,34 @@
-// import { clsx } from 'clsx/lite'
-// import { type ComponentChildren, createContext } from 'preact'
-// import { useContext, useRef } from 'preact/hooks'
-// import { type AriaRadioProps, useRadio, useRadioGroup } from 'react-aria'
-// import {
-// 	type RadioGroupProps,
-// 	type RadioGroupState,
-// 	useRadioGroupState,
-// } from 'react-stately'
-// import { fieldContainerStyles } from '../common/field-container'
-// import { labelStyles } from '../common/label'
+import { RadioGroup } from '@kobalte/core/radio-group'
+import { For } from 'solid-js'
 
-// const RadioContext = createContext<RadioGroupState | null>(null)
+interface CardFormMultipleChoiceInputProps {
+	label: string
+	options: string[]
+}
 
-// interface CardFormMultipleChoiceInputProps extends RadioGroupProps {
-// 	label: string
-// 	options: string[]
-// }
-
-// export function CardFormMultipleChoiceInput(
-// 	props: CardFormMultipleChoiceInputProps,
-// ) {
-// 	const { options, ...rest } = props
-
-// 	return (
-// 		<RadioGroup {...rest}>
-// 			{options.map((item) => (
-// 				<Radio value={item} key={item} />
-// 			))}
-// 		</RadioGroup>
-// 	)
-// }
-
-// interface RadioGroup extends RadioGroupProps {
-// 	label: string
-// 	children: ComponentChildren
-// }
-
-// function RadioGroup(props: RadioGroup) {
-// 	const { children, label } = props
-// 	const state = useRadioGroupState(props)
-// 	const { radioGroupProps, labelProps } = useRadioGroup(props, state)
-
-// 	return (
-// 		<div className={fieldContainerStyles} {...radioGroupProps}>
-// 			<h2 className={labelStyles} {...labelProps}>
-// 				{label}
-// 			</h2>
-// 			<RadioContext.Provider value={state}>{children}</RadioContext.Provider>
-// 		</div>
-// 	)
-// }
-
-// interface RadioProps extends AriaRadioProps {}
-
-// function Radio(props: RadioProps) {
-// 	const { children } = props
-// 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
-// 	const state = useContext(RadioContext)!
-// 	const ref = useRef(null)
-// 	const { inputProps } = useRadio(props, state, ref)
-
-// 	return (
-// 		<label style={{ display: 'block' }}>
-// 			<input {...inputProps} ref={ref} />
-// 			{children}
-// 		</label>
-// 	)
-// }
+export function CardFormMultipleChoiceInput(
+	props: CardFormMultipleChoiceInputProps,
+) {
+	return (
+		<RadioGroup class="radio-group">
+			<RadioGroup.Label class="radio-group__label">
+				{props.label}
+			</RadioGroup.Label>
+			<div class="radio-group__items" role="presentation">
+				<For each={props.options}>
+					{(item) => (
+						<RadioGroup.Item value={item} class="radio">
+							<RadioGroup.ItemInput class="radio__input" />
+							<RadioGroup.ItemControl class="radio__control">
+								<RadioGroup.ItemIndicator class="radio__indicator" />
+							</RadioGroup.ItemControl>
+							<RadioGroup.ItemLabel class="radio__label">
+								{item}
+							</RadioGroup.ItemLabel>
+						</RadioGroup.Item>
+					)}
+				</For>
+			</div>
+		</RadioGroup>
+	)
+}
