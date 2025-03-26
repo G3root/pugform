@@ -1,0 +1,21 @@
+{
+  "name": "pugform",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "start": "turbo run start",
+    "fmt": "pnpm biome format . --write && pnpm biome check . --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@dotenvx/dotenvx": "^1.39.0",
+    "turbo": "^2.4.4",
+    "typescript": "5.8.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
