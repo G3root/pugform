@@ -10,4 +10,6 @@ const apiRoutes = [route('/auth/*', 'routes/api/auth.ts')] satisfies RouteConfig
 export default [
 	...prefix('/api', apiRoutes),
 	index('routes/home.tsx'),
+	route('/sign-up', 'routes/sign-up.tsx'),
+	route('/login', 'routes/login.tsx'),
 ] satisfies RouteConfig
