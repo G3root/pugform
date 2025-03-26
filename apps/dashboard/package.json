@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@react-router/node": "^7.4.0",
     "@react-router/serve": "^7.4.0",
