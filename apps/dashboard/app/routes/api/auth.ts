@@ -1,4 +1,3 @@
-
 import { auth } from '~/lib/auth'
 import type { Route } from './+types/auth'
 
