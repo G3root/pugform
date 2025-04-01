@@ -16,6 +16,8 @@ import {
 	SidebarRail,
 } from '~/components/ui/sidebar'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
+import { authClient } from '~/lib/auth-client'
+import { NavUser } from './nav-user'
 
 const data = {
 	navMain: [
@@ -83,7 +85,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroup>
 				))}
 			</SidebarContent>
-			<SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+			<SidebarFooter>
+				<UserMenu />
+			</SidebarFooter>
 		</Sidebar>
+	)
+}
+
+function UserMenu() {
+	const {
+		data: session,
+		isPending, //loading state
+		error, //error object
+		refetch, //refetch the session
+	} = authClient.useSession()
+
+	return (
+		<NavUser
+			name={session?.user?.name ?? 'John Doe'}
+			email={session?.user?.email ?? 'john.doe@example.com'}
+			avatar={session?.user?.image ?? 'https://github.com/shadcn.png'}
+		/>
 	)
 }
