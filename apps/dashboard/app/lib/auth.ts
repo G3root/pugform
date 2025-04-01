@@ -1,8 +1,8 @@
+import { db } from '@pugform/database'
 import { betterAuth } from 'better-auth'
 import { twoFactor } from 'better-auth/plugins'
 import { organization } from 'better-auth/plugins'
 import { passkey } from 'better-auth/plugins/passkey'
-import { db } from './db.server'
 
 export const auth = betterAuth({
 	database: {

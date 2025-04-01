@@ -1,16 +1,9 @@
+import { formOptions } from '@tanstack/react-form/remix'
 import { Link, href } from 'react-router'
-
-import { mergeForm, useTransform } from '@tanstack/react-form'
-import {
-	ServerValidateError,
-	createServerValidate,
-	formOptions,
-} from '@tanstack/react-form/remix'
-import { useActionData } from 'react-router'
 import { z } from 'zod'
 import { useAppForm } from '~/hooks/form'
+import { signIn } from '~/lib/auth-client'
 import { EmailSchema, PasswordSchema } from '~/utils/user-validation'
-import type { Route } from './+types/login'
 
 const FormSchema = z.object({
 	email: EmailSchema,
@@ -24,46 +17,32 @@ const formOpts = formOptions({
 	},
 })
 
-const serverValidate = createServerValidate({
-	...formOpts,
-	onServerValidate: async ({ value }) => {
-		console.log(value, 'value')
-	},
-})
-
-export async function action({ request }: Route.ActionArgs) {
-	const formData = await request.formData()
-	try {
-		await serverValidate(formData)
-	} catch (e) {
-		if (e instanceof ServerValidateError) {
-			return e.formState
-		}
-
-		throw e
-	}
-
-	return null
-}
-
 export default function LoginPage() {
-	const actionData = useActionData()
 	const form = useAppForm({
 		...formOpts,
 		validators: {
 			onChange: FormSchema,
 		},
-		transform: useTransform(
-			(baseForm) => mergeForm(baseForm, actionData ?? {}),
-			[actionData],
-		),
+		onSubmit: async ({ value }) => {
+			await signIn.email({
+				email: value.email,
+				password: value.password,
+				callbackURL: '/',
+			})
+		},
 	})
 
 	return (
 		<div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
 			<div className="w-full max-w-sm">
 				<div className="flex flex-col gap-6">
-					<form action="">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault()
+							e.stopPropagation()
+							form.handleSubmit()
+						}}
+					>
 						<div className="flex flex-col gap-6">
 							<div className="flex flex-col items-center gap-2">
 								<Link

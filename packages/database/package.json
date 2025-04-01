@@ -1,0 +1,37 @@
+{
+  "name": "@pugform/database",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/client.ts",
+    "./enums": "./src/generated/enums.ts",
+    "./db-types": ["./src/generated/db-types.ts"]
+  },
+  "scripts": {
+    "clean": "rimraf .turbo node_modules dist",
+    "db:migrate:deploy": "dotenvx run -f ../../.env -- prisma migrate deploy",
+    "db:migrate:dev": "dotenvx run -f ../../.env -- prisma migrate dev",
+    "db:push": "dotenvx run -f ../../.env -- prisma db push",
+    "db:seed": "dotenvx run -f ../../.env -- tsx src/seed.ts",
+    "db:migrate:force": "dotenvx run -f ../../.env -- prisma migrate reset --force",
+    "format": "dotenvx run -f ../../.env -- prisma format",
+    "generate": "dotenvx run -f ../../.env -- prisma generate",
+    "prebuild": "pnpm run generate",
+    "predev": "pnpm run generate",
+    "studio": "dotenvx run -f ../../.env -- prisma studio"
+  },
+  "dependencies": {
+    "kysely": "^0.27.6",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.5.0",
+    "@types/pg": "^8.11.11",
+    "prisma": "^6.5.0",
+    "prisma-kysely": "^1.8.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

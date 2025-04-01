@@ -6,7 +6,7 @@ import {
 	type Updateable,
 } from 'kysely'
 import pg from 'pg'
-import type { DB as Database, User as UserTable } from '../generated/db-types'
+import type { DB as Database, User as UserTable } from './generated/db-types'
 
 const DATABASE_URL = process.env.DATABASE_URL
 

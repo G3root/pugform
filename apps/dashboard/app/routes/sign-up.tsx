@@ -2,14 +2,11 @@ import {
 	ServerValidateError,
 	createServerValidate,
 	formOptions,
-	mergeForm,
 } from '@tanstack/react-form/remix'
-
-import { Form, useActionData } from 'react-router'
+import { useActionData } from 'react-router'
 import { z } from 'zod'
-
-import { useTransform } from '@tanstack/react-form'
 import { useAppForm } from '~/hooks/form'
+import { signUp } from '~/lib/auth-client.js'
 import {
 	EmailSchema,
 	PasswordAndConfirmPasswordSchema,
@@ -62,18 +59,25 @@ export default function SignUpPage(props: Route.ComponentProps) {
 		validators: {
 			onChange: FormSchema,
 		},
-		transform: useTransform(
-			(baseForm) => mergeForm(baseForm, actionData ?? {}),
-			[actionData],
-		),
+		onSubmit: async ({ value }) => {
+			await signUp.email({
+				email: value.email,
+				name: value.name,
+				password: value.password,
+				callbackURL: '/',
+			})
+		},
 	})
 	return (
 		<div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
 			<div className="w-full max-w-sm">
-				<Form
+				<form
 					className="flex flex-col gap-6"
-					method="post"
-					onSubmit={() => form.handleSubmit()}
+					onSubmit={(e) => {
+						e.preventDefault()
+						e.stopPropagation()
+						form.handleSubmit()
+					}}
 				>
 					<form.AppField
 						name="name"
@@ -102,7 +106,7 @@ export default function SignUpPage(props: Route.ComponentProps) {
 					<form.AppForm>
 						<form.SubscribeButton label="Signup" />
 					</form.AppForm>
-				</Form>
+				</form>
 			</div>
 		</div>
 	)
