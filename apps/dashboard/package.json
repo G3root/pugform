@@ -19,6 +19,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@react-router/node": "^7.4.0",
     "@react-router/serve": "^7.4.0",
+    "@remixicon/react": "^4.6.0",
     "@tanstack/react-form": "^1.1.2",
     "@tanstack/react-store": "^0.7.0",
     "better-auth": "^1.2.4",
