@@ -1,6 +1,10 @@
 import type * as React from 'react'
 
-import { RiSettings3Line, RiSlowDownLine } from '@remixicon/react'
+import {
+	RiAddCircleLine,
+	RiSettings3Line,
+	RiSlowDownLine,
+} from '@remixicon/react'
 import { Link } from 'react-router'
 import {
 	Sidebar,
@@ -18,7 +22,7 @@ import {
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
 import { authClient } from '~/lib/auth-client'
 import { NavUser } from './nav-user'
-
+import { Button } from './ui/button'
 const data = {
 	navMain: [
 		{
@@ -84,6 +88,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarGroupContent>
 					</SidebarGroup>
 				))}
+				<SidebarGroup>
+					<div className="flex items-center justify-between">
+						<SidebarGroupLabel className="text-muted-foreground/65 uppercase">
+							Projects
+						</SidebarGroupLabel>
+
+						<div>
+							<SidebarMenuButton>
+								<RiAddCircleLine size={22} />
+							</SidebarMenuButton>
+						</div>
+					</div>
+				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
 				<UserMenu />

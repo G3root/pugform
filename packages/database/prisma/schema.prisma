@@ -127,6 +127,7 @@ model Organization {
   metadata    String?
   members     Member[]
   invitations Invitation[]
+  Project     Project[]
 
   @@unique([slug])
   @@map("organization")
@@ -140,6 +141,7 @@ model Member {
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String
   createdAt      DateTime
+  Project        Project[]
 
   @@map("member")
 }
@@ -156,4 +158,22 @@ model Invitation {
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@map("invitation")
+}
+
+model Project {
+  id       String @id
+  name     String
+  publicId String
+
+  creator   Member @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId String
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([publicId, organizationId])
+  @@map("project")
 }
