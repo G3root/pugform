@@ -4,6 +4,7 @@ export type RouteError =
 	| { type: 'Unauthorized'; context?: string }
 	| { type: 'Other'; error?: Error; context?: string }
 	| { type: 'BadRequest'; context: string }
+	| { type: 'MethodNotAllowed'; context?: string }
 
 export const notFound = (context?: string): RouteError => ({
 	type: 'NotFound',
@@ -28,6 +29,11 @@ export const other = (context: string, error?: Error): RouteError => ({
 
 export const badRequest = (context: string): RouteError => ({
 	type: 'BadRequest',
+	context,
+})
+
+export const methodNotAllowed = (context?: string): RouteError => ({
+	type: 'MethodNotAllowed',
 	context,
 })
 
@@ -63,6 +69,12 @@ export const mapRouteError = (err: RouteError) => {
 			}
 		}
 
+		case 'MethodNotAllowed': {
+			return {
+				status: 405,
+				errorMsg: 'Method Not Allowed',
+			}
+		}
 		case 'Other': {
 			const errorInfo = [err.error ? err.error : '', `Context: ${err.context}`]
 				.filter((val) => val !== '')
