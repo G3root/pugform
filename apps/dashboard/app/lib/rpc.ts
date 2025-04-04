@@ -18,58 +18,59 @@ export async function rpcHandler<T, R>(
 	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
 	method: 'GET' | 'POST' = 'POST',
 ) {
-	return fromPromise(
-		Promise.resolve(async () => {
+	const parsedInput = await fromPromise(
+		(async () => {
 			if (request.method !== method) {
 				return errAsync(Errors.methodNotAllowed())
 			}
 
 			if (method === 'POST') {
-				return okAsync(request.json() as unknown)
+				return okAsync((await request.json()) as unknown)
 			}
+
 			const url = new URL(request.url)
 			const params: Record<string, string> = {}
 			url.searchParams.forEach((value, key) => {
 				params[key] = value
 			})
 			return okAsync(params as unknown)
-		}),
-		(e) => Errors.other('Handler failed', e instanceof Error ? e : undefined),
-	)
-		.andThen((data) => {
-			const validationResult = schema.safeParse(data)
-			if (!validationResult.success) {
-				const errorMessage = validationResult.error.errors
-					.map((err) => `${err.path.join('.')}: ${err.message}`)
-					.join(', ')
-				return errAsync(Errors.badRequest(errorMessage))
-			}
-			return okAsync(validationResult.data)
-		})
-		.andThen((data) =>
-			fromPromise(
-				handler(data).then((result) =>
-					result.match(
-						(data) => data,
-						(error) => {
-							throw error
-						},
-					),
-				),
-				(e) =>
-					Errors.other('Handler failed', e instanceof Error ? e : undefined),
+		})(),
+		(e) =>
+			Errors.other(
+				'Request parsing failed',
+				e instanceof Error ? e : undefined,
 			),
+	).andThen((data) => {
+		const validationResult = schema.safeParse(data)
+		if (!validationResult.success) {
+			const errorMessage = validationResult.error.errors
+				.map((err) => `${err.path.join('.')}: ${err.message}`)
+				.join(', ')
+			return errAsync(Errors.badRequest(errorMessage))
+		}
+		return okAsync(validationResult.data)
+	})
+
+	if (parsedInput.isErr()) {
+		const error = Errors.mapRouteError(parsedInput.error)
+		return responseData(
+			{ status: 'failed' as const, errorMsg: error.errorMsg },
+			{ status: error.status },
 		)
-		.mapErr(Errors.mapRouteError)
-		.match(
-			(data) =>
-				responseData({ status: 'success' as const, data }, { status: 200 }),
-			(error) =>
-				responseData(
-					{ status: 'failed' as const, errorMsg: error.errorMsg },
-					{ status: error.status },
-				),
-		)
+	}
+
+	const result = await handler(parsedInput.value)
+	const final = result.mapErr(Errors.mapRouteError)
+
+	return final.match(
+		(data) =>
+			responseData({ status: 'success' as const, data }, { status: 200 }),
+		(error) =>
+			responseData(
+				{ status: 'failed' as const, errorMsg: error.errorMsg },
+				{ status: error.status },
+			),
+	)
 }
 
 /**
