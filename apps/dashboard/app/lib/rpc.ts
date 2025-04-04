@@ -1,12 +1,7 @@
-import { type ResultAsync, errAsync, okAsync } from 'neverthrow'
+import { type ResultAsync, errAsync, fromPromise, okAsync } from 'neverthrow'
 import { data as responseData } from 'react-router'
 import type { z } from 'zod'
-import {
-	type RouteError,
-	badRequest,
-	mapRouteError,
-	other,
-} from '~/utils/errors'
+import * as Errors from '~/utils/errors'
 
 /**
  * Generic RPC handler for Remix loader or action functions
@@ -20,80 +15,49 @@ import {
 export async function rpcHandler<T, R>(
 	request: Request,
 	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, RouteError>>,
+	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
 	method: 'GET' | 'POST' = 'POST',
 ) {
-	// Only allow the specified method
-	if (request.method !== method) {
-		return responseData(
-			{
-				error: `Method not allowed. Use ${method} for this endpoint.`,
-			},
-			{
-				status: 405,
-			},
-		)
-	}
+	return fromPromise(
+		Promise.resolve(async () => {
+			if (request.method !== method) {
+				return errAsync(Errors.methodNotAllowed())
+			}
 
-	try {
-		let data: unknown
-
-		// Parse the request data based on the method
-		if (method === 'POST') {
-			// For POST requests, parse the request body
-			data = await request.json()
-		} else {
-			// For GET requests, parse the URL search params
+			if (method === 'POST') {
+				return okAsync(request.json() as unknown)
+			}
 			const url = new URL(request.url)
 			const params: Record<string, string> = {}
-
-			// Convert URLSearchParams to a plain object
 			url.searchParams.forEach((value, key) => {
 				params[key] = value
 			})
-
-			data = params
-		}
-
-		// Validate the request data against the schema
-		const validationResult = schema.safeParse(data)
-
-		if (!validationResult.success) {
-			// If validation fails, return a bad request error
-			const errorMessage = validationResult.error.errors
-				.map((err) => `${err.path.join('.')}: ${err.message}`)
-				.join(', ')
-
-			return responseData(
-				{
-					error: errorMessage,
-				},
-				{
-					status: 400,
-				},
-			)
-		}
-
-		// Process the validated data
-		const result = await handler(validationResult.data)
-
-		// Handle the result
-		return result.match(
+			return okAsync(params as unknown)
+		}),
+		(e) => Errors.other('Handler failed', e instanceof Error ? e : undefined),
+	)
+		.andThen((data) => {
+			const validationResult = schema.safeParse(data)
+			if (!validationResult.success) {
+				const errorMessage = validationResult.error.errors
+					.map((err) => `${err.path.join('.')}: ${err.message}`)
+					.join(', ')
+				return errAsync(Errors.badRequest(errorMessage))
+			}
+			return okAsync(validationResult.data)
+		})
+		.andThen((data) =>
+			fromPromise(handler(data), (e) =>
+				Errors.other('Handler failed', e instanceof Error ? e : undefined),
+			),
+		)
+		.match(
 			(data) => responseData({ data }),
 			(error) => {
-				const { status, errorMsg } = mapRouteError(error)
+				const { status, errorMsg } = Errors.mapRouteError(error)
 				return responseData({ error: errorMsg }, { status })
 			},
 		)
-	} catch (e) {
-		// Handle unexpected errors
-		const error = other(
-			'Unexpected error during RPC processing',
-			e instanceof Error ? e : undefined,
-		)
-		const { status, errorMsg } = mapRouteError(error)
-		return responseData({ error: errorMsg }, { status })
-	}
 }
 
 /**
@@ -105,7 +69,7 @@ export async function rpcHandler<T, R>(
  */
 export function createRpcQueryHandler<T, R>(
 	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, RouteError>>,
+	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
 ) {
 	return async ({ request }: { request: Request }) =>
 		rpcHandler(request, schema, handler, 'GET')
@@ -120,7 +84,7 @@ export function createRpcQueryHandler<T, R>(
  */
 export function createRpcMutationHandler<T, R>(
 	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, RouteError>>,
+	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
 ) {
 	return async ({ request }: { request: Request }) =>
 		rpcHandler(request, schema, handler, 'POST')
