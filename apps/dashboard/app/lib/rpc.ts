@@ -2,6 +2,15 @@ import { type ResultAsync, errAsync, fromPromise, okAsync } from 'neverthrow'
 import { data as responseData } from 'react-router'
 import type { z } from 'zod'
 import * as Errors from '~/utils/errors'
+import { createBaseContext } from './rpc-context'
+
+type RpcHandlerConfig<T, R, Ctx> = {
+	schema: z.ZodType<T, z.ZodTypeDef, unknown>
+	handler: (data: T, ctx: Ctx) => Promise<ResultAsync<R, Errors.RouteError>>
+	request: Request
+	createContext: (request: Request) => Promise<Ctx>
+	method: 'GET' | 'POST'
+}
 
 /**
  * Generic RPC handler for Remix loader or action functions
@@ -12,12 +21,13 @@ import * as Errors from '~/utils/errors'
  * @param method The HTTP method to allow (GET or POST)
  * @returns Response with appropriate status code and data/error message
  */
-export async function rpcHandler<T, R>(
-	request: Request,
-	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
-	method: 'GET' | 'POST' = 'POST',
-) {
+export async function rpcHandler<T, R, Ctx>({
+	schema,
+	handler,
+	request,
+	createContext,
+	method,
+}: RpcHandlerConfig<T, R, Ctx>) {
 	const parsedInput = await fromPromise(
 		(async () => {
 			if (request.method !== method) {
@@ -59,7 +69,8 @@ export async function rpcHandler<T, R>(
 		)
 	}
 
-	const result = await handler(parsedInput.value)
+	const ctx = await createContext(request)
+	const result = await handler(parsedInput.value, ctx)
 	const final = result.mapErr(Errors.mapRouteError)
 
 	return final.match(
@@ -85,7 +96,13 @@ export function createRpcQueryHandler<T, R>(
 	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
 ) {
 	return async ({ request }: { request: Request }) =>
-		rpcHandler(request, schema, handler, 'GET')
+		rpcHandler({
+			schema,
+			handler,
+			request,
+			createContext: createBaseContext,
+			method: 'GET',
+		})
 }
 
 /**
@@ -95,10 +112,19 @@ export function createRpcQueryHandler<T, R>(
  * @param handler Function that processes the validated data and returns a Result
  * @returns A function that can be used as a Remix action
  */
-export function createRpcMutationHandler<T, R>(
-	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
-) {
+export function createRpcMutationHandler<T, R>({
+	schema,
+	handler,
+}: Omit<
+	RpcHandlerConfig<T, R, Awaited<ReturnType<typeof createBaseContext>>>,
+	'request' | 'method' | 'createContext'
+>) {
 	return async ({ request }: { request: Request }) =>
-		rpcHandler(request, schema, handler, 'POST')
+		rpcHandler({
+			schema,
+			handler,
+			request,
+			createContext: createBaseContext,
+			method: 'POST',
+		})
 }
