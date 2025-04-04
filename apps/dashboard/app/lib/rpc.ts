@@ -47,16 +47,28 @@ export async function rpcHandler<T, R>(
 			return okAsync(validationResult.data)
 		})
 		.andThen((data) =>
-			fromPromise(handler(data), (e) =>
-				Errors.other('Handler failed', e instanceof Error ? e : undefined),
+			fromPromise(
+				handler(data).then((result) =>
+					result.match(
+						(data) => data,
+						(error) => {
+							throw error
+						},
+					),
+				),
+				(e) =>
+					Errors.other('Handler failed', e instanceof Error ? e : undefined),
 			),
 		)
+		.mapErr(Errors.mapRouteError)
 		.match(
-			(data) => responseData({ data }),
-			(error) => {
-				const { status, errorMsg } = Errors.mapRouteError(error)
-				return responseData({ error: errorMsg }, { status })
-			},
+			(data) =>
+				responseData({ status: 'success' as const, data }, { status: 200 }),
+			(error) =>
+				responseData(
+					{ status: 'failed' as const, errorMsg: error.errorMsg },
+					{ status: error.status },
+				),
 		)
 }
 
