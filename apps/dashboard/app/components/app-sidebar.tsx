@@ -5,7 +5,7 @@ import {
 	RiSettings3Line,
 	RiSlowDownLine,
 } from '@remixicon/react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,10 +19,11 @@ import {
 	SidebarMenuItem,
 	SidebarRail,
 } from '~/components/ui/sidebar'
+import { CreateProjectSheet } from '~/features/project/components/sheets/create-project-sheet'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
 import { authClient } from '~/lib/auth-client'
 import { NavUser } from './nav-user'
-import { Button } from './ui/button'
+
 const data = {
 	navMain: [
 		{
@@ -95,9 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						</SidebarGroupLabel>
 
 						<div>
-							<SidebarMenuButton>
-								<RiAddCircleLine size={22} />
-							</SidebarMenuButton>
+							<CreateProjectButton />
 						</div>
 					</div>
 				</SidebarGroup>
@@ -105,7 +104,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarFooter>
 				<UserMenu />
 			</SidebarFooter>
+			<CreateProjectSheet />
 		</Sidebar>
+	)
+}
+
+function CreateProjectButton() {
+	const location = useLocation()
+
+	return (
+		<SidebarMenuButton asChild>
+			<Link to={`${location.pathname}?create-project=true`}>
+				<RiAddCircleLine size={22} />
+			</Link>
+		</SidebarMenuButton>
 	)
 }
 

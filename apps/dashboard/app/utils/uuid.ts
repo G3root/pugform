@@ -5,6 +5,7 @@ export const shortId = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz')
 
 const prefixes = {
 	project: 'prj',
+	member: 'mem',
 } as const
 
 export function newId<TPrefix extends keyof typeof prefixes>(prefix: TPrefix) {

@@ -9,6 +9,7 @@ export const auth = betterAuth({
 		db,
 		type: 'postgres',
 	},
+
 	emailVerification: {
 		async sendVerificationEmail({ user, url }) {
 			console.log({ user, url })
@@ -74,6 +75,40 @@ export const auth = betterAuth({
 						})
 						.execute()
 				},
+			},
+		},
+		session: {
+			create: {
+				before: async (session) => {
+					const organization = await db
+						.selectFrom('organization')
+						.where('id', '=', session.userId)
+						.selectAll()
+						.executeTakeFirstOrThrow()
+
+					const member = await db
+						.selectFrom('member')
+						.where('organizationId', '=', organization.id)
+						.where('userId', '=', session.userId)
+						.selectAll()
+						.executeTakeFirstOrThrow()
+
+					return {
+						data: {
+							...session,
+							activeOrganizationId: organization.id,
+							activeMemberId: member.id,
+						},
+					}
+				},
+			},
+		},
+	},
+
+	session: {
+		additionalFields: {
+			activeMemberId: {
+				type: 'string',
 			},
 		},
 	},

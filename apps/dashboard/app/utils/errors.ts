@@ -80,6 +80,8 @@ export const mapRouteError = (err: RouteError) => {
 				.filter((val) => val !== '')
 				.join('\n')
 
+			console.log('errorInfo', errorInfo)
+
 			// logger.error(errorInfo)
 
 			return {

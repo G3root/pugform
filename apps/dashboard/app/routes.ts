@@ -9,6 +9,7 @@ import {
 const DASHBOARD_DIR = '(dashboard)'
 const API_DIR = '(api)'
 const AUTH_DIR = '(auth)'
+const RESOURCE_DIR = '(resource)'
 const ROUTES_DIR = 'routes'
 
 const buildPath = (...segments: string[]) => segments.join('/')
@@ -27,6 +28,14 @@ const buildApiRoutePath = (path: string) => {
 	return buildPath(ROUTES_DIR, API_DIR, path)
 }
 
+const buildResourceRoutePath = (path: string) => {
+	return buildPath(ROUTES_DIR, RESOURCE_DIR, path)
+}
+
+const resourceRoutes = [
+	route('/create-project', buildResourceRoutePath('create-project.ts')),
+] satisfies RouteConfig
+
 const apiRoutes = [
 	route('/auth/*', buildApiRoutePath('auth.ts')),
 ] satisfies RouteConfig
@@ -42,6 +51,7 @@ const authRoutes = [
 
 export default [
 	...prefix('/api', apiRoutes),
+	...prefix('/resource', resourceRoutes),
 	...authRoutes,
 	layout(buildApplicationRoutePath('_layout.tsx'), dashboardRoutes),
 ] satisfies RouteConfig

@@ -57,6 +57,7 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   activeOrganizationId String?
+  activeMemberId       String?
 
   @@unique([token])
   @@map("session")

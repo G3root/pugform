@@ -9,11 +9,19 @@ const TextField = lazy(() =>
 	})),
 )
 
-function SubscribeButton({ label }: { label: string }) {
+interface SubscribeButtonProps extends React.ComponentProps<typeof Button> {
+	label: string
+}
+
+function SubscribeButton({ label, ...props }: SubscribeButtonProps) {
 	const form = useFormContext()
 	return (
 		<form.Subscribe selector={(state) => state.isSubmitting}>
-			{(isSubmitting) => <Button disabled={isSubmitting}>{label}</Button>}
+			{(isSubmitting) => (
+				<Button {...props} disabled={isSubmitting}>
+					{label}
+				</Button>
+			)}
 		</form.Subscribe>
 	)
 }

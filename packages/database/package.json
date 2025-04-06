@@ -13,6 +13,7 @@
     "db:migrate:deploy": "dotenvx run -f ../../.env -- prisma migrate deploy",
     "db:migrate:dev": "dotenvx run -f ../../.env -- prisma migrate dev",
     "db:push": "dotenvx run -f ../../.env -- prisma db push",
+    "db:push:force": "dotenvx run -f ../../.env -- prisma db push --force-reset",
     "db:seed": "dotenvx run -f ../../.env -- tsx src/seed.ts",
     "db:migrate:force": "dotenvx run -f ../../.env -- prisma migrate reset --force",
     "format": "dotenvx run -f ../../.env -- prisma format",

@@ -2,7 +2,14 @@ import { type ResultAsync, errAsync, fromPromise, okAsync } from 'neverthrow'
 import { data as responseData } from 'react-router'
 import type { z } from 'zod'
 import * as Errors from '~/utils/errors'
-import { createBaseContext } from './rpc-context'
+// import type { ProtectedHandlerConfig } from './auth-middleware'
+import { type TBaseContext, createBaseContext } from './rpc-context'
+
+// type AuthenticatedContext = Omit<TBaseContext, 'session'> & {
+// 	session: NonNullable<TBaseContext['session']> & {
+// 		user: NonNullable<TBaseContext['session']>['user']
+// 	}
+// }
 
 type RpcHandlerConfig<T, R, Ctx> = {
 	schema: z.ZodType<T, z.ZodTypeDef, unknown>
@@ -35,7 +42,7 @@ export async function rpcHandler<T, R, Ctx>({
 			}
 
 			if (method === 'POST') {
-				return okAsync((await request.json()) as unknown)
+				return await request.json()
 			}
 
 			const url = new URL(request.url)
@@ -43,7 +50,7 @@ export async function rpcHandler<T, R, Ctx>({
 			url.searchParams.forEach((value, key) => {
 				params[key] = value
 			})
-			return okAsync(params as unknown)
+			return params as unknown
 		})(),
 		(e) =>
 			Errors.other(
@@ -52,10 +59,12 @@ export async function rpcHandler<T, R, Ctx>({
 			),
 	).andThen((data) => {
 		const validationResult = schema.safeParse(data)
+
 		if (!validationResult.success) {
 			const errorMessage = validationResult.error.errors
 				.map((err) => `${err.path.join('.')}: ${err.message}`)
 				.join(', ')
+
 			return errAsync(Errors.badRequest(errorMessage))
 		}
 		return okAsync(validationResult.data)
@@ -65,7 +74,7 @@ export async function rpcHandler<T, R, Ctx>({
 		const error = Errors.mapRouteError(parsedInput.error)
 		return responseData(
 			{ status: 'failed' as const, errorMsg: error.errorMsg },
-			{ status: error.status },
+			error.status,
 		)
 	}
 
@@ -74,57 +83,71 @@ export async function rpcHandler<T, R, Ctx>({
 	const final = result.mapErr(Errors.mapRouteError)
 
 	return final.match(
-		(data) =>
-			responseData({ status: 'success' as const, data }, { status: 200 }),
-		(error) =>
-			responseData(
+		(data) => responseData({ status: 'success' as const, data }, 200),
+		(error) => {
+			console.log('errors', error)
+			return responseData(
 				{ status: 'failed' as const, errorMsg: error.errorMsg },
-				{ status: error.status },
-			),
+				error.status,
+			)
+		},
 	)
 }
 
-/**
- * Helper function to create a loader handler for RPC endpoints (GET)
- *
- * @param schema Zod schema for validating the request data
- * @param handler Function that processes the validated data and returns a Result
- * @returns A function that can be used as a Remix loader
- */
-export function createRpcQueryHandler<T, R>(
-	schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-	handler: (data: T) => Promise<ResultAsync<R, Errors.RouteError>>,
-) {
-	return async ({ request }: { request: Request }) =>
-		rpcHandler({
-			schema,
-			handler,
-			request,
-			createContext: createBaseContext,
-			method: 'GET',
-		})
-}
+// /**
+//  * Creates a protected query handler that requires authentication
+//  */
+// export function createProtectedQueryHandler<T, R>(
+// 	config: ProtectedHandlerConfig<T, R>,
+// ) {
+// 	return async ({ request }: { request: Request }) => {
+// 		return rpcHandler({
+// 			...config,
+// 			request,
+// 			method: 'GET',
+// 			createContext: async (req) => {
+// 				const ctx = await createBaseContext(req)
+// 				if (!ctx.session?.user) {
+// 					throw Errors.unauthorized('Authentication required')
+// 				}
 
-/**
- * Helper function to create an action handler for RPC endpoints (POST)
- *
- * @param schema Zod schema for validating the request data
- * @param handler Function that processes the validated data and returns a Result
- * @returns A function that can be used as a Remix action
- */
-export function createRpcMutationHandler<T, R>({
-	schema,
-	handler,
-}: Omit<
-	RpcHandlerConfig<T, R, Awaited<ReturnType<typeof createBaseContext>>>,
-	'request' | 'method' | 'createContext'
->) {
-	return async ({ request }: { request: Request }) =>
-		rpcHandler({
-			schema,
-			handler,
-			request,
-			createContext: createBaseContext,
-			method: 'POST',
-		})
-}
+// 				return {
+// 					...ctx,
+// 					session: {
+// 						...ctx.session,
+// 						user: ctx.session.user,
+// 					},
+// 				} as AuthenticatedContext
+// 			},
+// 		})
+// 	}
+// }
+
+// /**
+//  * Creates a protected mutation handler that requires authentication
+//  */
+// export function createProtectedMutationHandler<T, R>(
+// 	config: ProtectedHandlerConfig<T, R>,
+// ) {
+// 	return async ({ request }: { request: Request }) => {
+// 		return rpcHandler({
+// 			...config,
+// 			request,
+// 			method: 'POST',
+// 			createContext: async (req) => {
+// 				const ctx = await createBaseContext(req)
+// 				if (!ctx.session?.user) {
+// 					throw Errors.unauthorized('Authentication required')
+// 				}
+
+// 				return {
+// 					...ctx,
+// 					session: {
+// 						...ctx.session,
+// 						user: ctx.session.user,
+// 					},
+// 				} as AuthenticatedContext
+// 			},
+// 		})
+// 	}
+// }
