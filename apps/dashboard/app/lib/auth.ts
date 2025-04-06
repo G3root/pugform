@@ -3,7 +3,7 @@ import { betterAuth } from 'better-auth'
 import { twoFactor } from 'better-auth/plugins'
 import { organization } from 'better-auth/plugins'
 import { passkey } from 'better-auth/plugins/passkey'
-
+import { newId } from '~/utils/uuid'
 export const auth = betterAuth({
 	database: {
 		db,
@@ -43,6 +43,38 @@ export const auth = betterAuth({
 			},
 		}),
 		passkey(),
-		organization(),
+		organization({
+			allowUserToCreateOrganization: false,
+		}),
 	],
+	databaseHooks: {
+		user: {
+			create: {
+				after: async (user) => {
+					const org = await db
+						.insertInto('organization')
+						.values({
+							id: user.id,
+							name: 'Personal',
+							slug: user.id,
+							logo: null,
+							createdAt: new Date(),
+						})
+						.returningAll()
+						.executeTakeFirstOrThrow()
+
+					await db
+						.insertInto('member')
+						.values({
+							id: newId('member'),
+							organizationId: org.id,
+							role: 'admin',
+							createdAt: new Date(),
+							userId: user.id,
+						})
+						.execute()
+				},
+			},
+		},
+	},
 })
