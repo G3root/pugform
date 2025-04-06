@@ -42,6 +42,9 @@ const apiRoutes = [
 
 const dashboardRoutes = [
 	index(buildApplicationRoutePath('dashboard.tsx')),
+	...prefix('/projects', [
+		route('/:projectId', buildApplicationRoutePath('project-detail.tsx')),
+	]),
 ] satisfies RouteConfig
 
 const authRoutes = [
