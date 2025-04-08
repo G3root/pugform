@@ -9,7 +9,13 @@ import {
 	RiSettings3Line,
 	RiSlowDownLine,
 } from '@remixicon/react'
-import { Link, href, useLocation, useRouteLoaderData } from 'react-router'
+import {
+	Link,
+	href,
+	useLocation,
+	useNavigate,
+	useRouteLoaderData,
+} from 'react-router'
 import {
 	Sidebar,
 	SidebarContent,
@@ -25,11 +31,10 @@ import {
 	useSidebar,
 } from '~/components/ui/sidebar'
 import { CreateProjectSheet } from '~/features/project/components/sheets/create-project-sheet'
+import { RenameProjectSheet } from '~/features/project/components/sheets/rename-project-sheet'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
 import { authClient } from '~/lib/auth-client'
 import { NavUser } from './nav-user'
-
-import type { Info as LayoutRouteInfo } from '../../.react-router/types/app/routes/(dashboard)/+types/_layout'
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -42,6 +47,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import type { Info as LayoutRouteInfo } from '.react-router/types/app/routes/(dashboard)/+types/_layout'
 
 const data = {
 	navMain: [
@@ -128,6 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarFooter>
 				<UserMenu />
 			</SidebarFooter>
+			<RenameProjectSheet />
 			<CreateProjectSheet />
 		</Sidebar>
 	)
@@ -176,7 +183,7 @@ function ProjectList() {
 						<RiArrowRightSLine />
 					</SidebarMenuAction>
 				</CollapsibleTrigger>
-				<ProjectMenu />
+				<ProjectMenu projectPublicId={project.publicId} />
 				<CollapsibleContent>
 					<div>
 						<h1>Hello</h1>
@@ -187,8 +194,14 @@ function ProjectList() {
 	))
 }
 
-function ProjectMenu() {
+interface ProjectMenuProps {
+	projectPublicId: string
+}
+
+function ProjectMenu({ projectPublicId }: ProjectMenuProps) {
 	const { isMobile } = useSidebar()
+	const location = useLocation()
+	const navigate = useNavigate()
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -202,7 +215,16 @@ function ProjectMenu() {
 				side={isMobile ? 'bottom' : 'right'}
 				align={isMobile ? 'end' : 'start'}
 			>
-				<DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={() =>
+						navigate(
+							`${location.pathname}?rename-project=true&pid=${projectPublicId}`,
+							{
+								replace: true,
+							},
+						)
+					}
+				>
 					<RiEditLine className="text-muted-foreground" />
 					<span>Rename</span>
 				</DropdownMenuItem>

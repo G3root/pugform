@@ -40,6 +40,7 @@ export function allProjects({ db, data }: TAllProjectsOptions) {
 			.selectFrom('project')
 			.where('organizationId', '=', data.organizationId)
 			.selectAll()
+			.orderBy('createdAt', 'desc')
 			.execute(),
 		(e) => Errors.other('Failed to get all projects', e as Error),
 	)
