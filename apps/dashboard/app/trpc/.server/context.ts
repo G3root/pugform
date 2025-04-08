@@ -1,9 +1,9 @@
 import { db } from '@pugform/database'
 import { TRPCError } from '@trpc/server'
-
+import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
 import { auth } from '~/lib/auth'
 
-export const createContext = async (opts: any) => {
+export const createContext = async (opts: FetchCreateContextFnOptions) => {
 	const session = await auth.api.getSession({ headers: opts.req.headers })
 
 	return {

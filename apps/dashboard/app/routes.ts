@@ -38,6 +38,7 @@ const resourceRoutes = [
 
 const apiRoutes = [
 	route('/auth/*', buildApiRoutePath('auth.ts')),
+	route('/trpc/*', buildApiRoutePath('trpc.ts')),
 ] satisfies RouteConfig
 
 const dashboardRoutes = [

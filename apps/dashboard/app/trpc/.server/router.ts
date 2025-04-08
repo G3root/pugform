@@ -1,6 +1,6 @@
 import { projectRouter } from './project-router/router'
-import { protectedProcedure, router } from './trpc'
-const appRouter = router({
+import { router } from './trpc'
+export const appRouter = router({
 	project: projectRouter,
 })
 
