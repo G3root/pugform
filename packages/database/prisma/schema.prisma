@@ -129,6 +129,7 @@ model Organization {
   members     Member[]
   invitations Invitation[]
   Project     Project[]
+  Form        Form[]
 
   @@unique([slug])
   @@map("organization")
@@ -143,6 +144,7 @@ model Member {
   role           String
   createdAt      DateTime
   Project        Project[]
+  Form           Form[]
 
   @@map("member")
 }
@@ -174,7 +176,45 @@ model Project {
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  Form           Form[]
 
   @@unique([publicId, organizationId])
   @@map("project")
+}
+
+enum FormLayout {
+  CLASSIC
+  CARD
+}
+
+enum FormStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+}
+
+model Form {
+  id String @id
+
+  name        String
+  publicId    String
+  description String?
+  isActive    Boolean @default(true)
+
+  layout FormLayout @default(CLASSIC)
+  status FormStatus @default(DRAFT)
+
+  creator   Member @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("form")
 }

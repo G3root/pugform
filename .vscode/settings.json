@@ -7,7 +7,7 @@
 		"quickfix.biome": "explicit",
 		"source.organizeImports.biome": "explicit"
 	},
-	"tailwindCSS.experimental.configFile": "./apps/web/tailwind.config.ts",
+
 	"tailwindCSS.experimental.classRegex": [
 		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
 		["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],

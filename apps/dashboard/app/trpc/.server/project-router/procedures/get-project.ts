@@ -1,4 +1,4 @@
-import type { TKyselyDb } from '@pugform/database'
+import { type TKyselyDb, jsonArrayFrom } from '@pugform/database'
 import { fromPromise } from 'neverthrow'
 import { z } from 'zod'
 import * as Errors from '~/utils/errors'
@@ -32,9 +32,18 @@ export function getProject({
 }) {
 	return fromPromise(
 		db
-			.selectFrom('project')
+			.selectFrom('project as p')
 			.where('publicId', '=', data.publicId)
 			.where('organizationId', '=', data.organizationId)
+			.select((eb) => [
+				jsonArrayFrom(
+					eb
+						.selectFrom('form as f')
+						.select(['f.name', 'f.id', 'f.isActive'])
+						.orderBy('createdAt', 'desc')
+						.whereRef('f.projectId', '=', 'p.id'),
+				).as('forms'),
+			])
 			.selectAll()
 			.executeTakeFirstOrThrow(),
 		(e) => Errors.other('Failed to get project', e as Error),
