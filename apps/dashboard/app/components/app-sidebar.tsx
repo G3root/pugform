@@ -1,20 +1,15 @@
 import type * as React from 'react'
 
 import {
-	RiAddCircleLine,
+	RiAddLine,
 	RiArrowRightSLine,
-	RiPulseLine,
+	RiDeleteBinLine,
+	RiEditLine,
+	RiMoreLine,
 	RiSettings3Line,
 	RiSlowDownLine,
 } from '@remixicon/react'
-import {
-	Link,
-	href,
-	useLoaderData,
-	useLocation,
-	useMatches,
-	useRouteLoaderData,
-} from 'react-router'
+import { Link, href, useLocation, useRouteLoaderData } from 'react-router'
 import {
 	Sidebar,
 	SidebarContent,
@@ -27,7 +22,7 @@ import {
 	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarRail,
+	useSidebar,
 } from '~/components/ui/sidebar'
 import { CreateProjectSheet } from '~/features/project/components/sheets/create-project-sheet'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
@@ -40,6 +35,13 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from './ui/collapsible'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from './ui/dropdown-menu'
 
 const data = {
 	navMain: [
@@ -137,7 +139,7 @@ function CreateProjectButton() {
 	return (
 		<SidebarMenuButton asChild>
 			<Link to={`${location.pathname}?create-project=true`}>
-				<RiAddCircleLine size={22} />
+				<RiAddLine />
 			</Link>
 		</SidebarMenuButton>
 	)
@@ -174,9 +176,7 @@ function ProjectList() {
 						<RiArrowRightSLine />
 					</SidebarMenuAction>
 				</CollapsibleTrigger>
-				<SidebarMenuAction showOnHover>
-					<RiPulseLine />
-				</SidebarMenuAction>
+				<ProjectMenu />
 				<CollapsibleContent>
 					<div>
 						<h1>Hello</h1>
@@ -185,6 +185,37 @@ function ProjectList() {
 			</SidebarMenuItem>
 		</Collapsible>
 	))
+}
+
+function ProjectMenu() {
+	const { isMobile } = useSidebar()
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<SidebarMenuAction showOnHover>
+					<RiMoreLine />
+					<span className="sr-only">Project Menu</span>
+				</SidebarMenuAction>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent
+				className="w-56 rounded-lg"
+				side={isMobile ? 'bottom' : 'right'}
+				align={isMobile ? 'end' : 'start'}
+			>
+				<DropdownMenuItem>
+					<RiEditLine className="text-muted-foreground" />
+					<span>Rename</span>
+				</DropdownMenuItem>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuItem>
+					<RiDeleteBinLine className="text-muted-foreground" />
+					<span>Delete</span>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
 }
 
 function UserMenu() {
