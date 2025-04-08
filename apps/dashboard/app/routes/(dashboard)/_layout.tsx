@@ -3,7 +3,7 @@ import { okAsync } from 'neverthrow'
 import { Outlet } from 'react-router'
 import { DashboardLayout as DashboardLayoutComponent } from '~/components/layouts/dashboard-layout'
 import { requireAuth } from '~/features/auth/api/require-auth.server'
-import { allProjects } from '~/features/project/api/all-project.server'
+import { allProjects } from '~/trpc/.server/project-router/procedures/all-project'
 import * as Errors from '~/utils/errors'
 import type { Route } from './+types/_layout'
 

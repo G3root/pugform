@@ -1,11 +1,11 @@
 import { db } from '@pugform/database'
 import { ServerValidateError } from '@tanstack/react-form/remix'
 import { fromPromise } from 'neverthrow'
-import { requireAuth } from '~/features/auth/api/require-auth.server.js'
-import { createProject } from '~/features/project/api/create-project.server.js'
+import { requireAuth } from '~/features/auth/api/require-auth.server'
 import { CreateProjectServerValidate } from '~/features/project/validation'
+import { createProject } from '~/trpc/.server/project-router/procedures/create-project'
 import * as Errors from '~/utils/errors'
-import type { Route } from './+types/create-project.ts'
+import type { Route } from './+types/create-project'
 
 export function action({ request }: Route.ActionArgs) {
 	return requireAuth({ request })
