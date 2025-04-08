@@ -2,14 +2,17 @@ import { mergeForm, useTransform } from '@tanstack/react-form'
 import { useActionData, useFetcher } from 'react-router'
 import { useAppForm } from '~/hooks/form'
 import type { action } from '../../../../routes/(resource)/create-project'
-import { CreateProjectFormOptions, CreateProjectSchema } from '../../validation'
+import {
+	CreateProjectFormOptions,
+	CreateProjectFormSchema,
+} from '../../validation'
 
 export function CreateProjectForm() {
 	const actionData = useActionData<typeof action>()
 	const form = useAppForm({
 		...CreateProjectFormOptions,
 		validators: {
-			onChange: CreateProjectSchema,
+			onChange: CreateProjectFormSchema,
 		},
 		transform: useTransform(
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
