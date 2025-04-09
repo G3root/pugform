@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 } from '~/components/ui/dialog'
 import { useQueryState } from '~/hooks/use-query-state'
-import type { Info as LayoutRouteInfo } from '../../../routes/(dashboard)/+types/_layout'
+import type { Info as LayoutRouteInfo } from '../../../../routes/(dashboard)/+types/_layout'
 import { CreateFormForm } from '../forms/create-form-form'
 
 export function CreateFormDialog() {

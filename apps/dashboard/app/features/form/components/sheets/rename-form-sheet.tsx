@@ -1,4 +1,4 @@
-import { useLoaderData, useRouteLoaderData } from 'react-router'
+import { useRouteLoaderData } from 'react-router'
 
 import {
 	Sheet,
@@ -6,29 +6,40 @@ import {
 	SheetDescription,
 	SheetHeader,
 	SheetTitle,
-	SheetTrigger,
 } from '~/components/ui/sheet'
 import { useQueryState } from '~/hooks/use-query-state'
 import type { Info as LayoutRouteInfo } from '../../../../routes/(dashboard)/+types/_layout'
-import { RenameProjectForm } from '../forms/rename-project-form'
 
-export function RenameProjectSheet() {
+import { RenameFormForm } from '../forms/rename-form-form'
+
+export function RenameFormSheet() {
 	const loaderId: LayoutRouteInfo['id'] = 'routes/(dashboard)/_layout'
 	const loader = useRouteLoaderData<LayoutRouteInfo['loaderData']>(loaderId)
 
-	const [open, setOpen] = useQueryState('rename-project')
+	const [open, setOpen] = useQueryState('rename-form')
 	const projectId = useQueryState('pid')[0]
+	const formId = useQueryState('fid')[0]
 
-	const projectName =
+	const project =
 		loader && loader.type === 'success'
-			? loader.data.find((p) => p.publicId === projectId)?.name
+			? loader.data.find((p) => p.publicId === projectId)
 			: null
 
-	if (!projectId || projectId.length < 3 || !projectName) {
+	const formName = project
+		? project.forms.find((f) => f.publicId === formId)?.name
+		: null
+
+	if (
+		!projectId ||
+		!formId ||
+		projectId.length < 3 ||
+		formId.length < 3 ||
+		!formName
+	) {
 		return null
 	}
 
-	const isOpen = Boolean(open) && Boolean(projectId)
+	const isOpen = Boolean(open) && Boolean(projectId) && Boolean(formId)
 
 	const handleOpenChange = (open: boolean) => {
 		setOpen()
@@ -38,14 +49,11 @@ export function RenameProjectSheet() {
 		<Sheet open={isOpen} onOpenChange={handleOpenChange}>
 			<SheetContent>
 				<SheetHeader>
-					<SheetTitle>Rename Project</SheetTitle>
-					<SheetDescription>Change the name of your project</SheetDescription>
+					<SheetTitle>Rename Form</SheetTitle>
+					<SheetDescription>Change the name of your form</SheetDescription>
 				</SheetHeader>
 				<div className="p-4">
-					<RenameProjectForm
-						projectPublicId={projectId}
-						projectName={projectName}
-					/>
+					<RenameFormForm formPublicId={formId} name={formName} />
 				</div>
 			</SheetContent>
 		</Sheet>

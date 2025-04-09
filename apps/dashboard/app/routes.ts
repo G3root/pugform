@@ -36,6 +36,7 @@ const resourceRoutes = [
 	route('/create-project', buildResourceRoutePath('create-project.ts')),
 	route('/rename-project', buildResourceRoutePath('rename-project.ts')),
 	route('/create-form', buildResourceRoutePath('create-form.ts')),
+	route('/rename-form', buildResourceRoutePath('rename-form.ts')),
 ] satisfies RouteConfig
 
 const apiRoutes = [

@@ -30,7 +30,8 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
-import { CreateFormDialog } from '~/features/form/dialogs/create-form-dialog'
+import { CreateFormDialog } from '~/features/form/components/dialogs/create-form-dialog'
+import { RenameFormSheet } from '~/features/form/components/sheets/rename-form-sheet'
 import { CreateProjectSheet } from '~/features/project/components/sheets/create-project-sheet'
 import { RenameProjectSheet } from '~/features/project/components/sheets/rename-project-sheet'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
@@ -49,7 +50,6 @@ import {
 	DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import type { Info as LayoutRouteInfo } from '.react-router/types/app/routes/(dashboard)/+types/_layout'
-
 const data = {
 	navMain: [
 		{
@@ -138,6 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<RenameProjectSheet />
 			<CreateProjectSheet />
 			<CreateFormDialog />
+			<RenameFormSheet />
 		</Sidebar>
 	)
 }

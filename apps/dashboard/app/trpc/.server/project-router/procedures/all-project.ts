@@ -1,4 +1,4 @@
-import type { TKyselyDb } from '@pugform/database'
+import { type TKyselyDb, jsonArrayFrom } from '@pugform/database'
 import { TRPCError } from '@trpc/server'
 import { fromPromise } from 'neverthrow'
 import * as Errors from '~/utils/errors'
@@ -37,8 +37,17 @@ interface TAllProjectsOptions {
 export function allProjects({ db, data }: TAllProjectsOptions) {
 	return fromPromise(
 		db
-			.selectFrom('project')
+			.selectFrom('project as p')
 			.where('organizationId', '=', data.organizationId)
+			.select((eb) => [
+				jsonArrayFrom(
+					eb
+						.selectFrom('form as f')
+						.select(['f.name', 'f.id', 'f.publicId'])
+						.orderBy('createdAt', 'desc')
+						.whereRef('f.projectId', '=', 'p.id'),
+				).as('forms'),
+			])
 			.selectAll()
 			.orderBy('createdAt', 'desc')
 			.execute(),

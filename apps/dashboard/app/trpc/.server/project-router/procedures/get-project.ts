@@ -42,6 +42,7 @@ export function getProject({
 						.select([
 							'f.name',
 							'f.id',
+							'f.publicId',
 							'f.isActive',
 							'f.description',
 							'f.layout',

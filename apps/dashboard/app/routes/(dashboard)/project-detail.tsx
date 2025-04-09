@@ -90,6 +90,11 @@ export default function ProjectDetail() {
 											<Button variant="outline">View</Button>
 											<Button variant="outline">Edit</Button>
 											<Button variant="outline">Delete</Button>
+
+											<RenameFormButton
+												formPublicId={form.publicId}
+												projectPublicId={data.data.publicId}
+											/>
 										</Stack>
 									</TableCell>
 								</TableRow>
@@ -99,6 +104,25 @@ export default function ProjectDetail() {
 				</Stack>
 			</Stack>
 		</Container>
+	)
+}
+
+function RenameFormButton({
+	formPublicId,
+	projectPublicId,
+}: {
+	formPublicId: string
+	projectPublicId: string
+}) {
+	const location = useLocation()
+
+	return (
+		<Link
+			to={`${location.pathname}?rename-form=true&pid=${projectPublicId}&fid=${formPublicId}`}
+			className={buttonVariants({ variant: 'outline' })}
+		>
+			Rename
+		</Link>
 	)
 }
 

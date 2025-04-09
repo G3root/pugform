@@ -2,7 +2,7 @@ import { mergeForm, useTransform } from '@tanstack/react-form'
 import { useActionData, useFetcher } from 'react-router'
 import { DialogFooter } from '~/components/ui/dialog'
 import { useAppForm } from '~/hooks/form'
-import { CreateFormFormOptions, CreateFormFormSchema } from '../validation'
+import { CreateFormFormOptions, CreateFormFormSchema } from '../../validation'
 
 interface CreateFormFormProps {
 	projectPublicId: string
