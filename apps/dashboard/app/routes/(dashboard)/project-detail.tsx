@@ -1,9 +1,17 @@
 import { db } from '@pugform/database'
-import { useLoaderData } from 'react-router'
-import { Button } from '~/components/ui/button'
+import { Link, useLoaderData, useLocation, useParams } from 'react-router'
+import { Button, buttonVariants } from '~/components/ui/button'
 import { Container } from '~/components/ui/container'
 import { Separator } from '~/components/ui/separator'
 import { Stack } from '~/components/ui/stack'
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '~/components/ui/table'
 import { requireAuth } from '~/features/auth/api/require-auth.server'
 import { getProject } from '~/trpc/.server/project-router/procedures/get-project'
 import * as Errors from '~/utils/errors'
@@ -50,12 +58,60 @@ export default function ProjectDetail() {
 				<Stack direction="row" justify="between" align="center">
 					<h1 className="font-bold text-2xl">{data.data.name}</h1>
 					<Stack>
-						<Button variant="outline">Create Form</Button>
+						<CreateFormButton />
 					</Stack>
 				</Stack>
 
 				<Separator />
+				<Stack direction="column" gap={4}>
+					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Name</TableHead>
+								<TableHead>Description</TableHead>
+								<TableHead>Created At</TableHead>
+								<TableHead>Updated At</TableHead>
+								<TableHead>Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{data.data.forms.map((form) => (
+								<TableRow key={form.id}>
+									<TableCell>{form.name}</TableCell>
+									<TableCell>{form.description}</TableCell>
+									<TableCell>
+										{new Date(form.createdAt).toLocaleDateString()}
+									</TableCell>
+									<TableCell>
+										{new Date(form.updatedAt).toLocaleDateString()}
+									</TableCell>
+									<TableCell>
+										<Stack direction="row" gap={2}>
+											<Button variant="outline">View</Button>
+											<Button variant="outline">Edit</Button>
+											<Button variant="outline">Delete</Button>
+										</Stack>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</Stack>
 			</Stack>
 		</Container>
+	)
+}
+
+function CreateFormButton() {
+	const location = useLocation()
+	const params = useParams<{ projectId: string }>()
+
+	return (
+		<Link
+			className={buttonVariants({ variant: 'outline' })}
+			to={`${location.pathname}?create-form=true&pid=${params.projectId}`}
+		>
+			Create Form
+		</Link>
 	)
 }

@@ -9,6 +9,12 @@ const TextField = lazy(() =>
 	})),
 )
 
+const TextareaField = lazy(() =>
+	import('~/components/ui/textarea-field').then((mod) => ({
+		default: mod.TextareaField,
+	})),
+)
+
 interface SubscribeButtonProps extends React.ComponentProps<typeof Button> {
 	label: string
 }
@@ -29,6 +35,7 @@ function SubscribeButton({ label, ...props }: SubscribeButtonProps) {
 export const { useAppForm, withForm } = createFormHook({
 	fieldComponents: {
 		TextField,
+		TextareaField,
 	},
 	formComponents: {
 		SubscribeButton,

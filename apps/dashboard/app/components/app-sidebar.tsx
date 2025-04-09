@@ -30,6 +30,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
+import { CreateFormDialog } from '~/features/form/dialogs/create-form-dialog'
 import { CreateProjectSheet } from '~/features/project/components/sheets/create-project-sheet'
 import { RenameProjectSheet } from '~/features/project/components/sheets/rename-project-sheet'
 import { useCurrentRouteHandle } from '~/hooks/use-current-route-handle'
@@ -136,6 +137,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarFooter>
 			<RenameProjectSheet />
 			<CreateProjectSheet />
+			<CreateFormDialog />
 		</Sidebar>
 	)
 }

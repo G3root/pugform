@@ -39,7 +39,15 @@ export function getProject({
 				jsonArrayFrom(
 					eb
 						.selectFrom('form as f')
-						.select(['f.name', 'f.id', 'f.isActive'])
+						.select([
+							'f.name',
+							'f.id',
+							'f.isActive',
+							'f.description',
+							'f.layout',
+							'f.createdAt',
+							'f.updatedAt',
+						])
 						.orderBy('createdAt', 'desc')
 						.whereRef('f.projectId', '=', 'p.id'),
 				).as('forms'),
