@@ -87,7 +87,12 @@ export default function ProjectDetail() {
 									</TableCell>
 									<TableCell>
 										<Stack direction="row" gap={2}>
-											<Button variant="outline">View</Button>
+											<Link
+												className={buttonVariants({ variant: 'outline' })}
+												to={`/forms/${form.publicId}`}
+											>
+												View
+											</Link>
 											<Button variant="outline">Edit</Button>
 											<Button variant="outline">Delete</Button>
 

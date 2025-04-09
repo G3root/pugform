@@ -44,11 +44,18 @@ const apiRoutes = [
 	route('/trpc/*', buildApiRoutePath('trpc.ts')),
 ] satisfies RouteConfig
 
+const formRoutes = [
+	index(buildApplicationRoutePath('form/form-summary.tsx')),
+	route('/responses', buildApplicationRoutePath('form/form-responses.tsx')),
+	route('/integration', buildApplicationRoutePath('form/form-integration.tsx')),
+] satisfies RouteConfig
+
 const dashboardRoutes = [
 	index(buildApplicationRoutePath('dashboard.tsx')),
 	...prefix('/projects', [
 		route('/:projectId', buildApplicationRoutePath('project-detail.tsx')),
 	]),
+	...prefix('/forms/:formId', formRoutes),
 ] satisfies RouteConfig
 
 const authRoutes = [
