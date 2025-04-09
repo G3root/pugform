@@ -5,3 +5,7 @@ export const CreateFormSchema = z.object({
 	projectPublicId: z.string(),
 	description: z.string().optional(),
 })
+
+export const DeleteFormSchema = z.object({
+	formPublicId: z.string(),
+})
