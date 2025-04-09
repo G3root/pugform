@@ -9,3 +9,8 @@ export const CreateFormSchema = z.object({
 export const DeleteFormSchema = z.object({
 	formPublicId: z.string(),
 })
+
+export const RenameFormSchema = z.object({
+	formPublicId: z.string(),
+	name: z.string().min(1, 'Name is required'),
+})
