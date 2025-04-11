@@ -70,7 +70,7 @@ export function FormLayout({ children }: { children: React.ReactNode }) {
                     <span className="sr-only">More options</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent side="right">
                   <RenameFormMenuButton formPublicId={data.data.publicId} />
                   {/* <DeleteFormMenuButton
 									projectPublicId={data.data.projectPublicId}
