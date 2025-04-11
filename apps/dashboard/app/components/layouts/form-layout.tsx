@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { useCopyToClipboard } from '~/hooks/use-copy-to-clipboard'
 import type { Info } from '../../../.react-router/types/app/routes/(dashboard)/form/+types/_form-layout'
 import { Button, buttonVariants } from '../ui/button'
+import { Container } from '../ui/container'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -31,43 +32,45 @@ export function FormLayout({ children }: { children: React.ReactNode }) {
 	}
 
 	return (
-		<Stack>
-			<Stack direction="row" justify="between" align="center">
-				<Stack direction="row" gap={2}>
-					<h1 className="font-bold text-xl tracking-tight sm:text-2xl">
-						{data.data.name}
-					</h1>
+		<Container>
+			<Stack>
+				<Stack direction="row" justify="between" align="center">
+					<Stack direction="row" gap={2}>
+						<h1 className="font-bold text-xl tracking-tight sm:text-2xl">
+							{data.data.name}
+						</h1>
 
-					<div>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button size="icon" variant="ghost">
-									<RiMoreLine />
-									<span className="sr-only">More options</span>
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent>
-								<RenameFormMenuButton formPublicId={data.data.publicId} />
-								{/* <DeleteFormMenuButton
+						<div>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button size="icon" variant="ghost">
+										<RiMoreLine />
+										<span className="sr-only">More options</span>
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<RenameFormMenuButton formPublicId={data.data.publicId} />
+									{/* <DeleteFormMenuButton
 									projectPublicId={data.data.projectPublicId}
 									formPublicId={params.formId}
 								/> */}
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
-				</Stack>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+					</Stack>
 
-				<Stack gap={2} direction="row" align="center">
-					<CopyLinkButton />
+					<Stack gap={2} direction="row" align="center">
+						<CopyLinkButton />
 
-					<Link to={'/'} className={buttonVariants()}>
-						Edit
-					</Link>
+						<Link to={'/'} className={buttonVariants()}>
+							Edit
+						</Link>
+					</Stack>
 				</Stack>
+				{/* <NavTabs>{children}</NavTabs> */}
+				{children}
 			</Stack>
-			{/* <NavTabs>{children}</NavTabs> */}
-			{children}
-		</Stack>
+		</Container>
 	)
 }
 
