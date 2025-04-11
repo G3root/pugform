@@ -1,9 +1,7 @@
-import { type ResultAsync, errAsync, fromPromise, okAsync } from 'neverthrow'
-import { data as responseData } from 'react-router'
-import type { z } from 'zod'
-import * as Errors from '~/utils/errors'
-// import type { ProtectedHandlerConfig } from './auth-middleware'
-import { type TBaseContext, createBaseContext } from './rpc-context'
+import { type ResultAsync, errAsync, fromPromise, okAsync } from 'neverthrow';
+import { data as responseData } from 'react-router';
+import type { z } from 'zod';
+import * as Errors from '~/utils/errors';
 
 // type AuthenticatedContext = Omit<TBaseContext, 'session'> & {
 // 	session: NonNullable<TBaseContext['session']> & {
@@ -12,12 +10,12 @@ import { type TBaseContext, createBaseContext } from './rpc-context'
 // }
 
 type RpcHandlerConfig<T, R, Ctx> = {
-	schema: z.ZodType<T, z.ZodTypeDef, unknown>
-	handler: (data: T, ctx: Ctx) => Promise<ResultAsync<R, Errors.RouteError>>
-	request: Request
-	createContext: (request: Request) => Promise<Ctx>
-	method: 'GET' | 'POST'
-}
+  schema: z.ZodType<T, z.ZodTypeDef, unknown>;
+  handler: (data: T, ctx: Ctx) => Promise<ResultAsync<R, Errors.RouteError>>;
+  request: Request;
+  createContext: (request: Request) => Promise<Ctx>;
+  method: 'GET' | 'POST';
+};
 
 /**
  * Generic RPC handler for Remix loader or action functions
@@ -29,69 +27,66 @@ type RpcHandlerConfig<T, R, Ctx> = {
  * @returns Response with appropriate status code and data/error message
  */
 export async function rpcHandler<T, R, Ctx>({
-	schema,
-	handler,
-	request,
-	createContext,
-	method,
+  schema,
+  handler,
+  request,
+  createContext,
+  method,
 }: RpcHandlerConfig<T, R, Ctx>) {
-	const parsedInput = await fromPromise(
-		(async () => {
-			if (request.method !== method) {
-				return errAsync(Errors.methodNotAllowed())
-			}
+  const parsedInput = await fromPromise(
+    (async () => {
+      if (request.method !== method) {
+        return errAsync(Errors.methodNotAllowed());
+      }
 
-			if (method === 'POST') {
-				return await request.json()
-			}
+      if (method === 'POST') {
+        return await request.json();
+      }
 
-			const url = new URL(request.url)
-			const params: Record<string, string> = {}
-			url.searchParams.forEach((value, key) => {
-				params[key] = value
-			})
-			return params as unknown
-		})(),
-		(e) =>
-			Errors.other(
-				'Request parsing failed',
-				e instanceof Error ? e : undefined,
-			),
-	).andThen((data) => {
-		const validationResult = schema.safeParse(data)
+      const url = new URL(request.url);
+      const params: Record<string, string> = {};
+      url.searchParams.forEach((value, key) => {
+        params[key] = value;
+      });
+      return params as unknown;
+    })(),
+    (e) =>
+      Errors.other('Request parsing failed', e instanceof Error ? e : undefined)
+  ).andThen((data) => {
+    const validationResult = schema.safeParse(data);
 
-		if (!validationResult.success) {
-			const errorMessage = validationResult.error.errors
-				.map((err) => `${err.path.join('.')}: ${err.message}`)
-				.join(', ')
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors
+        .map((err) => `${err.path.join('.')}: ${err.message}`)
+        .join(', ');
 
-			return errAsync(Errors.badRequest(errorMessage))
-		}
-		return okAsync(validationResult.data)
-	})
+      return errAsync(Errors.badRequest(errorMessage));
+    }
+    return okAsync(validationResult.data);
+  });
 
-	if (parsedInput.isErr()) {
-		const error = Errors.mapRouteError(parsedInput.error)
-		return responseData(
-			{ status: 'failed' as const, errorMsg: error.errorMsg },
-			error.status,
-		)
-	}
+  if (parsedInput.isErr()) {
+    const error = Errors.mapRouteError(parsedInput.error);
+    return responseData(
+      { status: 'failed' as const, errorMsg: error.errorMsg },
+      error.status
+    );
+  }
 
-	const ctx = await createContext(request)
-	const result = await handler(parsedInput.value, ctx)
-	const final = result.mapErr(Errors.mapRouteError)
+  const ctx = await createContext(request);
+  const result = await handler(parsedInput.value, ctx);
+  const final = result.mapErr(Errors.mapRouteError);
 
-	return final.match(
-		(data) => responseData({ status: 'success' as const, data }, 200),
-		(error) => {
-			console.log('errors', error)
-			return responseData(
-				{ status: 'failed' as const, errorMsg: error.errorMsg },
-				error.status,
-			)
-		},
-	)
+  return final.match(
+    (data) => responseData({ status: 'success' as const, data }, 200),
+    (error) => {
+      console.log('errors', error);
+      return responseData(
+        { status: 'failed' as const, errorMsg: error.errorMsg },
+        error.status
+      );
+    }
+  );
 }
 
 // /**

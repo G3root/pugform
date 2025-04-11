@@ -1,16 +1,16 @@
-import { db } from '@pugform/database'
-import { auth } from './auth'
+import { db } from '@pugform/database';
+import { auth } from './auth';
 
 type BaseContext = {
-	db: typeof db
-}
+  db: typeof db;
+};
 
 export const createBaseContext = async (request: Request) => {
-	const session = await auth.api.getSession({
-		headers: request.headers,
-	})
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-	return { db, session }
-}
+  return { db, session };
+};
 
-export type TBaseContext = Awaited<ReturnType<typeof createBaseContext>>
+export type TBaseContext = Awaited<ReturnType<typeof createBaseContext>>;

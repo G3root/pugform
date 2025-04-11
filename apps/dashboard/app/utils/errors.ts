@@ -1,93 +1,93 @@
 export type RouteError =
-	| { type: 'NotFound'; context?: string }
-	| { type: 'Conflict'; context?: string }
-	| { type: 'Unauthorized'; context?: string }
-	| { type: 'Other'; error?: Error; context?: string }
-	| { type: 'BadRequest'; context: string }
-	| { type: 'MethodNotAllowed'; context?: string }
+  | { type: 'NotFound'; context?: string }
+  | { type: 'Conflict'; context?: string }
+  | { type: 'Unauthorized'; context?: string }
+  | { type: 'Other'; error?: Error; context?: string }
+  | { type: 'BadRequest'; context: string }
+  | { type: 'MethodNotAllowed'; context?: string };
 
 export const notFound = (context?: string): RouteError => ({
-	type: 'NotFound',
-	context,
-})
+  type: 'NotFound',
+  context,
+});
 
 export const conflict = (context?: string): RouteError => ({
-	type: 'Conflict',
-	context,
-})
+  type: 'Conflict',
+  context,
+});
 
 export const unauthorized = (context?: string): RouteError => ({
-	type: 'Unauthorized',
-	context,
-})
+  type: 'Unauthorized',
+  context,
+});
 
 export const other = (context: string, error?: Error): RouteError => ({
-	type: 'Other',
-	context,
-	error,
-})
+  type: 'Other',
+  context,
+  error,
+});
 
 export const badRequest = (context: string): RouteError => ({
-	type: 'BadRequest',
-	context,
-})
+  type: 'BadRequest',
+  context,
+});
 
 export const methodNotAllowed = (context?: string): RouteError => ({
-	type: 'MethodNotAllowed',
-	context,
-})
+  type: 'MethodNotAllowed',
+  context,
+});
 
 export const mapRouteError = (err: RouteError) => {
-	switch (err.type) {
-		case 'BadRequest': {
-			return {
-				status: 400,
-				errorMsg: err.context,
-			}
-		}
+  switch (err.type) {
+    case 'BadRequest': {
+      return {
+        status: 400,
+        errorMsg: err.context,
+      };
+    }
 
-		case 'Conflict': {
-			return {
-				status: 409,
-				errorMsg: 'Conflict',
-			}
-		}
+    case 'Conflict': {
+      return {
+        status: 409,
+        errorMsg: 'Conflict',
+      };
+    }
 
-		case 'Unauthorized': {
-			return {
-				status: 401,
-				errorMsg: 'Authentication required',
-			}
-		}
+    case 'Unauthorized': {
+      return {
+        status: 401,
+        errorMsg: 'Authentication required',
+      };
+    }
 
-		case 'NotFound': {
-			const withMaybeContext = err.context ? ` - ${err.context}` : ''
+    case 'NotFound': {
+      const withMaybeContext = err.context ? ` - ${err.context}` : '';
 
-			return {
-				status: 404,
-				errorMsg: `Not Found${withMaybeContext}`,
-			}
-		}
+      return {
+        status: 404,
+        errorMsg: `Not Found${withMaybeContext}`,
+      };
+    }
 
-		case 'MethodNotAllowed': {
-			return {
-				status: 405,
-				errorMsg: 'Method Not Allowed',
-			}
-		}
-		case 'Other': {
-			const errorInfo = [err.error ? err.error : '', `Context: ${err.context}`]
-				.filter((val) => val !== '')
-				.join('\n')
+    case 'MethodNotAllowed': {
+      return {
+        status: 405,
+        errorMsg: 'Method Not Allowed',
+      };
+    }
+    case 'Other': {
+      const errorInfo = [err.error ? err.error : '', `Context: ${err.context}`]
+        .filter((val) => val !== '')
+        .join('\n');
 
-			console.log('errorInfo', errorInfo)
+      console.log('errorInfo', errorInfo);
 
-			// logger.error(errorInfo)
+      // logger.error(errorInfo)
 
-			return {
-				status: 500,
-				errorMsg: 'An Internal Error Occurred :(',
-			}
-		}
-	}
-}
+      return {
+        status: 500,
+        errorMsg: 'An Internal Error Occurred :(',
+      };
+    }
+  }
+};
