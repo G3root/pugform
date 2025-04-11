@@ -49,7 +49,7 @@ const formRoutes = [
     index(buildApplicationRoutePath('form/form-summary.tsx')),
     route('/responses', buildApplicationRoutePath('form/form-responses.tsx')),
     route(
-      '/integration',
+      '/integrations',
       buildApplicationRoutePath('form/form-integration.tsx')
     ),
   ]),
