@@ -4,6 +4,13 @@
   "javascript": {
     "globals": ["React"]
   },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "useConsistentMemberAccessibility": "off"
+      }
+    }
+  },
   "overrides": [
     {
       "include": ["**/package.json"],

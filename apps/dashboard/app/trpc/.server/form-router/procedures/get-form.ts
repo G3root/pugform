@@ -1,4 +1,4 @@
-import type { TKyselyDb } from '@pugform/database';
+import { type TKyselyDb, jsonObjectFrom } from '@pugform/database';
 import { TRPCError } from '@trpc/server';
 import { fromPromise } from 'neverthrow';
 import * as Errors from '~/utils/errors';
@@ -42,6 +42,16 @@ export function getForm({ data, db }: TGetFormOptions) {
       .selectFrom('form')
       .where('publicId', '=', data.formPublicId)
       .where('organizationId', '=', data.organizationId)
+      .select((eb) => [
+        jsonObjectFrom(
+          eb
+            .selectFrom('project as p')
+            .select(['p.id', 'p.name', 'p.publicId'])
+            .whereRef('p.id', '=', 'form.projectId')
+        )
+          .$notNull()
+          .as('project'),
+      ])
       .selectAll()
       .executeTakeFirstOrThrow(),
     (e) => Errors.other('Failed to get form', e as Error)
