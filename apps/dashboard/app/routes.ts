@@ -55,6 +55,10 @@ const formRoutes = [
   ]),
 ] satisfies RouteConfig;
 
+const formEditRoutes = [
+  route('/forms/:formId/edit', buildApplicationRoutePath('form/form-edit.tsx')),
+] satisfies RouteConfig;
+
 const dashboardRoutes = [
   index(buildApplicationRoutePath('dashboard.tsx')),
   ...prefix('/projects', [
@@ -73,4 +77,5 @@ export default [
   ...prefix('/resource', resourceRoutes),
   ...authRoutes,
   layout(buildApplicationRoutePath('_layout.tsx'), dashboardRoutes),
+  ...formEditRoutes,
 ] satisfies RouteConfig;

@@ -37,7 +37,7 @@ export function loader({ request }: Route.LoaderArgs) {
     );
 }
 
-export default function DashboardLayout() {
+export default function DashboardLayoutRoute() {
   return (
     <DashboardLayoutComponent>
       <Outlet />

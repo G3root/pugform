@@ -17,7 +17,7 @@ const formOpts = formOptions({
   },
 });
 
-export default function LoginPage() {
+export default function LoginRoute() {
   const form = useAppForm({
     ...formOpts,
     validators: {

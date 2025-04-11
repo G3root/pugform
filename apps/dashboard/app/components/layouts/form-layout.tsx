@@ -84,7 +84,10 @@ export function FormLayout({ children }: { children: React.ReactNode }) {
           <Stack gap={2} direction="row" align="center">
             <CopyLinkButton />
 
-            <Link to={'/'} className={buttonVariants()}>
+            <Link
+              to={`/forms/${data.data.publicId}/edit`}
+              className={buttonVariants()}
+            >
               Edit
             </Link>
           </Stack>

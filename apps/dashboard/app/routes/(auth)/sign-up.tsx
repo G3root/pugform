@@ -52,7 +52,7 @@ export async function action({ request }: Route.ActionArgs) {
   return null;
 }
 
-export default function SignUpPage(props: Route.ComponentProps) {
+export default function SignUpRoute(props: Route.ComponentProps) {
   const actionData = useActionData();
   const form = useAppForm({
     ...formOpts,

@@ -1,4 +1,4 @@
-export default function Dashboard() {
+export default function DashboardRoute() {
   return (
     <div>
       <h1>Unknown Route</h1>

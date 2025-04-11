@@ -1,4 +1,4 @@
-export default function FormIntegration() {
+export default function FormIntegrationRoute() {
   return (
     <div>
       <h1>Form Integration</h1>

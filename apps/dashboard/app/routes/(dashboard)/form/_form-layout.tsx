@@ -34,7 +34,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       }
     );
 }
-export default function FormLayout() {
+export default function FormLayoutRoute() {
   return (
     <FormLayoutComponent>
       <Outlet />

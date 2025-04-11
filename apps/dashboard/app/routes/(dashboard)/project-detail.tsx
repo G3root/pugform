@@ -45,7 +45,7 @@ export function loader({ request, params }: Route.LoaderArgs) {
     );
 }
 
-export default function ProjectDetail() {
+export default function ProjectDetailRoute() {
   const data = useLoaderData<typeof loader>();
 
   if (data.type === 'error') {
