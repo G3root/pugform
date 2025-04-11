@@ -38,6 +38,7 @@ export const methodNotAllowed = (context?: string): RouteError => ({
 });
 
 export const mapRouteError = (err: RouteError) => {
+  // biome-ignore lint/style/useDefaultSwitchClause: <explanation>
   switch (err.type) {
     case 'BadRequest': {
       return {
@@ -76,11 +77,9 @@ export const mapRouteError = (err: RouteError) => {
       };
     }
     case 'Other': {
-      const errorInfo = [err.error ? err.error : '', `Context: ${err.context}`]
-        .filter((val) => val !== '')
-        .join('\n');
-
-      console.log('errorInfo', errorInfo);
+      // const errorInfo = [err.error ? err.error : '', `Context: ${err.context}`]
+      //   .filter((val) => val !== '')
+      //   .join('\n');
 
       // logger.error(errorInfo)
 
@@ -91,3 +90,20 @@ export const mapRouteError = (err: RouteError) => {
     }
   }
 };
+
+export function getErrorMessage(error: unknown) {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
+  // biome-ignore lint/suspicious/noConsole: <explanation>
+  console.error('Unable to get error message for error', error);
+  return 'Unknown Error';
+}
