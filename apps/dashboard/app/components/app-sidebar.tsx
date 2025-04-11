@@ -28,6 +28,9 @@ import {
 	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
 	useSidebar,
 } from '~/components/ui/sidebar'
 import { CreateFormDialog } from '~/features/form/components/dialogs/create-form-dialog'
@@ -188,9 +191,17 @@ function ProjectList() {
 				</CollapsibleTrigger>
 				<ProjectMenu projectPublicId={project.publicId} />
 				<CollapsibleContent>
-					<div>
-						<h1>Hello</h1>
-					</div>
+					<SidebarMenuSub>
+						{project.forms.map((form) => (
+							<SidebarMenuSubItem key={form.id}>
+								<SidebarMenuSubButton asChild>
+									<Link to={href('/forms/:formId', { formId: form.publicId })}>
+										<span>{form.name}</span>
+									</Link>
+								</SidebarMenuSubButton>
+							</SidebarMenuSubItem>
+						))}
+					</SidebarMenuSub>
 				</CollapsibleContent>
 			</SidebarMenuItem>
 		</Collapsible>
