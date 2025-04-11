@@ -1,4 +1,4 @@
-import { useRouteLoaderData } from 'react-router'
+import { useParams, useRouteLoaderData } from 'react-router'
 import {
 	Dialog,
 	DialogContent,
@@ -13,6 +13,7 @@ import { CreateFormForm } from '../forms/create-form-form'
 export function CreateFormDialog() {
 	const loaderId: LayoutRouteInfo['id'] = 'routes/(dashboard)/_layout'
 	const loader = useRouteLoaderData<LayoutRouteInfo['loaderData']>(loaderId)
+	const params = useParams<{ formId?: string }>()
 
 	const [open, setOpen] = useQueryState('create-form')
 	const projectId = useQueryState('pid')[0]

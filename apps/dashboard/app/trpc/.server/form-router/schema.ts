@@ -14,3 +14,7 @@ export const RenameFormSchema = z.object({
 	formPublicId: z.string(),
 	name: z.string().min(1, 'Name is required'),
 })
+
+export const GetFormSchema = z.object({
+	formPublicId: z.string(),
+})

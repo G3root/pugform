@@ -1,4 +1,4 @@
-import { useRouteLoaderData } from 'react-router'
+import { useParams, useRouteLoaderData } from 'react-router'
 
 import {
 	Sheet,
@@ -15,31 +15,24 @@ import { RenameFormForm } from '../forms/rename-form-form'
 export function RenameFormSheet() {
 	const loaderId: LayoutRouteInfo['id'] = 'routes/(dashboard)/_layout'
 	const loader = useRouteLoaderData<LayoutRouteInfo['loaderData']>(loaderId)
-
+	const params = useParams<{ formId?: string }>()
 	const [open, setOpen] = useQueryState('rename-form')
-	const projectId = useQueryState('pid')[0]
-	const formId = useQueryState('fid')[0]
+	const formIdQuery = useQueryState('fid')[0]
 
-	const project =
+	const formId = params?.formId ?? formIdQuery
+
+	const forms =
 		loader && loader.type === 'success'
-			? loader.data.find((p) => p.publicId === projectId)
+			? loader.data.flatMap((p) => p.forms)
 			: null
 
-	const formName = project
-		? project.forms.find((f) => f.publicId === formId)?.name
-		: null
+	const formName = forms ? forms.find((f) => f.publicId === formId)?.name : null
 
-	if (
-		!projectId ||
-		!formId ||
-		projectId.length < 3 ||
-		formId.length < 3 ||
-		!formName
-	) {
+	if (!formId || formId.length < 3 || !formName) {
 		return null
 	}
 
-	const isOpen = Boolean(open) && Boolean(projectId) && Boolean(formId)
+	const isOpen = Boolean(open) && Boolean(formId)
 
 	const handleOpenChange = (open: boolean) => {
 		setOpen()

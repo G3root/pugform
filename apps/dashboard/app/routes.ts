@@ -45,9 +45,14 @@ const apiRoutes = [
 ] satisfies RouteConfig
 
 const formRoutes = [
-	index(buildApplicationRoutePath('form/form-summary.tsx')),
-	route('/responses', buildApplicationRoutePath('form/form-responses.tsx')),
-	route('/integration', buildApplicationRoutePath('form/form-integration.tsx')),
+	layout(buildApplicationRoutePath('form/_form-layout.tsx'), [
+		index(buildApplicationRoutePath('form/form-summary.tsx')),
+		route('/responses', buildApplicationRoutePath('form/form-responses.tsx')),
+		route(
+			'/integration',
+			buildApplicationRoutePath('form/form-integration.tsx'),
+		),
+	]),
 ] satisfies RouteConfig
 
 const dashboardRoutes = [
